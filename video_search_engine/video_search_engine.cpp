@@ -4,6 +4,7 @@
 #include <numeric>
 #include <vector>
 #include <iomanip>
+#include <stdio.h>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/cudacodec.hpp>
 #include <opencv2/highgui.hpp>
@@ -22,15 +23,14 @@ int main() {
 
 	cv::cuda::GpuMat first_frame, second_frame;
 	cv::Ptr<cv::cudacodec::VideoReader> cuda_reader = cv::cudacodec::createVideoReader(file);
-
+	
 	cuda_reader->nextFrame(first_frame);
 	cv::cuda::cvtColor(first_frame, first_frame, cv::COLOR_BGRA2GRAY);
-
+	
 	cv::TickMeter tm;
 	std::vector<double> gpu_times;
 	int gpu_frame_count = 0;
 
-	//std::vector<std::pair<double, std::pair<cv::cuda::GpuMat, cv::cuda::GpuMat>>> distance;
 	Sorted_Linked_List top_distance(10);
 
 	while (true) {
@@ -47,9 +47,17 @@ int main() {
 		hist2.download(hist2_cpu);
 
 		double d = wasserstein_distance(hist1_cpu, hist2_cpu);
-		top_distance.insert(d, first_frame, second_frame);
-		//distance.push_back(std::make_pair(d, std::make_pair(first_frame, second_frame)));
+		//top_distance.insert(d, first_frame, second_frame);
 		//std::cout << std::fixed << std::setprecision(2)<<wasserstein_distance(hist1_cpu, hist2_cpu) << std::endl;
+		if (d > 50) {
+			cv::Mat tmp;
+			first_frame.download(tmp);
+			cv::imshow("", tmp);
+			cv::waitKey();
+			second_frame.download(tmp);
+			cv::imshow("", tmp);
+			cv::waitKey();
+		}
 
 		first_frame = std::move(second_frame);
 		
@@ -58,13 +66,6 @@ int main() {
 		gpu_frame_count++;
 
 	}
-	/*
-	std::sort(distance.begin(), distance.end(), std::greater<double>());
-	for (int i = 0; i < 10; i++) {
-		std::cout << distance[i].first << " ";
-	}
-	std::cout << std::endl;
-	*/
 	top_distance.print_list();
 	top_distance.show_img();
 
@@ -78,6 +79,5 @@ int main() {
 
 		std::cout << "GPU : Avg : " << gpu_avg << " ms FPS : " << 1000.0 / gpu_avg << " Frames " << gpu_frame_count << std::endl;
 	}
-
 	return 0;
 }
