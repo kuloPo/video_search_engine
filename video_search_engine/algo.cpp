@@ -70,10 +70,10 @@ void Sorted_Linked_List::show_img() const {
 	while (p != nullptr) {
 		cv::Mat tmp;
 		p->img1.download(tmp);
-		cv::imshow("", tmp);
+		//cv::imshow("", tmp);
 		cv::waitKey(0);
 		p->img2.download(tmp);
-		cv::imshow("", tmp);
+		//cv::imshow("", tmp);
 		cv::waitKey(0);
 		p = p->next;
 	}

@@ -41,22 +41,20 @@ int main() {
 
 		cv::cuda::GpuMat hist1 = get_histogram(first_frame);
 		cv::cuda::GpuMat hist2 = get_histogram(second_frame);
+		cv::cuda::transpose(hist1, hist1);
+		cv::cuda::transpose(hist2, hist2);
 
-		cv::Mat hist1_cpu, hist2_cpu;
-		hist1.download(hist1_cpu);
-		hist2.download(hist2_cpu);
-
-		double d = wasserstein_distance(hist1_cpu, hist2_cpu);
-		//top_distance.insert(d, first_frame, second_frame);
-		//std::cout << std::fixed << std::setprecision(2)<<wasserstein_distance(hist1_cpu, hist2_cpu) << std::endl;
+		double d = wasserstein_distance(hist1, hist2);
+		top_distance.insert(d, first_frame, second_frame);
+		//printf("%.2f\n", d);
 		if (d > 50) {
 			cv::Mat tmp;
 			first_frame.download(tmp);
-			cv::imshow("", tmp);
-			cv::waitKey();
+			//cv::imshow("", tmp);
+			//cv::waitKey();
 			second_frame.download(tmp);
-			cv::imshow("", tmp);
-			cv::waitKey();
+			//cv::imshow("", tmp);
+			//cv::waitKey();
 		}
 
 		first_frame = std::move(second_frame);

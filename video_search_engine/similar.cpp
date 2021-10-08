@@ -8,32 +8,25 @@ cv::cuda::GpuMat get_histogram(const cv::cuda::GpuMat img) {
 	return hist;
 }
 
-double wasserstein_distance(const cv::Mat& hist1, const cv::Mat& hist2) {
-	double last = 0;
-	double sum = 0;
-
-	for (int i = 0; i < 256; i++) {
-		double A = hist1.at<float>(i);
-		double B = hist2.at<float>(i);
-		double EMDi = A + last - B;
-		sum += std::abs(EMDi);
-		last = EMDi;
-	}
-	return sum;
-}
-
-
 //double wasserstein_distance(const cv::Mat& hist1, const cv::Mat& hist2) {
-//	cv::Mat sig1(256, 2, CV_32FC1);
-//	cv::Mat sig2(256, 2, CV_32FC1);
-//	for (int i = 0; i < 256; i++) {
-//		sig1.at<float>(i, 0) = hist1.at<float>(i);
-//		sig1.at<float>(i, 1) = i;
+//	double last = 0;
+//	double sum = 0;
 //
-//		sig2.at<float>(i, 0) = hist2.at<float>(i);
-//		sig2.at<float>(i, 1) = i;
+//	for (int i = 0; i < 256; i++) {
+//		double A = hist1.at<float>(i);
+//		double B = hist2.at<float>(i);
+//		double EMDi = A + last - B;
+//		sum += std::abs(EMDi);
+//		last = EMDi;
 //	}
-//	return 0;
-//	return cv::EMD(sig1, sig2, cv::DIST_L2);
+//	return sum;
 //}
+
+
+double wasserstein_distance(const cv::cuda::GpuMat& hist1, const cv::cuda::GpuMat& hist2) {
+	cv::Mat sig1, sig2;
+	hist1.download(sig1);
+	hist2.download(sig2);
+	return cv::EMDL1(sig1, sig2);
+}
 
