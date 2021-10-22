@@ -30,3 +30,8 @@ double wasserstein_distance(const cv::cuda::GpuMat& hist1, const cv::cuda::GpuMa
 	return cv::EMDL1(sig1, sig2);
 }
 
+int direct_distance(const cv::cuda::GpuMat& img1, const cv::cuda::GpuMat& img2) {
+	cv::cuda::GpuMat tmp;
+	cv::cuda::absdiff(img1, img2, tmp);
+	return cv::cuda::sum(tmp)[0] / (img1.rows * img1.cols);
+}

@@ -1,80 +1,57 @@
 #include "algo.h"
 
-Sorted_Linked_List::Sorted_Linked_List(int max_capacity) {
-	this->max_capacity = max_capacity;
-}
+std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
+	cv::cuda::GpuMat first_frame, second_frame;
+	cv::Ptr<cv::cudacodec::VideoReader> cuda_reader = cv::cudacodec::createVideoReader(filename.string());
 
-Sorted_Linked_List::~Sorted_Linked_List() {
-	while (head != nullptr) {
-		Node* p = head->next;
-		delete head;
-		head = p;
-	}
-}
+	cuda_reader->nextFrame(first_frame);
+	cv::cuda::resize(first_frame, first_frame, cv::Size(128, 128));
+	cv::cuda::cvtColor(first_frame, first_frame, cv::COLOR_BGRA2GRAY);
 
-void Sorted_Linked_List::insert(double distance, cv::cuda::GpuMat img1, cv::cuda::GpuMat img2) {
-	if (current_num == max_capacity) {
-		if (distance < head->distance) {
-			return;
+	cv::TickMeter tm;
+	std::vector<double> gpu_times;
+	int gpu_frame_count = 0;
+
+	std::vector<Key_Frame*> key_frames;
+
+	while (true) {
+		tm.reset(); tm.start();
+		if (!cuda_reader->nextFrame(second_frame))
+			break;
+
+		cv::cuda::resize(second_frame, second_frame, cv::Size(128, 128));
+		cv::cuda::cvtColor(second_frame, second_frame, cv::COLOR_BGRA2GRAY);
+
+		cv::cuda::GpuMat hist1 = get_histogram(first_frame);
+		cv::cuda::GpuMat hist2 = get_histogram(second_frame);
+		cv::cuda::transpose(hist1, hist1);
+		cv::cuda::transpose(hist2, hist2);
+
+		double d = wasserstein_distance(hist1, hist2);
+		if (d > 50) {
+			Key_Frame* key_frame = new Key_Frame;
+			key_frame->delta = d;
+			key_frame->first_frame = first_frame;
+			key_frame->second_frame = second_frame;
+			key_frame->frame_num = gpu_frame_count;
+			key_frames.push_back(key_frame);
 		}
-	}
-	if (current_num == 0) {
-		Node* new_node = new Node;
-		new_node->distance = distance;
-		new_node->img1 = img1;
-		new_node->img2 = img2;
-		head = new_node;
-	}
-	else {
-		Node* p = head;
-		if (distance < p->distance) {
-			Node* new_node = new Node;
-			new_node->distance = distance;
-			new_node->img1 = img1;
-			new_node->img2 = img2;
-			new_node->next = head;
-			head = new_node;
-		}
-		else {
-			while (p->next != nullptr && p->next->distance < distance) {
-				p = p->next;
-			}
-			Node* new_node = new Node;
-			new_node->distance = distance;
-			new_node->img1 = img1;
-			new_node->img2 = img2;
-			new_node->next = p->next;
-			p->next = new_node;
-		}
-	}
-	current_num++;
-	if (current_num > max_capacity) {
-		Node* to_drop = head;
-		head = head->next;
-		delete to_drop;
-		current_num--;
-	}
-}
 
-void Sorted_Linked_List::print_list() const {
-	Node* p = head;
-	while (p != nullptr) {
-		std::cout << p->distance << " ";
-		p = p->next;
-	}
-	std::cout << std::endl;
-}
+		first_frame = std::move(second_frame);
 
-void Sorted_Linked_List::show_img() const {
-	Node* p = head;
-	while (p != nullptr) {
-		cv::Mat tmp;
-		p->img1.download(tmp);
-		//cv::imshow("", tmp);
-		cv::waitKey(0);
-		p->img2.download(tmp);
-		//cv::imshow("", tmp);
-		cv::waitKey(0);
-		p = p->next;
+		tm.stop();
+		gpu_times.push_back(tm.getTimeMilli());
+		gpu_frame_count++;
+
 	}
+
+	if (!gpu_times.empty())
+	{
+		std::cout << std::endl << "Results:" << std::endl;
+		std::sort(gpu_times.begin(), gpu_times.end());
+		double gpu_avg = std::accumulate(gpu_times.begin(), gpu_times.end(), 0.0) / gpu_times.size();
+		std::cout << "GPU : Avg : " << gpu_avg << " ms FPS : " << 1000.0 / gpu_avg << " Frames " << gpu_frame_count << std::endl;
+	}
+
+	return key_frames;
 }

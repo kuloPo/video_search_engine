@@ -8,3 +8,4 @@
 
 cv::cuda::GpuMat get_histogram(const cv::cuda::GpuMat img);
 double wasserstein_distance(const cv::cuda::GpuMat& hist1, const cv::cuda::GpuMat& hist2);
+int direct_distance(const cv::cuda::GpuMat& img1, const cv::cuda::GpuMat& img2);
