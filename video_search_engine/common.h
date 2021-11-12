@@ -12,5 +12,6 @@ struct Key_Frame {
 };
 
 inline const std::filesystem::path video_path = ".\\videos";
-inline const std::filesystem::path csv_path = ".\\data\\interval.csv";
+inline const std::filesystem::path index_path = ".\\data\\interval.json";
 inline const std::filesystem::path key_frame_path = ".\\data";
+

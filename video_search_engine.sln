@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31624.102
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "video_search_engine", "video_search_engine\video_search_engine.vcxproj", "{10C5E3D8-32B5-4D5F-9CF6-6D6211FC9FCE}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcxproj", "{CCFD8193-58A8-4C03-98A5-9227096B138A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "searcher", "searcher\searcher.vcxproj", "{C6AE5546-38FE-40D3-B308-B32290AAC435}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,14 @@ Global
 		{CCFD8193-58A8-4C03-98A5-9227096B138A}.Release|x64.Build.0 = Release|x64
 		{CCFD8193-58A8-4C03-98A5-9227096B138A}.Release|x86.ActiveCfg = Release|Win32
 		{CCFD8193-58A8-4C03-98A5-9227096B138A}.Release|x86.Build.0 = Release|Win32
+		{C6AE5546-38FE-40D3-B308-B32290AAC435}.Debug|x64.ActiveCfg = Debug|x64
+		{C6AE5546-38FE-40D3-B308-B32290AAC435}.Debug|x64.Build.0 = Debug|x64
+		{C6AE5546-38FE-40D3-B308-B32290AAC435}.Debug|x86.ActiveCfg = Debug|Win32
+		{C6AE5546-38FE-40D3-B308-B32290AAC435}.Debug|x86.Build.0 = Debug|Win32
+		{C6AE5546-38FE-40D3-B308-B32290AAC435}.Release|x64.ActiveCfg = Release|x64
+		{C6AE5546-38FE-40D3-B308-B32290AAC435}.Release|x64.Build.0 = Release|x64
+		{C6AE5546-38FE-40D3-B308-B32290AAC435}.Release|x86.ActiveCfg = Release|Win32
+		{C6AE5546-38FE-40D3-B308-B32290AAC435}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

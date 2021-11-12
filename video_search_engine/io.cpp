@@ -13,14 +13,20 @@ void show_image(const std::vector<Key_Frame*>& key_frames) {
 	}
 }
 
-void write_data(const std::filesystem::path& filename, const std::vector<Key_Frame*>& key_frames) {
+rapidjson::Value write_data(const std::filesystem::path& filename, const std::vector<Key_Frame*>& key_frames, rapidjson::Document::AllocatorType& allocator) {
 	std::filesystem::create_directory(key_frame_path / filename);
-	std::ofstream fs;
-	fs.open(csv_path, std::ofstream::out | std::ofstream::app);
-	fs << filename;
+	std::string ID;
+	picosha2::hash256_hex_string(filename.string(), ID);
+	int last_frame = 0;
+
+	rapidjson::Value video(rapidjson::kObjectType);
+	rapidjson::Value interval(rapidjson::kArrayType);
+
 	for (Key_Frame* key_frame : key_frames) {
 		std::string frame_num_str = std::to_string(key_frame->frame_num);
-		fs << "," + frame_num_str;
+		std::string frame_interval_str = std::to_string(key_frame->frame_num - last_frame);
+		interval.PushBack(key_frame->frame_num - last_frame, allocator);
+		last_frame = key_frame->frame_num;
 
 		cv::Mat tmp;
 		key_frame->first_frame.download(tmp);
@@ -28,6 +34,10 @@ void write_data(const std::filesystem::path& filename, const std::vector<Key_Fra
 		key_frame->second_frame.download(tmp);
 		cv::imwrite((key_frame_path / filename / (frame_num_str + "_2.png")).string(), tmp);
 	}
-	fs << std::endl;
-	fs.close();
+
+	video.AddMember("filename", filename.string(), allocator);
+	video.AddMember("ID", ID, allocator);
+	video.AddMember("interval", interval, allocator);
+
+	return video;
 }

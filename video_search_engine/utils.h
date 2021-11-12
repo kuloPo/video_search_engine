@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 #include <opencv2/core/cuda.hpp>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/highgui.hpp>
@@ -24,3 +25,6 @@ public:
 	void print_list() const;
 	void show_img() const;
 };
+
+template <typename T> bool vector_contain(std::vector<T>& vec, const T& elem);
+#include "utils.tpp"
