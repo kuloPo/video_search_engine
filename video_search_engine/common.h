@@ -6,9 +6,9 @@
 
 struct Key_Frame {
 	double delta;
+	int frame_num;
 	cv::cuda::GpuMat first_frame;
 	cv::cuda::GpuMat second_frame;
-	int frame_num;
 };
 
 inline const std::filesystem::path video_path = ".\\videos";

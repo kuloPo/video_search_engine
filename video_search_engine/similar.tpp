@@ -7,7 +7,7 @@ template<typename T> int interval_comparison(const std::vector<T>& v1, const std
 
 	for (int x = 1; x <= n1; x++) {
 		for (int y = 1; y <= n2; y++) {
-			if (v1.at(x - 1) == v2.at(y - 1)) {
+			if (cv::abs(v1.at(x - 1) - v2.at(y - 1)) < 1) {
 				m.at<int>(x, y) = m.at<int>(x - 1, y - 1) + 1;
 			}
 		}

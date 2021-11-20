@@ -8,11 +8,18 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 	cv::cuda::resize(first_frame, first_frame, cv::Size(128, 128));
 	cv::cuda::cvtColor(first_frame, first_frame, cv::COLOR_BGRA2GRAY);
 
+	std::vector<Key_Frame*> key_frames;
+
+	// add first frame into index
+	Key_Frame* frame_zero = new Key_Frame;
+	frame_zero->delta = 0;
+	frame_zero->first_frame = first_frame;
+	frame_zero->frame_num = 0;
+	key_frames.push_back(frame_zero);
+
 	cv::TickMeter tm;
 	std::vector<double> gpu_times;
 	int gpu_frame_count = 0;
-
-	std::vector<Key_Frame*> key_frames;
 
 	while (true) {
 		tm.reset(); tm.start();
@@ -37,13 +44,20 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 			key_frames.push_back(key_frame);
 		}
 
-		first_frame = std::move(second_frame);
+		first_frame = second_frame;
 
 		tm.stop();
 		gpu_times.push_back(tm.getTimeMilli());
 		gpu_frame_count++;
 
 	}
+
+	// add last frame into index
+	Key_Frame* frame_last = new Key_Frame;
+	frame_last->delta = 0;
+	frame_last->first_frame = first_frame;
+	frame_last->frame_num = gpu_frame_count;
+	key_frames.push_back(frame_last);
 
 	if (!gpu_times.empty())
 	{

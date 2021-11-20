@@ -5,18 +5,19 @@
 #include "common.h"
 #include "algo.h"
 #include "utils.h"
+#include "io.h"
 
 int main() {
 	std::ifstream f;
 
-	f.open("./data/invert_index.json");
+	f.open("../video_search_engine/data/invert_index.json");
 	std::string invert_index_json;
 	getline(f, invert_index_json);
 	f.close();
 	rapidjson::Document invert_index;
 	invert_index.Parse(invert_index_json.c_str());
 
-	f.open("./data/interval.json");
+	f.open("../video_search_engine/data/interval.json");
 	std::string interval_json;
 	getline(f, interval_json);
 	f.close();
@@ -24,12 +25,13 @@ int main() {
 	interval_database.Parse(interval_json.c_str());
 
 	std::filesystem::path filename = "5 weird motherboards that shouldn't exist-SWOCCuL6maE.mp4";
+	int input_fps = get_fps(filename);
 	std::vector<Key_Frame*> key_frames = std::move(create_index(filename));
 	
-	std::vector<int> input_interval;
+	std::vector<double> input_interval;
 	int last_frame = 0;
 	for (Key_Frame* key_frame : key_frames) {
-		input_interval.push_back(key_frame->frame_num - last_frame);
+		input_interval.push_back(1.0 * (key_frame->frame_num - last_frame) / input_fps);
 		last_frame = key_frame->frame_num;
 	}
 
@@ -60,11 +62,12 @@ int main() {
 
 	for (rapidjson::SizeType i = 0; i < interval_database.Size(); i++) {
 		std::string filename = interval_database[i]["filename"].GetString();
+		int fps = interval_database[i]["FPS"].GetInt();
 		if (vector_contain(search_range, filename)) {
 			const rapidjson::Value& interval_array = interval_database[i]["interval"];
-			std::vector<int> interval;
+			std::vector<double> interval;
 			for (rapidjson::SizeType j = 0; j < interval_array.Size(); j++) {
-				interval.push_back(interval_array[j].GetInt());
+				interval.push_back(1.0 * interval_array[j].GetInt() / fps);
 			}
 			int similarity = interval_comparison(interval, input_interval);
 			if (similarity >= 5) {

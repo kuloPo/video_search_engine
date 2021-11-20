@@ -9,10 +9,11 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
 #include <rapidjson/document.h>
+#include <opencv2/videoio.hpp>
 
 #include "common.h"
 #include "picosha2.h"
 
 void show_image(const std::vector<Key_Frame*>& key_frames);
 rapidjson::Value write_data(const std::filesystem::path& filename, const std::vector<Key_Frame*>& key_frames, rapidjson::Document::AllocatorType& allocator);
-
+int get_fps(const std::filesystem::path& filename);

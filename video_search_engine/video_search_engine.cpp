@@ -6,7 +6,6 @@
 #include "algo.h"
 #include "io.h"
 #include "common.h"
-#include "algo.h"
 
 
 int main() {
