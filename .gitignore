@@ -3,7 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+test/
 data/
+videos/
 
 # User-specific files
 *.rsuser
@@ -11,6 +13,7 @@ data/
 *.user
 *.userosscache
 *.sln.docstates
+*.mp4
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

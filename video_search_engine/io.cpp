@@ -14,7 +14,7 @@ void show_image(const std::vector<Key_Frame*>& key_frames) {
 }
 
 rapidjson::Value write_data(const std::filesystem::path& filename, const std::vector<Key_Frame*>& key_frames, rapidjson::Document::AllocatorType& allocator) {
-	std::filesystem::create_directory(key_frame_path / filename);
+	std::filesystem::create_directory(index_path / filename);
 	std::string ID;
 	picosha2::hash256_hex_string(filename.string(), ID);
 	int fps = get_fps(video_path / filename);
@@ -32,10 +32,10 @@ rapidjson::Value write_data(const std::filesystem::path& filename, const std::ve
 
 		cv::Mat tmp;
 		key_frame->first_frame.download(tmp);
-		cv::imwrite((key_frame_path / filename / (frame_num_str + "_1.png")).string(), tmp);
+		cv::imwrite((index_path / filename / (frame_num_str + "_1.png")).string(), tmp);
 		if (key_frame->delta != 0) { // not the first or last frame
 			key_frame->second_frame.download(tmp);
-			cv::imwrite((key_frame_path / filename / (frame_num_str + "_2.png")).string(), tmp);
+			cv::imwrite((index_path / filename / (frame_num_str + "_2.png")).string(), tmp);
 		}
 	}
 

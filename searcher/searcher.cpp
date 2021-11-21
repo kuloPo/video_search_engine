@@ -8,23 +8,25 @@
 #include "io.h"
 
 int main() {
+	std::filesystem::path invert_index_path = index_path / "invert_index.json";
+	std::filesystem::path interval_path = index_path / "interval.json";
 	std::ifstream f;
 
-	f.open("../video_search_engine/data/invert_index.json");
+	f.open(invert_index_path);
 	std::string invert_index_json;
 	getline(f, invert_index_json);
 	f.close();
 	rapidjson::Document invert_index;
 	invert_index.Parse(invert_index_json.c_str());
 
-	f.open("../video_search_engine/data/interval.json");
+	f.open(interval_path);
 	std::string interval_json;
 	getline(f, interval_json);
 	f.close();
 	rapidjson::Document interval_database;
 	interval_database.Parse(interval_json.c_str());
 
-	std::filesystem::path filename = "5 weird motherboards that shouldn't exist-SWOCCuL6maE.mp4";
+	std::filesystem::path filename = "video.mp4";
 	int input_fps = get_fps(filename);
 	std::vector<Key_Frame*> key_frames = std::move(create_index(filename));
 	

@@ -1,5 +1,5 @@
-
 #include <stdio.h>
+#include <iostream>
 #include <rapidjson/writer.h>
 
 #include "similar.h"
@@ -15,6 +15,7 @@ int main() {
 
 	for (const auto& entry : std::filesystem::directory_iterator(video_path)) {
 		std::filesystem::path filename = entry.path().filename();
+		std::cout << filename << std::endl;
 		std::vector<Key_Frame*> key_frames = std::move(create_index(video_path / filename));
 		rapidjson::Value video = write_data(filename, key_frames, allocator);
 		root.PushBack(video, allocator);
@@ -26,10 +27,8 @@ int main() {
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 	root.Accept(writer);
-	//std::cout << buffer.GetString() << std::endl;
-	std::ofstream fs(index_path);
+	std::ofstream fs(index_path / "interval.json");
 	fs << buffer.GetString();
-		
-
+	
 	return 0;
 }

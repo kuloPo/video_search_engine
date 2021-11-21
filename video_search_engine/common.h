@@ -11,7 +11,6 @@ struct Key_Frame {
 	cv::cuda::GpuMat second_frame;
 };
 
-inline const std::filesystem::path video_path = ".\\videos";
-inline const std::filesystem::path index_path = ".\\data\\interval.json";
-inline const std::filesystem::path key_frame_path = ".\\data";
+inline const std::filesystem::path video_path = "..\\videos";
+inline const std::filesystem::path index_path = "..\\data";
 
