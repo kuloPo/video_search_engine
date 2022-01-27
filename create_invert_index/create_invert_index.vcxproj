@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{c6ae5546-38fe-40d3-b308-b32290aac435}</ProjectGuid>
-    <RootNamespace>searcher</RootNamespace>
+    <ProjectGuid>{1a044c9d-a2e4-430c-b2ae-2737fbc1e9bd}</ProjectGuid>
+    <RootNamespace>createinvertindex</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -120,15 +120,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\lib\rapidjson\include;..\video_search_engine;D:\lib\opencv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\lib\opencv\x64\vc17\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_core454d.lib;opencv_cudacodec454d.lib;opencv_cudaimgproc454d.lib;opencv_imgcodecs454d.lib;opencv_imgproc454d.lib;opencv_cudaarithm454d.lib;opencv_highgui454d.lib;opencv_shape454d.lib;opencv_cudawarping454d.lib;opencv_ximgproc454d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -148,19 +145,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\video_search_engine\algo.h" />
+    <ClCompile Include="..\video_search_engine\io.cpp" />
+    <ClCompile Include="create_invert_index.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="..\video_search_engine\common.h" />
     <ClInclude Include="..\video_search_engine\io.h" />
-    <ClInclude Include="..\video_search_engine\similar.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\video_search_engine\algo.cpp" />
-    <ClCompile Include="..\video_search_engine\io.cpp" />
-    <ClCompile Include="..\video_search_engine\similar.cpp" />
-    <ClCompile Include="searcher.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\video_search_engine\similar.tpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,4 +1,5 @@
 #include "similar.h"
+#include <iostream>
 
 template<typename T> int interval_comparison(const std::vector<T>& v1, const std::vector<T>& v2) {
 	int n1 = v1.size();
@@ -13,7 +14,28 @@ template<typename T> int interval_comparison(const std::vector<T>& v1, const std
 		}
 	}
 
-	double max_v;
-	cv::minMaxLoc(m, NULL, &max_v);
-	return (int)max_v;
+	int sum = 0;
+
+	for (int x = 1; x <= n1; x++) {
+		for (int y = 1; y <= n2; y++) {
+			if (m.at<int>(x, y) >= min_matched_interval && (x == n1 || y == n2 || m.at<int>(x+1, y+1) == 0)){
+				sum += m.at<int>(x, y);
+			}
+		}
+	}
+	/*
+	for (int x = 1; x <= n1; x++) {
+		for (int y = 1; y <= n2; y++) {
+			if (m.at<int>(x, y) >= min_matched_interval) {
+				std::cout<<m.at<int>(x, y)<<" ";
+			}
+			else {
+				std::cout<<"  ";
+			}
+		}
+		std::cout<<std::endl;
+	}
+	*/
+
+	return sum;
 }

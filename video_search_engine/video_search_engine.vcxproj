@@ -122,7 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -159,6 +159,7 @@
   <ItemGroup>
     <ClInclude Include="algo.h" />
     <ClInclude Include="common.h" />
+    <ClInclude Include="config.h" />
     <ClInclude Include="io.h" />
     <ClInclude Include="picosha2.h" />
     <ClInclude Include="similar.h" />

@@ -35,7 +35,7 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 		cv::cuda::transpose(hist2, hist2);
 
 		double d = wasserstein_distance(hist1, hist2);
-		if (d > 50) {
+		if (d > frame_difference_threshold) {
 			Key_Frame* key_frame = new Key_Frame;
 			key_frame->delta = d;
 			key_frame->first_frame = first_frame;

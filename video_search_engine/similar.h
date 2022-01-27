@@ -7,6 +7,7 @@
 #include <opencv2/cudaarithm.hpp>
 #include <opencv2/shape/emdL1.hpp>
 #include <opencv2/ximgproc/radon_transform.hpp>
+#include "common.h"
 
 cv::cuda::GpuMat get_histogram(const cv::cuda::GpuMat img);
 double wasserstein_distance(const cv::cuda::GpuMat& hist1, const cv::cuda::GpuMat& hist2);

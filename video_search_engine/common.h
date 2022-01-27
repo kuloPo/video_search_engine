@@ -3,6 +3,10 @@
 #include <filesystem>
 #include <iostream>
 #include <opencv2/core/cuda.hpp>
+#include "config.h"
+
+using std::cout;
+using std::endl;
 
 struct Key_Frame {
 	double delta;
@@ -13,4 +17,3 @@ struct Key_Frame {
 
 inline const std::filesystem::path video_path = "..\\videos";
 inline const std::filesystem::path index_path = "..\\data";
-

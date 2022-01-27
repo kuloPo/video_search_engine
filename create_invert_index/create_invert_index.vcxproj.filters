@@ -15,51 +15,19 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="video_search_engine.cpp">
+    <ClCompile Include="create_invert_index.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="similar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="algo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="io.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="utils.cpp">
+    <ClCompile Include="..\video_search_engine\io.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="similar.h">
+    <ClInclude Include="..\video_search_engine\io.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="algo.h">
+    <ClInclude Include="..\video_search_engine\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="io.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="picosha2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="similar.tpp">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="utils.tpp">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
 </Project>
