@@ -38,16 +38,15 @@ std::vector<double> read_interval(std::string s, int fps) {
 int main() {
 	std::unique_ptr<DB_Connector> DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
 
-	std::filesystem::path filename = "video_flip.mp4";
+	std::filesystem::path filename = "D:\\datasets\\ST1\\ST1Query5.mpeg";
 	int input_fps = get_fps(filename);
 	std::vector<Key_Frame*> key_frames = std::move(create_index(filename));
 	
+	std::vector<int> interval, interval_merged;
 	std::vector<double> input_interval;
-	int last_frame = 0;
-	for (Key_Frame* key_frame : key_frames) {
-		input_interval.push_back(1.0 * (key_frame->frame_num - last_frame) / input_fps);
-		last_frame = key_frame->frame_num;
-	}
+	calc_interval(key_frames, interval);
+	interval_merge(interval, input_fps, interval_merged);
+	interval_to_sec(interval_merged, input_fps, input_interval);
 
 	cout << endl;
 	cout << "Input FPS: " << input_fps << endl;
@@ -68,15 +67,18 @@ int main() {
 		}
 	}
 
-	//std::cout << "result from invert index:" << std::endl;
+	std::cout << "result from invert index:" << std::endl;
 
-	//for (std::string ID : search_range) {
-	//	std::cout << ID << std::endl;
-	//}
+	for (std::string ID : search_range) {
+		std::string search_sql = std::format("SELECT * FROM interval WHERE ID = '{}'", ID);
+		std::unique_ptr<pqxx::result>& query_result = DB->performQuery(search_sql);
+		std::string filename = query_result->begin()[1].as<std::string>();
+		cout << filename << endl;
+	}
 
-	//std::cout << std::endl;
+	std::cout << std::endl;
 
-	cout << search_range.size() << "videos in search range\n" << endl;
+	cout << search_range.size() << " videos in search range\n" << endl;
 
 	std::cout << "result from interval matching:" << std::endl;
 
