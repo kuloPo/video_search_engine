@@ -20,13 +20,15 @@ int main() {
 		}
 
 		std::vector<Key_Frame*> key_frames = std::move(create_index(video_path / filename));
-		std::vector<int> interval;
+		int fps = get_fps(video_path / filename);
+		std::vector<int> interval, interval_merged;
 		calc_interval(key_frames, interval);
-		std::string interval_str = write_interval(interval, filename);
+		interval_merge(interval, fps, interval_merged);
+		std::string interval_str = write_interval(interval_merged, filename);
 		std::string filename_str = filename.string();
 		filename_str = std::regex_replace(filename_str, std::regex("'"), "''");
 		std::string insert_sql = std::format("INSERT INTO INTERVAL (ID,FILENAME,FPS,INTERVAL) VALUES ('{}','{}',{},'{}');", 
-			ID, filename_str, get_fps(video_path / filename), interval_str);
+			ID, filename_str, fps, interval_str);
 		DB->performQuery(insert_sql);
 		write_key_frame(key_frames, index_path, filename);
 
