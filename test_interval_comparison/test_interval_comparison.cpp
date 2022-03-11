@@ -7,63 +7,54 @@
 #include "io.h"
 
 int main() {
-	std::filesystem::path filepath_1 = "../video_search_engine/video.mp4";
+	std::filesystem::path filepath_1 = "../searcher/video.mp4";
 	std::filesystem::path filepath_2 = "../searcher/video_flip.mp4";
 
-	std::vector<Key_Frame*> key_frames = std::move(create_index(filepath_1));
+	std::vector<Key_Frame*> key_frames_1 = std::move(create_index(filepath_1));
+	std::vector<Key_Frame*> key_frames_2 = std::move(create_index(filepath_2));
 
 	std::cout << "video 1 key frame: " << std::endl;
-	for (Key_Frame* key_frame : key_frames) {
+	for (Key_Frame* key_frame : key_frames_1) {
 		std::cout << key_frame->frame_num << " " << key_frame->delta << std::endl;
 	}
 	std::cout << std::endl;
-
-	std::vector<double> interval_1;
-	int last_frame = 0;
-	int fps = get_fps(filepath_1);
-	for (Key_Frame* key_frame : key_frames) {
-		interval_1.push_back(1.0 * (key_frame->frame_num - last_frame) / fps);
-		last_frame = key_frame->frame_num;
-	}
-
-	for (Key_Frame* key_frame : key_frames) {
-		delete key_frame;
-	}
-
-	key_frames = std::move(create_index(filepath_2));
 
 	std::cout << "video 2 key frame: " << std::endl;
-	for (Key_Frame* key_frame : key_frames) {
+	for (Key_Frame* key_frame : key_frames_2) {
 		std::cout << key_frame->frame_num << " " << key_frame->delta << std::endl;
 	}
 	std::cout << std::endl;
 
-	std::vector<double> interval_2;
-	last_frame = 0;
-	fps = get_fps(filepath_2);
-	for (Key_Frame* key_frame : key_frames) {
-		interval_2.push_back(1.0 * (key_frame->frame_num - last_frame) / fps);
-		last_frame = key_frame->frame_num;
-	}
-
-	for (Key_Frame* key_frame : key_frames) {
-		delete key_frame;
-	}
+	std::vector<int> interval_1, interval_2;
+	calc_interval(key_frames_1, interval_1);
+	calc_interval(key_frames_2, interval_2);
 
 	std::cout << "video 1 interval: " << std::endl;
-	for (double i : interval_1) {
+	for (int i : interval_1) {
 		std::cout << i << " ";
 	}
 	std::cout << std::endl;
 
 	std::cout << "video 2 interval: " << std::endl;
-	for (double i : interval_2) {
+	for (int i : interval_2) {
 		std::cout << i << " ";
 	}
 	std::cout << std::endl;
 
-	int similarity = interval_comparison(interval_1, interval_2);
+	std::vector<double> interval_sec_1, interval_sec_2;
+	interval_to_sec(interval_1, get_fps(filepath_1), interval_sec_1);
+	interval_to_sec(interval_1, get_fps(filepath_2), interval_sec_2);
+
+	int similarity = interval_comparison(interval_sec_1, interval_sec_2);
 	std::cout << std::endl << "similarity: " << similarity << std::endl;
+
+	for (Key_Frame* key_frame : key_frames_1) {
+		delete key_frame;
+	}
+
+	for (Key_Frame* key_frame : key_frames_2) {
+		delete key_frame;
+	}
 
 	return 0;
 }

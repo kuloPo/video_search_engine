@@ -69,3 +69,20 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 	
 	return key_frames;
 }
+
+void calc_interval(const std::vector<Key_Frame*>& key_frames, std::vector<int>& interval) {
+	int last_frame = 0;
+	for (Key_Frame* key_frame : key_frames) {
+		if (key_frame->frame_num == 0) {
+			continue;
+		}
+		interval.push_back(key_frame->frame_num - last_frame);
+		last_frame = key_frame->frame_num;
+	}
+}
+
+void interval_to_sec(const std::vector<int>& interval, const int fps, std::vector<double>& interval_sec) {
+	for (int i : interval) {
+		interval_sec.push_back(1.0 * i / fps);
+	}
+}

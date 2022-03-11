@@ -13,36 +13,33 @@ void show_image(const std::vector<Key_Frame*>& key_frames) {
 	}
 }
 
-std::string write_data(const std::filesystem::path& filename, const std::vector<Key_Frame*>& key_frames) {
-	std::filesystem::create_directory(index_path / filename);
+std::string write_interval(const std::vector<int>& interval, const std::filesystem::path& filename) {
 	std::string ID;
+	std::string interval_str = "";
+
 	picosha2::hash256_hex_string(filename.string(), ID);
-	int fps = get_fps(video_path / filename);
+	std::filesystem::create_directory(index_path / filename);
 
-	int last_frame = 0;
-	std::string interval = "";
+	for (int i : interval) {
+		std::string frame_interval_str = std::to_string(i);
+		interval_str += frame_interval_str;
+		interval_str += ",";
+	}
+	return interval_str;
+}
 
+void write_key_frame(const std::vector<Key_Frame*>& key_frames, const std::filesystem::path& path, const std::filesystem::path& filename) {
 	for (Key_Frame* key_frame : key_frames) {
-		std::string frame_num_str = std::to_string(key_frame->frame_num);
-		std::string frame_interval_str = std::to_string(key_frame->frame_num - last_frame);
-		interval += frame_interval_str;
-		interval += ",";
-		
-		last_frame = key_frame->frame_num;
-
 		cv::Mat tmp;
+		std::string frame_num_str;
 		key_frame->first_frame.download(tmp);
+		frame_num_str = std::to_string(key_frame->frame_num);
 		cv::imwrite((index_path / filename / (frame_num_str + "_1.png")).string(), tmp);
 		if (key_frame->delta != 0) { // not the first or last frame
 			key_frame->second_frame.download(tmp);
 			cv::imwrite((index_path / filename / (frame_num_str + "_2.png")).string(), tmp);
 		}
 	}
-
-	std::string filename_str = filename.string();
-	filename_str = std::regex_replace(filename_str, std::regex("'"), "''");
-	std::string insert_sql = std::format("INSERT INTO INTERVAL (ID,FILENAME,FPS,INTERVAL) VALUES ('{}','{}',{},'{}');", ID, filename_str, fps, interval);
-	return insert_sql;
 }
 
 int get_fps(const std::filesystem::path& filename) {

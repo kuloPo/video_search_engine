@@ -72,6 +72,7 @@ private:
 };
 
 void show_image(const std::vector<Key_Frame*>& key_frames);
-std::string write_data(const std::filesystem::path& filename, const std::vector<Key_Frame*>& key_frames);
+std::string write_interval(const std::vector<int>& interval, const std::filesystem::path& filename);
+void write_key_frame(const std::vector<Key_Frame*>& key_frames, const std::filesystem::path& path, const std::filesystem::path& filename);
 int get_fps(const std::filesystem::path& filename);
 std::unique_ptr<DB_Connector> init_db();
