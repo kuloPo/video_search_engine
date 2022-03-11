@@ -51,13 +51,13 @@ int main() {
 	}
 
 	std::cout << "video 1 interval: " << std::endl;
-	for (int i : interval_1) {
+	for (double i : interval_1) {
 		std::cout << i << " ";
 	}
 	std::cout << std::endl;
 
 	std::cout << "video 2 interval: " << std::endl;
-	for (int i : interval_2) {
+	for (double i : interval_2) {
 		std::cout << i << " ";
 	}
 	std::cout << std::endl;

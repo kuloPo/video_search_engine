@@ -27,6 +27,12 @@
     <ClInclude Include="..\video_search_engine\io.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\video_search_engine\utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\video_search_engine\config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\video_search_engine\algo.cpp">
@@ -41,9 +47,15 @@
     <ClCompile Include="..\video_search_engine\io.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\video_search_engine\utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\video_search_engine\similar.tpp">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\video_search_engine\utils.tpp">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

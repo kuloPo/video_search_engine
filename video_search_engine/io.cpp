@@ -42,7 +42,6 @@ std::string write_data(const std::filesystem::path& filename, const std::vector<
 	std::string filename_str = filename.string();
 	filename_str = std::regex_replace(filename_str, std::regex("'"), "''");
 	std::string insert_sql = std::format("INSERT INTO INTERVAL (ID,FILENAME,FPS,INTERVAL) VALUES ('{}','{}',{},'{}');", ID, filename_str, fps, interval);
-	cout << insert_sql << endl;
 	return insert_sql;
 }
 

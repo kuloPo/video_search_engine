@@ -14,6 +14,3 @@ struct Key_Frame {
 	cv::cuda::GpuMat first_frame;
 	cv::cuda::GpuMat second_frame;
 };
-
-inline const std::filesystem::path video_path = "..\\videos";
-inline const std::filesystem::path index_path = "..\\data";

@@ -9,23 +9,23 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 	cv::cuda::cvtColor(first_frame, first_frame, cv::COLOR_BGRA2GRAY);
 
 	std::vector<Key_Frame*> key_frames;
-
+	
 	// add first frame into index
 	Key_Frame* frame_zero = new Key_Frame;
 	frame_zero->delta = 0;
 	frame_zero->first_frame = first_frame;
 	frame_zero->frame_num = 0;
 	key_frames.push_back(frame_zero);
-
+	
 	cv::TickMeter tm;
 	std::vector<double> gpu_times;
 	int gpu_frame_count = 0;
-
+	
 	while (true) {
 		tm.reset(); tm.start();
 		if (!cuda_reader->nextFrame(second_frame))
 			break;
-
+		
 		cv::cuda::resize(second_frame, second_frame, cv::Size(128, 128));
 		cv::cuda::cvtColor(second_frame, second_frame, cv::COLOR_BGRA2GRAY);
 
@@ -33,7 +33,7 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 		cv::cuda::GpuMat hist2 = get_histogram(second_frame);
 		cv::cuda::transpose(hist1, hist1);
 		cv::cuda::transpose(hist2, hist2);
-
+		
 		double d = wasserstein_distance(hist1, hist2);
 		if (d > frame_difference_threshold) {
 			Key_Frame* key_frame = new Key_Frame;
@@ -51,14 +51,14 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 		gpu_frame_count++;
 
 	}
-
+	
 	// add last frame into index
 	Key_Frame* frame_last = new Key_Frame;
 	frame_last->delta = 0;
 	frame_last->first_frame = first_frame;
 	frame_last->frame_num = gpu_frame_count;
 	key_frames.push_back(frame_last);
-
+	
 	if (!gpu_times.empty())
 	{
 		std::cout << std::endl << "Results:" << std::endl;
@@ -66,6 +66,6 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 		double gpu_avg = std::accumulate(gpu_times.begin(), gpu_times.end(), 0.0) / gpu_times.size();
 		std::cout << "GPU : Avg : " << gpu_avg << " ms FPS : " << 1000.0 / gpu_avg << " Frames " << gpu_frame_count << std::endl;
 	}
-
+	
 	return key_frames;
 }

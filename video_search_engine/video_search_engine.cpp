@@ -19,12 +19,12 @@ int main() {
 			continue;
 		}
 
-		std::vector<Key_Frame*> key_frames = std::move(create_index(video_path / filename));
-		std::string insert_sql = write_data(filename, key_frames);
-		DB->performQuery(insert_sql);
-		for (Key_Frame* key_frame : key_frames) {
-			delete key_frame;
-		}
+			std::vector<Key_Frame*> key_frames = std::move(create_index(video_path / filename));
+			std::string insert_sql = write_data(filename, key_frames);
+			DB->performQuery(insert_sql);
+			for (Key_Frame* key_frame : key_frames) {
+				delete key_frame;
+			}	
 	}
 	
 	return 0;

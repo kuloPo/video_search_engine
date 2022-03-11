@@ -5,6 +5,7 @@
 #include <opencv2/core/cuda.hpp>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/highgui.hpp>
+#include "common.h"
 
 class Sorted_Linked_List {
 public:
@@ -26,5 +27,6 @@ public:
 	void show_img() const;
 };
 
+void print_interval(std::vector<Key_Frame*>& key_frames, int fps, bool output_by_second = true);
 template <typename T> bool vector_contain(std::vector<T>& vec, const T& elem);
 #include "utils.tpp"

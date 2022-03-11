@@ -78,3 +78,11 @@ void Sorted_Linked_List::show_img() const {
 		p = p->next;
 	}
 }
+
+void print_interval(std::vector<Key_Frame*>& key_frames, int fps, bool output_by_second) {
+	for (Key_Frame* key_frame : key_frames) {
+		int interval = output_by_second ? key_frame->frame_num / fps : key_frame->frame_num;
+		cout << interval << " ";
+	}
+	cout << endl;
+}

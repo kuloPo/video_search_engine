@@ -29,7 +29,7 @@ std::vector<double> read_interval(std::string s, int fps) {
 	std::string token;
 	while ((pos = s.find(delimiter)) != std::string::npos) {
 		token = s.substr(0, pos);
-		interval.push_back(std::round(1.0 * std::stoi(token) / fps));
+		interval.push_back(1.0 * std::stoi(token) / fps);
 		s.erase(0, pos + delimiter.length());
 	}
 	return interval;
@@ -49,6 +49,14 @@ int main() {
 		last_frame = key_frame->frame_num;
 	}
 
+	cout << endl;
+	cout << "Input FPS: " << input_fps << endl;
+	cout << "Input inteval:" << endl;
+	for (double interval : input_interval) {
+		cout << interval << " ";
+	}
+	cout << endl;
+
 	std::vector<std::string> search_range;
 
 	for (int interval : input_interval) {
@@ -60,33 +68,18 @@ int main() {
 		}
 	}
 
-	std::cout << "result from invert index:" << std::endl;
+	//std::cout << "result from invert index:" << std::endl;
 
-	for (std::string ID : search_range) {
-		std::cout << ID << std::endl;
-	}
+	//for (std::string ID : search_range) {
+	//	std::cout << ID << std::endl;
+	//}
 
-	std::cout << std::endl;
+	//std::cout << std::endl;
 
 	cout << search_range.size() << "videos in search range\n" << endl;
 
 	std::cout << "result from interval matching:" << std::endl;
 
-	//for (rapidjson::SizeType i = 0; i < interval_database.Size(); i++) {
-	//	std::string filename = interval_database[i]["filename"].GetString();
-	//	int fps = interval_database[i]["FPS"].GetInt();
-	//	if (vector_contain(search_range, filename)) {
-	//		const rapidjson::Value& interval_array = interval_database[i]["interval"];
-	//		std::vector<double> interval;
-	//		for (rapidjson::SizeType j = 0; j < interval_array.Size(); j++) {
-	//			interval.push_back(1.0 * interval_array[j].GetInt() / fps);
-	//		}
-	//		int similarity = interval_comparison(interval, input_interval);
-	//		if (similarity >= 5) {
-	//			std::cout << filename << ", matched interval: " << similarity << std::endl;
-	//		}
-	//	}
-	//}
 	for (std::string ID : search_range) {
 		std::string search_sql = std::format("SELECT * FROM interval WHERE ID = '{}'", ID);
 		std::unique_ptr<pqxx::result>& query_result = DB->performQuery(search_sql);
@@ -95,7 +88,7 @@ int main() {
 		std::string interval_str = query_result->begin()[3].as<std::string>();
 		std::vector<double> interval = read_interval(interval_str, fps);
 		int similarity = interval_comparison(interval, input_interval);
-		if (similarity >= 5) {
+		if (similarity >= min_matched_interval) {
 			std::cout << filename << ", matched interval: " << similarity << std::endl;
 		}
 	}
