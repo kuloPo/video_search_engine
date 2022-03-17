@@ -13,3 +13,4 @@ inline const std::filesystem::path index_path = "D:\\MUSCLE_VCD_2007";
 
 inline const int frame_difference_threshold = 50;
 inline const int min_matched_interval = 3;
+inline const int min_matched_percentage = 30;

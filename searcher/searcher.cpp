@@ -7,6 +7,8 @@
 #include "utils.h"
 #include "io.h"
 
+std::unique_ptr<DB_Connector> DB;
+
 void read_ID(std::string s, std::vector<std::string>& search_range) {
 	std::string delimiter = ",";
 
@@ -35,50 +37,55 @@ std::vector<double> read_interval(std::string s, int fps) {
 	return interval;
 }
 
-int main() {
-	std::unique_ptr<DB_Connector> DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
-
-	std::filesystem::path filename = "D:\\datasets\\ST1\\ST1Query5.mpeg";
+void query(const std::filesystem::path& filename) {
+	cout << filename << endl;
 	int input_fps = get_fps(filename);
 	std::vector<Key_Frame*> key_frames = std::move(create_index(filename));
-	
-	std::vector<int> interval, interval_merged;
-	std::vector<double> input_interval;
-	calc_interval(key_frames, interval);
-	interval_merge(interval, input_fps, interval_merged);
-	interval_to_sec(interval_merged, input_fps, input_interval);
 
-	cout << endl;
-	cout << "Input FPS: " << input_fps << endl;
-	cout << "Input inteval:" << endl;
-	for (double interval : input_interval) {
-		cout << interval << " ";
-	}
-	cout << endl;
+	std::vector<int> input_interval, interval_merged;
+	std::vector<double> input_interval_sec;
+	calc_interval(key_frames, input_interval);
+	interval_merge(input_interval, input_fps, interval_merged);
+	interval_to_sec(interval_merged, input_fps, input_interval_sec);
+
+	//cout << endl;
+	//cout << "Input FPS: " << input_fps << endl;
+	//cout << "Input inteval:" << endl;
+	//for (double interval : input_interval) {
+	//	cout << interval << " ";
+	//}
+	//cout << endl;
 
 	std::vector<std::string> search_range;
 
-	for (int interval : input_interval) {
-		std::string search_sql = "SELECT * FROM invert_index WHERE interval = " + std::to_string(interval);
-		std::unique_ptr<pqxx::result>& query_result = DB->performQuery(search_sql);
-		if (!query_result->empty()) {
-			std::string ID = query_result->begin()[1].as<std::string>();
+	for (double interval : input_interval_sec) {
+		std::string search_sql = "SELECT * FROM invert_index WHERE interval = " + std::to_string(std::floor(interval));
+		std::unique_ptr<pqxx::result>& query_result_floor = DB->performQuery(search_sql);
+		if (!query_result_floor->empty()) {
+			std::string ID = query_result_floor->begin()[1].as<std::string>();
+			read_ID(ID, search_range);
+		}
+
+		search_sql = "SELECT * FROM invert_index WHERE interval = " + std::to_string(std::ceil(interval));
+		std::unique_ptr<pqxx::result>& query_result_ceil = DB->performQuery(search_sql);
+		if (!query_result_ceil->empty()) {
+			std::string ID = query_result_ceil->begin()[1].as<std::string>();
 			read_ID(ID, search_range);
 		}
 	}
 
-	std::cout << "result from invert index:" << std::endl;
+	//std::cout << "result from invert index:" << std::endl;
 
-	for (std::string ID : search_range) {
-		std::string search_sql = std::format("SELECT * FROM interval WHERE ID = '{}'", ID);
-		std::unique_ptr<pqxx::result>& query_result = DB->performQuery(search_sql);
-		std::string filename = query_result->begin()[1].as<std::string>();
-		cout << filename << endl;
-	}
+	//for (std::string ID : search_range) {
+	//	std::string search_sql = std::format("SELECT * FROM interval WHERE ID = '{}'", ID);
+	//	std::unique_ptr<pqxx::result>& query_result = DB->performQuery(search_sql);
+	//	std::string filename = query_result->begin()[1].as<std::string>();
+	//	cout << filename << endl;
+	//}
 
-	std::cout << std::endl;
+	//std::cout << std::endl;
 
-	cout << search_range.size() << " videos in search range\n" << endl;
+	//cout << search_range.size() << " videos in search range\n" << endl;
 
 	std::cout << "result from interval matching:" << std::endl;
 
@@ -88,11 +95,26 @@ int main() {
 		std::string filename = query_result->begin()[1].as<std::string>();
 		int fps = query_result->begin()[2].as<int>();
 		std::string interval_str = query_result->begin()[3].as<std::string>();
-		std::vector<double> interval = read_interval(interval_str, fps);
-		int similarity = interval_comparison(interval, input_interval);
-		if (similarity >= min_matched_interval) {
-			std::cout << filename << ", matched interval: " << similarity << std::endl;
+		std::vector<double> interval_db = read_interval(interval_str, fps);
+		int similarity = interval_comparison(input_interval_sec, interval_db);
+		double matched_percentage = 100.0 * similarity / input_interval_sec.size();
+		if (matched_percentage >= min_matched_percentage) {
+			std::cout << std::format("{}, matched interval: {}%\n", filename, matched_percentage);
 		}
+	}
+
+	for (Key_Frame* key_frame : key_frames) {
+		delete key_frame;
+	}
+}
+
+int main() {
+	DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
+
+	for (int i = 1; i <= 15; i++) {
+		std::filesystem::path filename = std::format("D:\\datasets\\ST1\\ST1Query{}.mpeg", i);
+		query(filename);
+		cout << endl;
 	}
 
 	return 0;

@@ -59,6 +59,7 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 	frame_last->frame_num = gpu_frame_count;
 	key_frames.push_back(frame_last);
 	
+#ifdef DEBUG_CREATE_INDEX
 	if (!gpu_times.empty())
 	{
 		std::cout << std::endl << "Results:" << std::endl;
@@ -66,6 +67,7 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 		double gpu_avg = std::accumulate(gpu_times.begin(), gpu_times.end(), 0.0) / gpu_times.size();
 		std::cout << "GPU : Avg : " << gpu_avg << " ms FPS : " << 1000.0 / gpu_avg << " Frames " << gpu_frame_count << std::endl;
 	}
+#endif // DEBUG_CREATE_INDEX
 	
 	return key_frames;
 }

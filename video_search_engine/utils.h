@@ -29,4 +29,6 @@ public:
 
 void print_interval(std::vector<Key_Frame*>& key_frames, int fps, bool output_by_second = true);
 template <typename T> bool vector_contain(std::vector<T>& vec, const T& elem);
+template <typename T> T max_3(T x, T y, T z);
+template <typename T> int argmax_3(T x, T y, T z);
 #include "utils.tpp"

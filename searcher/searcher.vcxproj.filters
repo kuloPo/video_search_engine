@@ -52,9 +52,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\video_search_engine\similar.tpp">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="..\video_search_engine\utils.tpp">
       <Filter>Source Files</Filter>
     </None>
