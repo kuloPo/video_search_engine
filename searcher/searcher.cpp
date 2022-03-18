@@ -48,14 +48,6 @@ void query(const std::filesystem::path& filename) {
 	interval_merge(input_interval, input_fps, interval_merged);
 	interval_to_sec(interval_merged, input_fps, input_interval_sec);
 
-	//cout << endl;
-	//cout << "Input FPS: " << input_fps << endl;
-	//cout << "Input inteval:" << endl;
-	//for (double interval : input_interval) {
-	//	cout << interval << " ";
-	//}
-	//cout << endl;
-
 	std::vector<std::string> search_range;
 
 	for (double interval : input_interval_sec) {
@@ -74,18 +66,28 @@ void query(const std::filesystem::path& filename) {
 		}
 	}
 
-	//std::cout << "result from invert index:" << std::endl;
+#ifdef DEBUG_SEARCHER
+	cout << endl;
+	cout << "Input FPS: " << input_fps << endl;
+	cout << "Input inteval:" << endl;
+	for (double interval : input_interval) {
+		cout << interval << " ";
+	}
+	cout << endl;
 
-	//for (std::string ID : search_range) {
-	//	std::string search_sql = std::format("SELECT * FROM interval WHERE ID = '{}'", ID);
-	//	std::unique_ptr<pqxx::result>& query_result = DB->performQuery(search_sql);
-	//	std::string filename = query_result->begin()[1].as<std::string>();
-	//	cout << filename << endl;
-	//}
+	std::cout << "result from invert index:" << std::endl;
 
-	//std::cout << std::endl;
+	for (std::string ID : search_range) {
+		std::string search_sql = std::format("SELECT * FROM interval WHERE ID = '{}'", ID);
+		std::unique_ptr<pqxx::result>& query_result = DB->performQuery(search_sql);
+		std::string filename = query_result->begin()[1].as<std::string>();
+		cout << filename << endl;
+	}
 
-	//cout << search_range.size() << " videos in search range\n" << endl;
+	std::cout << std::endl;
+
+	cout << search_range.size() << " videos in search range\n" << endl;
+#endif // DEBUG_SEARCHER
 
 	std::cout << "result from interval matching:" << std::endl;
 
