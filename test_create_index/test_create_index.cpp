@@ -8,6 +8,9 @@
 
 #include <vector>
 
+int frame_difference_threshold = 50;
+int min_matched_interval = 3;
+
 int main() {
 	std::filesystem::path filepath = "../rsrc/video.mp4";
 	std::vector<Key_Frame*> key_frames = std::move(create_index(filepath));
