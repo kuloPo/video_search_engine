@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "video_search_engine", "video_search_engine\video_search_engine.vcxproj", "{10C5E3D8-32B5-4D5F-9CF6-6D6211FC9FCE}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcxproj", "{CCFD8193-58A8-4C03-98A5-9227096B138A}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "searcher", "searcher\searcher.vcxproj", "{C6AE5546-38FE-40D3-B308-B32290AAC435}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_create_index", "test_create_index\test_create_index.vcxproj", "{34DB8CE8-A6EF-42B8-97CB-21FF5A0E3BD2}"
@@ -31,10 +29,6 @@ Global
 		{10C5E3D8-32B5-4D5F-9CF6-6D6211FC9FCE}.Debug|x64.Build.0 = Debug|x64
 		{10C5E3D8-32B5-4D5F-9CF6-6D6211FC9FCE}.Release|x64.ActiveCfg = Release|x64
 		{10C5E3D8-32B5-4D5F-9CF6-6D6211FC9FCE}.Release|x64.Build.0 = Release|x64
-		{CCFD8193-58A8-4C03-98A5-9227096B138A}.Debug|x64.ActiveCfg = Debug|x64
-		{CCFD8193-58A8-4C03-98A5-9227096B138A}.Debug|x64.Build.0 = Debug|x64
-		{CCFD8193-58A8-4C03-98A5-9227096B138A}.Release|x64.ActiveCfg = Release|x64
-		{CCFD8193-58A8-4C03-98A5-9227096B138A}.Release|x64.Build.0 = Release|x64
 		{C6AE5546-38FE-40D3-B308-B32290AAC435}.Debug|x64.ActiveCfg = Debug|x64
 		{C6AE5546-38FE-40D3-B308-B32290AAC435}.Debug|x64.Build.0 = Debug|x64
 		{C6AE5546-38FE-40D3-B308-B32290AAC435}.Release|x64.ActiveCfg = Release|x64
