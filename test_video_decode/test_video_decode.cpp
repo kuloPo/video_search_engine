@@ -3,7 +3,7 @@
 #include <opencv2/highgui.hpp>
 
 int main() {
-	std::filesystem::path filepath = "../searcher/video.mp4";
+	std::filesystem::path filepath = "../rsrc/video.mp4";
 	cv::Ptr<cv::cudacodec::VideoReader> cuda_reader = cv::cudacodec::createVideoReader(filepath.string());
 	cv::cuda::GpuMat frame;
 	cuda_reader->nextFrame(frame);

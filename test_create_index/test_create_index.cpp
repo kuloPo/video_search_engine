@@ -9,7 +9,7 @@
 #include <vector>
 
 int main() {
-	std::filesystem::path filepath = "D:\\datasets\\ST1\\ST1Query10.mpeg";
+	std::filesystem::path filepath = "../rsrc/video.mp4";
 	std::vector<Key_Frame*> key_frames = std::move(create_index(filepath));
 	for (Key_Frame* key_frame : key_frames) {
 		std::cout << key_frame->frame_num << " " << key_frame->delta << std::endl;

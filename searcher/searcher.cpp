@@ -108,8 +108,8 @@ void query(const std::filesystem::path& filename) {
 		std::string interval_str = query_result->begin()[3].as<std::string>();
 		std::vector<double> interval_db;
 		read_interval(interval_str, fps, interval_db);
-		int similarity = interval_comparison(input_interval_sec, interval_db);
-		double matched_percentage = 100.0 * similarity / input_interval_sec.size();
+		int similarity = interval_comparison(interval_db, input_interval_sec);
+		double matched_percentage = 100.0 * similarity / interval_db.size();
 		if (matched_percentage >= min_matched_percentage) {
 			std::cout << std::format("{}, matched interval: {}%\n", filename, matched_percentage);
 		}

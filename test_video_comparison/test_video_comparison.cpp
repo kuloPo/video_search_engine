@@ -8,8 +8,8 @@
 #include "utils.h"
 
 int main() {
-	std::filesystem::path filepath_1 = "D:\\datasets\\ST1\\ST1Query6.mpeg";
-	std::filesystem::path filepath_2 = "D:\\datasets\\MUSCLE_VCD_2007\\movie76.mpg";
+	std::filesystem::path filepath_1 = "../rsrc/video.mp4";
+	std::filesystem::path filepath_2 = "../rsrc/video_flip.mp4";
 
 	std::vector<Key_Frame*> key_frames_1 = std::move(create_index(filepath_1));
 	std::vector<Key_Frame*> key_frames_2 = std::move(create_index(filepath_2));
@@ -70,7 +70,8 @@ int main() {
 	std::cout << std::endl;
 
 	int similarity = interval_comparison(interval_sec_1, interval_sec_2);
-	std::cout << std::endl << "similarity: " << similarity << std::endl;
+	double matched_percentage = 100.0 * similarity / interval_sec_2.size();
+	std::cout << std::format("similarity: {}%\n", matched_percentage);
 
 	for (Key_Frame* key_frame : key_frames_1) {
 		delete key_frame;
