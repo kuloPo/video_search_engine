@@ -18,39 +18,39 @@
     <ClCompile Include="test_video_comparison.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\video_search_engine\algo.cpp">
+    <ClCompile Include="..\src\algo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\video_search_engine\similar.cpp">
+    <ClCompile Include="..\src\similar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\video_search_engine\io.cpp">
+    <ClCompile Include="..\src\io.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\video_search_engine\utils.cpp">
+    <ClCompile Include="..\src\utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\video_search_engine\algo.h">
+    <ClInclude Include="..\header\algo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\video_search_engine\common.h">
+    <ClInclude Include="..\header\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\video_search_engine\similar.h">
+    <ClInclude Include="..\header\similar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\video_search_engine\io.h">
+    <ClInclude Include="..\header\io.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\video_search_engine\utils.h">
+    <ClInclude Include="..\header\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\video_search_engine\utils.tpp">
-      <Filter>Source Files</Filter>
+    <None Include="..\header\utils.tpp">
+      <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
 </Project>

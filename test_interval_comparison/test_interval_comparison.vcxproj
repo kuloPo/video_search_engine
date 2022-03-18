@@ -84,16 +84,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\video_search_engine\similar.cpp" />
-    <ClCompile Include="..\video_search_engine\utils.cpp" />
+    <ClCompile Include="..\src\similar.cpp" />
+    <ClCompile Include="..\src\utils.cpp" />
     <ClCompile Include="test_interval_comparison.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\video_search_engine\similar.h" />
-    <ClInclude Include="..\video_search_engine\utils.h" />
+    <ClInclude Include="..\header\similar.h" />
+    <ClInclude Include="..\header\utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\video_search_engine\utils.tpp" />
+    <None Include="..\header\utils.tpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

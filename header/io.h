@@ -71,8 +71,39 @@ private:
     std::string port;
 };
 
+/*
+@brief Display the key frames of a video
+
+@param key_frames Vector containing the pointers of Key_Frame of the source video
+*/
 void show_image(const std::vector<Key_Frame*>& key_frames);
+
+/*
+@brief Convert the interval vector of a video into a SQL insert query, together with other video information.  
+
+@param interval Interval vector of the video
+@param filename Path to the video
+*/
 std::string write_interval(const std::vector<int>& interval, const std::filesystem::path& filename);
+
+/*
+@brief Write the key frame images to disk.
+
+@param key_frames Vector containing the pointers of Key_Frame of the source video
+@param path Destination folder to store the frame images
+@param filename Path to the video
+*/
 void write_key_frame(const std::vector<Key_Frame*>& key_frames, const std::filesystem::path& path, const std::filesystem::path& filename);
+
+/*
+@brief Get frame per second of the video.
+
+@param filename Path to the video
+@return fps of the video in int
+*/
 int get_fps(const std::filesystem::path& filename);
+
+/*
+@brief Initialize database. Call when program starts. 
+*/
 std::unique_ptr<DB_Connector> init_db();

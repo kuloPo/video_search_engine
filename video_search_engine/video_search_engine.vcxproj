@@ -75,7 +75,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\lib\opencv\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -84,28 +83,26 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\lib\opencv\x64\vc16\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_core453.lib;opencv_cudacodec453.lib;opencv_cudaimgproc453.lib;opencv_imgcodecs453.lib;opencv_imgproc453.lib;opencv_cudaarithm453.lib;opencv_highgui453.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="algo.cpp" />
-    <ClCompile Include="io.cpp" />
-    <ClCompile Include="similar.cpp" />
-    <ClCompile Include="utils.cpp" />
+    <ClCompile Include="..\src\algo.cpp" />
+    <ClCompile Include="..\src\io.cpp" />
+    <ClCompile Include="..\src\similar.cpp" />
+    <ClCompile Include="..\src\utils.cpp" />
     <ClCompile Include="video_search_engine.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="algo.h" />
-    <ClInclude Include="common.h" />
-    <ClInclude Include="config.h" />
-    <ClInclude Include="io.h" />
-    <ClInclude Include="picosha2.h" />
-    <ClInclude Include="similar.h" />
-    <ClInclude Include="utils.h" />
+    <ClInclude Include="..\header\algo.h" />
+    <ClInclude Include="..\header\common.h" />
+    <ClInclude Include="..\header\config.h" />
+    <ClInclude Include="..\header\io.h" />
+    <ClInclude Include="..\header\picosha2.h" />
+    <ClInclude Include="..\header\similar.h" />
+    <ClInclude Include="..\header\utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="utils.tpp" />
+    <None Include="..\header\utils.tpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

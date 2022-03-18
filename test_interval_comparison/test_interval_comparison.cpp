@@ -10,3 +10,8 @@ int main() {
     return 0;
 }
 
+/*
+Should return 7
+interval 1: 1 2 3       4 2.5 2.5 6
+interval 2: 1 2 1.5 1.5 4 5       6
+*/

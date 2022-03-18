@@ -8,7 +8,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>D:\lib\rapidjson\include;D:\lib\opencv\include;..\video_search_engine;D:\lib\libpqxx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\lib\rapidjson\include;D:\lib\opencv\include;..\header;D:\lib\libpqxx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>D:\lib\opencv\x64\vc17\lib;D:\lib\libpqxx\lib;C:\Program Files\PostgreSQL\14\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

@@ -9,7 +9,7 @@
       <AdditionalLibraryDirectories>C:\Program Files\PostgreSQL\14\lib;D:\lib\libpqxx\lib;D:\lib\opencv\x64\vc17\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories>D:\lib\libpqxx\include;..\video_search_engine;D:\lib\opencv\include;D:\lib\rapidjson\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\lib\libpqxx\include;..\header;D:\lib\opencv\include;D:\lib\rapidjson\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

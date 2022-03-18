@@ -18,45 +18,45 @@
     <ClCompile Include="video_search_engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="similar.cpp">
+    <ClCompile Include="..\src\similar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="algo.cpp">
+    <ClCompile Include="..\src\algo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="io.cpp">
+    <ClCompile Include="..\src\io.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utils.cpp">
+    <ClCompile Include="..\src\utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="similar.h">
+    <ClInclude Include="..\header\similar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="algo.h">
+    <ClInclude Include="..\header\algo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="io.h">
+    <ClInclude Include="..\header\io.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="common.h">
+    <ClInclude Include="..\header\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils.h">
+    <ClInclude Include="..\header\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="picosha2.h">
+    <ClInclude Include="..\header\picosha2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="config.h">
+    <ClInclude Include="..\header\config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="utils.tpp">
-      <Filter>Source Files</Filter>
+    <None Include="..\header\utils.tpp">
+      <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
 </Project>
