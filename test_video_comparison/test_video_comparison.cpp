@@ -27,8 +27,8 @@ int main() {
 	std::cout << std::endl;
 
 	int fps_1, fps_2;
-	fps_1 = get_fps(filepath_1);
-	fps_2 = get_fps(filepath_2);
+	fps_1 = 25;
+	fps_2 = 25;
 
 	std::vector<int> interval_1, interval_2;
 	std::vector<int> interval_merged_1, interval_merged_2;

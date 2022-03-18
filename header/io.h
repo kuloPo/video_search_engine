@@ -11,6 +11,7 @@
 
 #include "common.h"
 #include "picosha2.h"
+#include "INIReader.h"
 
 class DB_Connector {
 public:
@@ -107,3 +108,10 @@ int get_fps(const std::filesystem::path& filename);
 @brief Initialize database. Call when program starts. 
 */
 std::unique_ptr<DB_Connector> init_db();
+
+/*
+@brief Read config.ini file. Call when program starts.
+
+@param config_path Path to config.ini
+*/
+void read_config(const std::filesystem::path& config_path);
