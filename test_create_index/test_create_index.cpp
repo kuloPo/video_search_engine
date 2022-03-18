@@ -4,6 +4,7 @@
 #include "algo.h"
 #include "common.h"
 #include "similar.h"
+#include "utils.h"
 
 #include <vector>
 

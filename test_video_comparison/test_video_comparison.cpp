@@ -5,6 +5,7 @@
 #include "common.h"
 #include "similar.h"
 #include "io.h"
+#include "utils.h"
 
 int main() {
 	std::filesystem::path filepath_1 = "D:\\datasets\\ST1\\ST1Query6.mpeg";

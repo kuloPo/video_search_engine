@@ -24,6 +24,9 @@
     <ClCompile Include="..\video_search_engine\similar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\video_search_engine\utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\video_search_engine\algo.h">
@@ -35,5 +38,13 @@
     <ClInclude Include="..\video_search_engine\similar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\video_search_engine\utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\video_search_engine\utils.tpp">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

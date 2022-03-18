@@ -88,6 +88,7 @@
     <ClCompile Include="..\video_search_engine\algo.cpp" />
     <ClCompile Include="..\video_search_engine\io.cpp" />
     <ClCompile Include="..\video_search_engine\similar.cpp" />
+    <ClCompile Include="..\video_search_engine\utils.cpp" />
     <ClCompile Include="test_video_comparison.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -95,6 +96,10 @@
     <ClInclude Include="..\video_search_engine\common.h" />
     <ClInclude Include="..\video_search_engine\io.h" />
     <ClInclude Include="..\video_search_engine\similar.h" />
+    <ClInclude Include="..\video_search_engine\utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\video_search_engine\utils.tpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
