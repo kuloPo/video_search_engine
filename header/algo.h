@@ -15,6 +15,7 @@
 by comparing delta between frames.
 The return result will contain the frame number, delta of the pairs, 
 and reduced size frame images of the pairs. 
+First and last frame of a video will always be returned.
 
 @param filename Path of the video to create index
 @return A vector containing the pointers of Key_Frame

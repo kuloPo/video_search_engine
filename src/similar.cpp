@@ -63,6 +63,7 @@ cv::Vec2i _path_back_trace(const cv::Mat& m, const cv::Mat& path_trace, const cv
 }
 
 int interval_comparison(const std::vector<double>& v1, const std::vector<double>& v2) {
+	// use dynamic programming to find the number of matched interval
 	int n1 = v1.size();
 	int n2 = v2.size();
 	cv::Mat m = cv::Mat::zeros(n1 + 1, n2 + 1, CV_32SC1);
@@ -70,8 +71,9 @@ int interval_comparison(const std::vector<double>& v1, const std::vector<double>
 	
 	for (int x = 1; x <= n1; x++) {
 		for (int y = 1; y <= n2; y++) {
-			if (cv::abs(v1[x - 1] - v2[y - 1]) < 1) {
-				m.at<int>(x, y) = m.at<int>(x - 1, y - 1) + 1;
+			if (cv::abs(v1[x - 1] - v2[y - 1]) < 1) { // difference smaller than epsilon, match found 
+				m.at<int>(x, y) = m.at<int>(x - 1, y - 1) + 1; // update value
+				// if this is the first match found on the same level, record its coordinate
 				if (m.at<int>(x, y) > m.at<int>(x - 1, y) && m.at<int>(x, y) > m.at<int>(x, y - 1)) {
 					path_trace.at<cv::Vec2i>(x, y) = cv::Vec2i(x, y);
 				}
@@ -79,14 +81,16 @@ int interval_comparison(const std::vector<double>& v1, const std::vector<double>
 					path_trace.at<cv::Vec2i>(x, y) = _path_back_trace(m, path_trace, cv::Vec2i(x, y));
 				}
 			}
-			else {
+			else { // not match, inherit value 
 				m.at<int>(x, y) = max_3(m.at<int>(x - 1, y - 1), m.at<int>(x, y - 1), m.at<int>(x - 1, y));
 				path_trace.at<cv::Vec2i>(x, y) = _path_back_trace(m, path_trace, cv::Vec2i(x, y));
 			}
 		}
 	}
 
+	// coordinates representing the index of matched intervals
 	std::vector<cv::Vec2i> paths;
+	// start tracing from button right corner of mat
 	cv::Vec2i last_path = path_trace.at<cv::Vec2i>(n1, n2);
 	paths.push_back(cv::Vec2i(n1 + 1, n2 + 1));
 	while (last_path != cv::Vec2i(0, 0)) {
@@ -94,6 +98,10 @@ int interval_comparison(const std::vector<double>& v1, const std::vector<double>
 		last_path = _path_back_trace(m, path_trace, last_path);
 	}
 
+	// break intervals at where they are matched
+	// sum up unmatched intervals in between and check if are equal
+	// interval 1: 1 | 2 | 3       | 4 | 2.5 2.5 | 6
+	// interval 2: 1 | 2 | 1.5 1.5 | 4 | 5       | 6
 	std::vector<int> matched_index;
 
 	int last_1, last_2;
@@ -111,6 +119,9 @@ int interval_comparison(const std::vector<double>& v1, const std::vector<double>
 		for (int i = last_2; i < y; i++) {
 			sum_2 += v2[i];
 		}
+		// prevent one very large interval happens to match the other
+		// normal interval    : 1 2 3 4
+		// very large interval: 1 ... 2 ... 3 ... 4
 		if (cv::abs(sum_1 - sum_2) < 1) {
 			for (int i = last_1; i <= x; i++) {
 				if (i < v1.size() && (matched_index.empty() || i != matched_index.back())) {
@@ -122,6 +133,7 @@ int interval_comparison(const std::vector<double>& v1, const std::vector<double>
 		last_2 = y;
 	}
 
+	// find largest consecutive sequence in vector
 	int sum, max, last;
 	sum = 1;
 	max = 0;

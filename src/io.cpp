@@ -20,6 +20,7 @@ std::string write_interval(const std::vector<int>& interval, const std::filesyst
 	picosha2::hash256_hex_string(filename.string(), ID);
 	std::filesystem::create_directory(index_path / filename);
 
+	// concatenate interva into string
 	for (int i : interval) {
 		std::string frame_interval_str = std::to_string(i);
 		interval_str += frame_interval_str;
@@ -51,7 +52,9 @@ int get_fps(const std::filesystem::path& filename) {
 }
 
 std::unique_ptr<DB_Connector> init_db() {
+	// Connect to database
 	std::unique_ptr<DB_Connector> DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
+	// Create table interval and invert_index if not exist
 	std::string create_inverval_sql = "CREATE TABLE IF NOT EXISTS INTERVAL("  \
 		"ID CHAR(64)    PRIMARY KEY     NOT NULL," \
 		"FILENAME       TEXT    NOT NULL," \

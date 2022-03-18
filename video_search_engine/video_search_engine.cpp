@@ -19,19 +19,23 @@ int main() {
 			continue;
 		}
 
+		// extract key frames
 		std::vector<Key_Frame*> key_frames = std::move(create_index(video_path / filename));
+		// get interval
 		int fps = get_fps(video_path / filename);
 		std::vector<int> interval, interval_merged;
 		calc_interval(key_frames, interval);
 		interval_merge(interval, fps, interval_merged);
+		// write interval to database
 		std::string interval_str = write_interval(interval_merged, filename);
 		std::string filename_str = filename.string();
 		filename_str = std::regex_replace(filename_str, std::regex("'"), "''");
 		std::string insert_sql = std::format("INSERT INTO INTERVAL (ID,FILENAME,FPS,INTERVAL) VALUES ('{}','{}',{},'{}');", 
 			ID, filename_str, fps, interval_str);
 		DB->performQuery(insert_sql);
+		// write frame image to disk
 		write_key_frame(key_frames, index_path, filename);
-
+		// clean up
 		for (Key_Frame* key_frame : key_frames) {
 			delete key_frame;
 		}	
