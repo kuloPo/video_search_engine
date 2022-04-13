@@ -19,8 +19,11 @@ std::filesystem::path index_path;
 int frame_difference_threshold;
 int min_matched_interval;
 int min_matched_percentage;
+double interval_matching_epsilon;
 
 std::unique_ptr<DB_Connector> DB;
+cv::TickMeter tm;
+std::vector<double> search_times;
 
 /*
 @brief Read ID of videos from inverted index
@@ -73,6 +76,8 @@ void query(const std::filesystem::path& filename) {
 	interval_merge(input_interval, input_fps, interval_merged);
 	interval_to_sec(interval_merged, input_fps, input_interval_sec);
 
+	tm.reset(); tm.start();
+
 	// query interted index to find search range using each interval
 	std::vector<std::string> search_range;
 
@@ -121,12 +126,15 @@ void query(const std::filesystem::path& filename) {
 		std::string interval_str = query_result->begin()[3].as<std::string>();
 		std::vector<double> interval_db;
 		read_interval(interval_str, fps, interval_db);
-		int similarity = interval_comparison(interval_db, input_interval_sec);
-		double matched_percentage = 100.0 * similarity / interval_db.size();
+		int similarity = interval_comparison(input_interval_sec, interval_db);
+		double matched_percentage = 100.0 * similarity / input_interval_sec.size();
 		if (matched_percentage >= min_matched_percentage) {
 			std::cout << std::format("{}, matched interval: {}%\n", filename, matched_percentage);
 		}
 	}
+
+	tm.stop();
+	search_times.push_back(tm.getTimeMilli());
 
 	for (Key_Frame* key_frame : key_frames) {
 		delete key_frame;
@@ -142,6 +150,10 @@ int main() {
 		query(filename);
 		cout << endl;
 	}
+
+	std::sort(search_times.begin(), search_times.end());
+	double time_avg = std::accumulate(search_times.begin(), search_times.end(), 0.0) / search_times.size();
+	cout << std::format("Average search time: {} ms\n", time_avg);
 
 	return 0;
 }

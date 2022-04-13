@@ -15,3 +15,4 @@ extern int frame_difference_threshold;   // Threshold of treating two adjacent f
 extern int min_matched_interval;         // Minimum value can be returned by inverval_comparison(). 
 									     // If the value is too low, queries with too few intervals may be wrongly matched
 extern int min_matched_percentage;       // Queries with matched intervals above this threshold will be considered duplicate
+extern double interval_matching_epsilon; // difference smaller than epsilon, match found

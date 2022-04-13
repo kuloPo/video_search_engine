@@ -84,4 +84,5 @@ void read_config(const std::filesystem::path& config_path) {
 	frame_difference_threshold = reader.GetInteger("search_engine_param", "frame_difference_threshold", 50);
 	min_matched_interval = reader.GetInteger("search_engine_param", "min_matched_interval", 3);
 	min_matched_percentage = reader.GetInteger("search_engine_param", "min_matched_percentage", 30);
+	interval_matching_epsilon = reader.GetReal("search_engine_param", "interval_matching_epsilon", 1);
 }

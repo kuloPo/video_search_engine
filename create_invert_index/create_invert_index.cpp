@@ -13,6 +13,7 @@ std::filesystem::path index_path;
 int frame_difference_threshold;
 int min_matched_interval;
 int min_matched_percentage;
+double interval_matching_epsilon;
 
 std::vector<int> read_csv(std::string s) {
     std::vector<int> interval;

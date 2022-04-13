@@ -25,29 +25,6 @@ int direct_distance(const cv::cuda::GpuMat& img1, const cv::cuda::GpuMat& img2) 
 	return cv::cuda::sum(tmp)[0] / (img1.rows * img1.cols);
 }
 
-double radon_distance(const cv::Mat& img1, const cv::Mat& img2) {
-    cv::Mat _img1, _img2;
-    img1.copyTo(_img1);
-    img2.copyTo(_img2);
-    cv::resize(_img2, _img2, cv::Size(128, 128));
-    cv::resize(_img2, _img2, cv::Size(128, 128));
-    cv::Mat radon1;
-    cv::Mat radon2;
-    cv::ximgproc::RadonTransform(_img2, radon1, 1, 0, 180, true, false);
-    cv::ximgproc::RadonTransform(_img2, radon2, 1, 0, 180, true, false);
-    cv::normalize(radon1, radon1, 0, 1, cv::NORM_MINMAX, CV_32FC1);
-    cv::normalize(radon2, radon2, 0, 1, cv::NORM_MINMAX, CV_32FC1);
-
-    cv::Mat integral_distance(1, 180, CV_64FC1);
-    for (int i = 0; i < 180; i++) {
-        cv::Mat integral1 = radon1.col(i);
-        cv::Mat integral2 = radon2.col(i);
-        integral_distance.at<double>(0, i) = wasserstein_distance(integral1, integral2);
-
-    }
-    return cv::mean(integral_distance)[0];
-}
-
 cv::Vec2i _path_back_trace(const cv::Mat& m, const cv::Mat& path_trace, const cv::Vec2i& path) {
 	int x = path[0];
 	int y = path[1];
@@ -71,7 +48,7 @@ int interval_comparison(const std::vector<double>& v1, const std::vector<double>
 	
 	for (int x = 1; x <= n1; x++) {
 		for (int y = 1; y <= n2; y++) {
-			if (cv::abs(v1[x - 1] - v2[y - 1]) < 1) { // difference smaller than epsilon, match found 
+			if (cv::abs(v1[x - 1] - v2[y - 1]) < interval_matching_epsilon) { // difference smaller than epsilon, match found 
 				m.at<int>(x, y) = m.at<int>(x - 1, y - 1) + 1; // update value
 				// if this is the first match found on the same level, record its coordinate
 				if (m.at<int>(x, y) > m.at<int>(x - 1, y) && m.at<int>(x, y) > m.at<int>(x, y - 1)) {
@@ -111,6 +88,16 @@ int interval_comparison(const std::vector<double>& v1, const std::vector<double>
 		paths.pop_back();
 		int x = path[0] - 1;
 		int y = path[1] - 1;
+#ifdef DEBUG_INTERVAL_COMPARISON
+		if (!paths.empty()) {
+			cout << std::format("{}: {}, {}: {}\n", x, v1[x], y, v2[y]);
+		}
+#endif // DEBUG_INTERVAL_COMPARISON
+		if (x - last_1 > 10 || y - last_2 > 10) {
+			last_1 = x;
+			last_2 = y;
+			continue;
+		}
 		double sum_1, sum_2;
 		sum_1 = sum_2 = 0;
 		for (int i = last_1; i < x; i++) {
@@ -122,7 +109,7 @@ int interval_comparison(const std::vector<double>& v1, const std::vector<double>
 		// prevent one very large interval happens to match the other
 		// normal interval    : 1 2 3 4
 		// very large interval: 1 ... 2 ... 3 ... 4
-		if (cv::abs(sum_1 - sum_2) < 1) {
+		if (cv::abs(sum_1 - sum_2) < interval_matching_epsilon) {
 			for (int i = last_1; i <= x; i++) {
 				if (i < v1.size() && (matched_index.empty() || i != matched_index.back())) {
 					matched_index.push_back(i);
@@ -133,25 +120,32 @@ int interval_comparison(const std::vector<double>& v1, const std::vector<double>
 		last_2 = y;
 	}
 
-	// find largest consecutive sequence in vector
-	int sum, max, last;
-	sum = 1;
-	max = 0;
-	last = -2;
+	// find consecutive sequence greater than threshold
+	int sum, last, consecutive_count;
+	sum = 0;
+	last = -1;
+	consecutive_count = 0;
 	for (int i : matched_index) {
-		if (i == last + 1) {
-			sum++;
+		if (last == -1) {
+			consecutive_count = 1;
+		}
+		else if (i == last + 1) {
+			consecutive_count++;
 		}
 		else {
-			if (sum > max) {
-				max = sum;
+			if (consecutive_count >= min_matched_interval) {
+				sum += consecutive_count;
 			}
-			sum = 1;
+			consecutive_count = 1;
 		}
 		last = i;
 	}
+	if (consecutive_count >= min_matched_interval) {
+		sum += consecutive_count;
+	}
 
 #ifdef DEBUG_INTERVAL_COMPARISON
+	cout << endl << endl;
 	for (int i : matched_index) {
 		cout << i << " ";
 	}
@@ -178,5 +172,59 @@ int interval_comparison(const std::vector<double>& v1, const std::vector<double>
 	}
 #endif // DEBUG_INTERVAL_COMPARISON
 
-	return sum >= min_matched_interval ? sum : 0;
+	return sum;
+	//return matched_index.size();
 }
+
+void RadonTransform(cv::cuda::GpuMat& src,
+	cv::Mat& dst,
+	double theta,
+	double start_angle,
+	double end_angle)
+{
+	cv::cuda::GpuMat _srcMat;
+	src.copyTo(_srcMat);
+
+	int _row_num, _col_num, _out_mat_type;
+	_row_num = cvRound((end_angle - start_angle) / theta);
+	//transpose(_srcMat, _srcMat);
+	//cv::cuda::transpose(_srcMat, _srcMat);
+	cv::Point _center;
+
+	// avoid cropping corner when rotating
+	_col_num = cvCeil(sqrt(_srcMat.rows * _srcMat.rows + _srcMat.cols * _srcMat.cols));
+	cv::cuda::GpuMat _masked_src(cv::Size(_col_num, _col_num), _srcMat.type(), cv::Scalar(0));
+	_center = cv::Point(_masked_src.cols / 2, _masked_src.rows / 2);
+	_srcMat.copyTo(_masked_src(cv::Rect(
+		(_col_num - _srcMat.cols) / 2,
+		(_col_num - _srcMat.rows) / 2,
+		_srcMat.cols, _srcMat.rows)));
+
+	cv::cuda::GpuMat _radon(_row_num, _col_num, CV_32SC1);
+
+	//parallel_for_(cv::Range(0, _row_num), [&](const cv::Range& range) {
+		for (int _row = 0; _row < _row_num; _row++) {
+			// rotate the source by _t
+			double _t = (start_angle + _row * theta);
+			cv::cuda::GpuMat _rotated_src;
+			cv::Mat _r_matrix = cv::getRotationMatrix2D(_center, _t, 1);
+			cv::cuda::warpAffine(_masked_src, _rotated_src, _r_matrix, _masked_src.size());
+			cv::cuda::GpuMat _col_mat = _radon.row(_row);
+			// make projection
+			cv::cuda::reduce(_rotated_src, _col_mat, 0, cv::REDUCE_SUM, CV_32SC1);
+		}
+	//	});
+	cv::cuda::transpose(_radon, _radon);
+	_radon.download(dst);
+	return;
+}
+
+double radon_distance(const cv::Mat& radon1, const cv::Mat& radon2) {
+	std::vector<double> integral_distance;
+	for (int i = 0; i < 4; i++) {
+		cv::Mat integral1 = radon1.col(i);
+		cv::Mat integral2 = radon2.col(i);
+		integral_distance.push_back(wasserstein_distance(integral1, integral2));
+	}
+	return std::accumulate(integral_distance.begin(), integral_distance.end(), 0.0) / integral_distance.size();
+	}

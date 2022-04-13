@@ -8,8 +8,9 @@
 
 #include <vector>
 
-int frame_difference_threshold = 50;
+int frame_difference_threshold = 1500;
 int min_matched_interval = 3;
+double interval_matching_epsilon = 0.5;
 
 int main() {
 	std::filesystem::path filepath = "../rsrc/video.mp4";

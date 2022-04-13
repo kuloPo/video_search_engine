@@ -15,6 +15,7 @@ std::filesystem::path index_path;
 int frame_difference_threshold;
 int min_matched_interval;
 int min_matched_percentage;
+double interval_matching_epsilon;
 
 int main() {
 	read_config("../rsrc/config.ini");
@@ -48,7 +49,7 @@ int main() {
 			ID, filename_str, fps, interval_str);
 		DB->performQuery(insert_sql);
 		// write frame image to disk
-		write_key_frame(key_frames, index_path, filename);
+		//write_key_frame(key_frames, index_path, filename);
 		// clean up
 		for (Key_Frame* key_frame : key_frames) {
 			delete key_frame;
