@@ -2,12 +2,17 @@
 
 std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 	cv::cuda::GpuMat first_frame, second_frame;
+	cv::Mat first_radon, second_radon;
 	cv::Ptr<cv::cudacodec::VideoReader> cuda_reader = cv::cudacodec::createVideoReader(filename.string());
 
 	// read the first frame, reduce its resolution and convert it into grayscale
 	cuda_reader->nextFrame(first_frame);
 	cv::cuda::resize(first_frame, first_frame, cv::Size(128, 128));
 	cv::cuda::cvtColor(first_frame, first_frame, cv::COLOR_BGRA2GRAY);
+	//first_frame.download(first_frame_cpu);
+	RadonTransform(first_frame, first_radon, 45, 0, 180);
+	first_radon.convertTo(first_radon, CV_32FC1);
+	first_radon /= first_radon.rows * first_radon.cols;
 
 	std::vector<Key_Frame*> key_frames;
 	
@@ -31,11 +36,10 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 		cv::cuda::cvtColor(second_frame, second_frame, cv::COLOR_BGRA2GRAY);
 
 		// calculate histogram and the distance between hist
-		cv::cuda::GpuMat hist1 = get_histogram(first_frame);
-		cv::cuda::GpuMat hist2 = get_histogram(second_frame);
-		cv::cuda::transpose(hist1, hist1);
-		cv::cuda::transpose(hist2, hist2);
-		double d = wasserstein_distance(hist1, hist2);
+		RadonTransform(second_frame, second_radon, 45, 0, 180);
+		second_radon.convertTo(second_radon, CV_32FC1);
+		second_radon /= second_frame.rows * second_frame.cols;
+		double d = radon_distance(first_radon, second_radon);
 
 		// If delta is greater threshold, write the information into vector
 		if (d > frame_difference_threshold) {
@@ -48,6 +52,7 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 		}
 
 		first_frame = second_frame;
+		first_radon = second_radon;
 
 		tm.stop();
 		gpu_times.push_back(tm.getTimeMilli());
