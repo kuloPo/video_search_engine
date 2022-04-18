@@ -4,8 +4,14 @@
 #include <algorithm>
 #include <numeric>
 #include <iomanip>
+#include <opencv2/opencv_modules.hpp>
+
+#ifdef HAVE_OPENCV_CUDACODEC
 #include <opencv2/cudacodec.hpp>
 #include <opencv2/cudawarping.hpp>
+#else
+#include <opencv2/videoio.hpp>
+#endif
 
 #include "common.h"
 #include "similar.h"
@@ -30,3 +36,19 @@ given its vector of Key_Frame.
 @param interval Destination of the interval vector
 */
 void calc_interval(const std::vector<Key_Frame*>& key_frames, std::vector<int>& interval);
+
+#ifdef HAVE_OPENCV_CUDACODEC
+
+void add_key_frame(std::vector<Key_Frame*>& key_frames, int delta, int frame_num, 
+	cv::cuda::GpuMat first_frame, cv::cuda::GpuMat second_frame);
+
+void frame_preprocessing(cv::cuda::GpuMat& frame);
+
+#else
+
+void add_key_frame(std::vector<Key_Frame*>& key_frames, int delta, int frame_num,
+	cv::Mat first_frame, cv::Mat second_frame);
+
+void frame_preprocessing(cv::Mat& frame);
+
+#endif

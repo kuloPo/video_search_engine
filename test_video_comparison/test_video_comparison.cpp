@@ -4,7 +4,6 @@
 #include "algo.h"
 #include "common.h"
 #include "similar.h"
-#include "io.h"
 #include "utils.h"
 
 int frame_difference_threshold = 1500;

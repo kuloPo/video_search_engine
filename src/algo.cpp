@@ -1,54 +1,51 @@
 #include "algo.h"
 
 std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
-	cv::cuda::GpuMat first_frame, second_frame;
 	cv::Mat first_radon, second_radon;
+#ifdef HAVE_OPENCV_CUDACODEC
+	cv::cuda::GpuMat first_frame, second_frame;
 	cv::Ptr<cv::cudacodec::VideoReader> cuda_reader = cv::cudacodec::createVideoReader(filename.string());
-
-	// read the first frame, reduce its resolution and convert it into grayscale
 	cuda_reader->nextFrame(first_frame);
-	cv::cuda::resize(first_frame, first_frame, cv::Size(128, 128));
-	cv::cuda::cvtColor(first_frame, first_frame, cv::COLOR_BGRA2GRAY);
+#else
+	cv::Mat first_frame, second_frame;
+	cv::VideoCapture video_reader(filename.string());
+	video_reader >> first_frame;
+#endif
+	frame_preprocessing(first_frame);
+
 	//first_frame.download(first_frame_cpu);
 	RadonTransform(first_frame, first_radon, 45, 0, 180);
-	first_radon.convertTo(first_radon, CV_32FC1);
-	first_radon /= first_radon.rows * first_radon.cols;
 
 	std::vector<Key_Frame*> key_frames;
 	
 	// add first frame into index
-	Key_Frame* frame_zero = new Key_Frame;
-	frame_zero->delta = 0;
-	frame_zero->first_frame = first_frame;
-	frame_zero->frame_num = 0;
-	key_frames.push_back(frame_zero);
+	add_key_frame(key_frames, 0, 0, first_frame, empty_frame);
 	
 	// variables for measuring performance
 	cv::TickMeter tm;
 	std::vector<double> gpu_times;
 	int gpu_frame_count = 0;
 	
-	while (cuda_reader->nextFrame(second_frame)) {
+	while (true) {
 		tm.reset(); tm.start();
-		
+#ifdef HAVE_OPENCV_CUDACODEC
+		if (!cuda_reader->nextFrame(second_frame))
+			break;
+#else 
+		video_reader >> second_frame;
+		if (second_frame.empty())
+			break;
+#endif
 		// frame preprocessing
-		cv::cuda::resize(second_frame, second_frame, cv::Size(128, 128));
-		cv::cuda::cvtColor(second_frame, second_frame, cv::COLOR_BGRA2GRAY);
+		frame_preprocessing(second_frame);
 
 		// calculate histogram and the distance between hist
 		RadonTransform(second_frame, second_radon, 45, 0, 180);
-		second_radon.convertTo(second_radon, CV_32FC1);
-		second_radon /= second_frame.rows * second_frame.cols;
 		double d = radon_distance(first_radon, second_radon);
 
 		// If delta is greater threshold, write the information into vector
 		if (d > frame_difference_threshold) {
-			Key_Frame* key_frame = new Key_Frame;
-			key_frame->delta = d;
-			key_frame->first_frame = first_frame;
-			key_frame->second_frame = second_frame;
-			key_frame->frame_num = gpu_frame_count;
-			key_frames.push_back(key_frame);
+			add_key_frame(key_frames, d, gpu_frame_count, first_frame, second_frame);
 		}
 
 		first_frame = second_frame;
@@ -57,15 +54,10 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 		tm.stop();
 		gpu_times.push_back(tm.getTimeMilli());
 		gpu_frame_count++;
-
 	}
 	
 	// add last frame into index
-	Key_Frame* frame_last = new Key_Frame;
-	frame_last->delta = 0;
-	frame_last->first_frame = first_frame;
-	frame_last->frame_num = gpu_frame_count;
-	key_frames.push_back(frame_last);
+	add_key_frame(key_frames, 0, gpu_frame_count, first_frame, empty_frame);
 	
 #ifdef DEBUG_CREATE_INDEX
 	if (!gpu_times.empty())
@@ -90,3 +82,39 @@ void calc_interval(const std::vector<Key_Frame*>& key_frames, std::vector<int>& 
 		last_frame = key_frame->frame_num;
 	}
 }
+
+#ifdef HAVE_OPENCV_CUDACODEC
+
+void add_key_frame(std::vector<Key_Frame*>& key_frames, int delta, int frame_num,
+	cv::cuda::GpuMat first_frame, cv::cuda::GpuMat second_frame) {
+	Key_Frame* new_key_frame = new Key_Frame;
+	new_key_frame->delta = delta;
+	new_key_frame->frame_num = frame_num;
+	new_key_frame->first_frame = first_frame;
+	new_key_frame->second_frame = second_frame;
+	key_frames.push_back(new_key_frame);
+}
+
+void frame_preprocessing(cv::cuda::GpuMat& frame) {
+	cv::cuda::resize(frame, frame, cv::Size(128, 128));
+	cv::cuda::cvtColor(frame, frame, cv::COLOR_BGRA2GRAY);
+}
+
+#else
+
+void add_key_frame(std::vector<Key_Frame*>& key_frames, int delta, int frame_num,
+	cv::Mat first_frame, cv::Mat second_frame) {
+	Key_Frame* new_key_frame = new Key_Frame;
+	new_key_frame->delta = delta;
+	new_key_frame->frame_num = frame_num;
+	new_key_frame->first_frame = first_frame;
+	new_key_frame->second_frame = second_frame;
+	key_frames.push_back(new_key_frame);
+}
+
+void frame_preprocessing(cv::Mat& frame) {
+	cv::resize(frame, frame, cv::Size(128, 128));
+	cv::cvtColor(frame, frame, cv::COLOR_BGRA2GRAY);
+}
+
+#endif
