@@ -1,4 +1,3 @@
-#include <filesystem>
 #include <iostream>
 #include <numeric>
 #include <opencv2/opencv_modules.hpp>
@@ -11,12 +10,12 @@
 #endif
 
 int main() {
-	std::filesystem::path filepath = "../rsrc/video.mp4";
+	std::string filepath = "../rsrc/video.mp4";
 	cv::TickMeter tm;
 	std::vector<double> gpu_times;
 	int gpu_frame_count = 0;
 #ifdef HAVE_OPENCV_CUDACODEC
-	cv::Ptr<cv::cudacodec::VideoReader> cuda_reader = cv::cudacodec::createVideoReader(filepath.string());
+	cv::Ptr<cv::cudacodec::VideoReader> cuda_reader = cv::cudacodec::createVideoReader(filepath);
 	cv::cuda::GpuMat frame;
 	cuda_reader->nextFrame(frame);
 	while (true) {
