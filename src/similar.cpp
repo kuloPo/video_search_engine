@@ -124,6 +124,8 @@ cv::Vec2i _path_back_trace(const cv::Mat& m, const cv::Mat& path_trace, const cv
 		return path_trace.at<cv::Vec2i>(x, y - 1);
 	case 2:
 		return path_trace.at<cv::Vec2i>(x - 1, y);
+	default:
+		return cv::Vec2i(-1, -1);
 	}
 }
 
