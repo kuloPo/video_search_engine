@@ -1,17 +1,26 @@
 #include "io.h"
 
+
 void show_image(const std::vector<Key_Frame*>& key_frames) {
 	for (Key_Frame* key_frame : key_frames) {
 		printf("%d %.2f\n", key_frame->frame_num, key_frame->delta);
-		cv::Mat tmp;
-		key_frame->first_frame.download(tmp);
-		cv::imshow("", tmp);
+#ifdef HAVE_OPENCV_CUDACODEC
+		cv::Mat tmp_1, tmp_2;
+		key_frame->first_frame.download(tmp_1);
+		key_frame->second_frame.download(tmp_2);
+		cv::imshow("", tmp_1);
 		cv::waitKey();
-		key_frame->second_frame.download(tmp);
-		cv::imshow("", tmp);
+		cv::imshow("", tmp_2);
 		cv::waitKey();
+#else 
+		cv::imshow("", key_frame->first_frame);
+		cv::waitKey();
+		cv::imshow("", key_frame->second_frame);
+		cv::waitKey();
+#endif
 	}
 }
+
 
 std::string write_interval(const std::vector<int>& interval, const std::filesystem::path& filename) {
 	std::string ID;
@@ -29,6 +38,7 @@ std::string write_interval(const std::vector<int>& interval, const std::filesyst
 	return interval_str;
 }
 
+/*
 void write_key_frame(const std::vector<Key_Frame*>& key_frames, const std::filesystem::path& path, const std::filesystem::path& filename) {
 	for (Key_Frame* key_frame : key_frames) {
 		cv::Mat tmp;
@@ -42,6 +52,7 @@ void write_key_frame(const std::vector<Key_Frame*>& key_frames, const std::files
 		}
 	}
 }
+*/
 
 int get_fps(const std::filesystem::path& filename) {
 	int fps;

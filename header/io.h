@@ -93,7 +93,7 @@ std::string write_interval(const std::vector<int>& interval, const std::filesyst
 @param path Destination folder to store the frame images
 @param filename Path to the video
 */
-void write_key_frame(const std::vector<Key_Frame*>& key_frames, const std::filesystem::path& path, const std::filesystem::path& filename);
+//void write_key_frame(const std::vector<Key_Frame*>& key_frames, const std::filesystem::path& path, const std::filesystem::path& filename);
 
 /*
 @brief Get frame per second of the video.
