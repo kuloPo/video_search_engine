@@ -180,7 +180,7 @@ int interval_comparison(const std::vector<double>& v1, const std::vector<double>
 		int y = path[1] - 1;
 #ifdef DEBUG_INTERVAL_COMPARISON
 		if (!paths.empty()) {
-			cout << std::format("{}: {}, {}: {}\n", x, v1[x], y, v2[y]);
+			printf("%d: %.2f, %d: %.2f\n", x, v1[x], y, v2[y]);
 		}
 #endif // DEBUG_INTERVAL_COMPARISON
 		if (x - last_1 > 10 || y - last_2 > 10) {
@@ -256,7 +256,7 @@ int interval_comparison(const std::vector<double>& v1, const std::vector<double>
 
 	for (int x = 1; x <= n1; x++) {
 		for (int y = 1; y <= n2; y++) {
-			cout << std::format("({},{}) ", path_trace.at<cv::Vec2i>(x, y)[0], path_trace.at<cv::Vec2i>(x, y)[1]);
+			printf("(%d,%d) ", path_trace.at<cv::Vec2i>(x, y)[0], path_trace.at<cv::Vec2i>(x, y)[1]);
 		}
 		std::cout << std::endl;
 	}
