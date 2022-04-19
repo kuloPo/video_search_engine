@@ -55,11 +55,11 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>D:\lib\rapidjson\include;..\video_search_engine;D:\lib\opencv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <PreprocessorDefinitions>DEBUG_SEARCHER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -90,16 +90,12 @@
     <ClInclude Include="..\header\algo.h" />
     <ClInclude Include="..\header\common.h" />
     <ClInclude Include="..\header\config.h" />
-    <ClInclude Include="..\header\ini.h" />
-    <ClInclude Include="..\header\INIReader.h" />
     <ClInclude Include="..\header\io.h" />
     <ClInclude Include="..\header\similar.h" />
     <ClInclude Include="..\header\utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\algo.cpp" />
-    <ClCompile Include="..\src\ini.c" />
-    <ClCompile Include="..\src\INIReader.cpp" />
     <ClCompile Include="..\src\io.cpp" />
     <ClCompile Include="..\src\similar.cpp" />
     <ClCompile Include="..\src\utils.cpp" />

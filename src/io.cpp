@@ -68,21 +68,3 @@ std::unique_ptr<DB_Connector> init_db() {
 	DB->performQuery("SET CLIENT_ENCODING TO 'WIN1252'");
 	return DB;
 }
-
-void read_config(const std::filesystem::path& config_path) {
-	INIReader reader(config_path.string());
-
-	DB_address = reader.Get("database", "address", "127.0.0.1");
-	DB_port = reader.Get("database", "port", "5432");
-	DB_user = reader.Get("database", "user", "postgres");
-	DB_password = reader.Get("database", "password", "123456");
-	DB_name = reader.Get("database", "name", "UNKNOWN");
-
-	video_path = reader.Get("filepath", "video_path", "UNKNOWN");
-	index_path = reader.Get("filepath", "index_path", "UNKNOWN");
-
-	frame_difference_threshold = reader.GetInteger("search_engine_param", "frame_difference_threshold", 50);
-	min_matched_interval = reader.GetInteger("search_engine_param", "min_matched_interval", 3);
-	min_matched_percentage = reader.GetInteger("search_engine_param", "min_matched_percentage", 30);
-	interval_matching_epsilon = reader.GetReal("search_engine_param", "interval_matching_epsilon", 1);
-}

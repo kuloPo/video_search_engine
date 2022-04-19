@@ -3,22 +3,7 @@
 #include "io.h"
 #include "common.h"
 
-std::string DB_address;
-std::string DB_port;
-std::string DB_user;
-std::string DB_password;
-std::string DB_name;
-
-std::filesystem::path video_path;
-std::filesystem::path index_path;
-
-int frame_difference_threshold;
-int min_matched_interval;
-int min_matched_percentage;
-double interval_matching_epsilon;
-
 int main() {
-	read_config("../rsrc/config.ini");
 	std::unique_ptr<DB_Connector> DB = init_db();
 
 	for (const auto& entry : std::filesystem::directory_iterator(video_path)) {

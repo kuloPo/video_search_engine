@@ -33,12 +33,6 @@
     <ClInclude Include="..\header\config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\header\ini.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\header\INIReader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\algo.cpp">
@@ -54,12 +48,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\ini.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\INIReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

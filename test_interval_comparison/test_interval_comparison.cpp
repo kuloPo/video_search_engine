@@ -2,9 +2,6 @@
 
 #include "similar.h"
 
-int min_matched_interval = 3;
-double interval_matching_epsilon = 0.5;
-
 int main() {
     std::vector<double> interval_sec_1 = { 1,2,3,4,2.5,2.5,6 };
     std::vector<double> interval_sec_2 = { 1,2,1.5,1.5,4,5,6 };

@@ -6,10 +6,6 @@
 #include "similar.h"
 #include "utils.h"
 
-int frame_difference_threshold = 1500;
-int min_matched_interval = 3;
-double interval_matching_epsilon = 0.5;
-
 int main() {
 	std::filesystem::path filepath_1 = "../rsrc/video.mp4";
 	std::filesystem::path filepath_2 = "../rsrc/video_flip.mp4";
