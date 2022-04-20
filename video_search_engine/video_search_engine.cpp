@@ -12,7 +12,7 @@ int main() {
 		// check if already exist in db
 		std::string ID;
 		picosha2::hash256_hex_string(filename.string(), ID);
-		std::string search_sql = std::format("SELECT * from INTERVAL WHERE ID = '{}'", ID);
+		std::string search_sql = form_search_sql(ID);
 		std::unique_ptr<pqxx::result>& query_result = DB->performQuery(search_sql);
 		if (!query_result->empty()) {
 			cout << "Already indexed" << endl;
@@ -30,8 +30,7 @@ int main() {
 		std::string interval_str = write_interval(interval_merged, filename);
 		std::string filename_str = filename.string();
 		filename_str = std::regex_replace(filename_str, std::regex("'"), "''");
-		std::string insert_sql = std::format("INSERT INTO INTERVAL (ID,FILENAME,FPS,INTERVAL) VALUES ('{}','{}',{},'{}');", 
-			ID, filename_str, fps, interval_str);
+		std::string insert_sql = form_insert_sql(ID, filename_str, fps, interval_str);
 		DB->performQuery(insert_sql);
 		// write frame image to disk
 		//write_key_frame(key_frames, index_path, filename);

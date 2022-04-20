@@ -79,3 +79,27 @@ std::unique_ptr<DB_Connector> init_db() {
 	DB->performQuery("SET CLIENT_ENCODING TO 'WIN1252'");
 	return DB;
 }
+
+std::string form_search_sql(const std::string& ID) {
+	std::string ret = "SELECT * from INTERVAL WHERE ID = '";
+	ret += ID;
+	ret += "'";
+	return ret;
+}
+
+std::string form_insert_sql(
+	const std::string& ID,
+	const std::string& FILENAME,
+	int FPS,
+	const std::string& INTERVAL) {
+	std::string ret = "INSERT INTO INTERVAL (ID,FILENAME,FPS,INTERVAL) VALUES ('";
+	ret += ID;
+	ret += "','";
+	ret += FILENAME;
+	ret += "',";
+	ret += std::to_string(FPS);
+	ret += ",'";
+	ret += INTERVAL;
+	ret += "');";
+	return ret;
+}

@@ -107,3 +107,11 @@ int get_fps(const std::filesystem::path& filename);
 @brief Initialize database. Call when program starts. 
 */
 std::unique_ptr<DB_Connector> init_db();
+
+std::string form_search_sql(const std::string& ID);
+
+std::string form_insert_sql(
+    const std::string& ID,
+    const std::string& FILENAME,
+    const int FPS,
+    const std::string& INTERVAL);
