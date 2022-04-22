@@ -59,7 +59,7 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 	// add last frame into index
 	add_key_frame(key_frames, 0, gpu_frame_count, first_frame, empty_frame);
 	
-#ifdef DEBUG_CREATE_INDEX
+#if defined DEBUG_CREATE_INDEX || defined DEBUG_PERFORMANCE
 	if (!gpu_times.empty())
 	{
 		std::cout << std::endl << "Results:" << std::endl;
