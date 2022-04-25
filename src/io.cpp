@@ -83,7 +83,7 @@ std::unique_ptr<DB_Connector> init_db() {
 std::string form_search_sql(const std::string& ID) {
 	std::string ret = "SELECT * from INTERVAL WHERE ID = '";
 	ret += ID;
-	ret += "'";
+	ret += "';";
 	return ret;
 }
 

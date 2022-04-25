@@ -1,21 +1,22 @@
 #include <iostream>
 #include <numeric>
+#include <filesystem>
 #include <opencv2/opencv_modules.hpp>
+#include <opencv2/highgui.hpp>
 
 #ifdef HAVE_OPENCV_CUDACODEC
 #include <opencv2/cudacodec.hpp>
-#include <opencv2/highgui.hpp>
 #else
 #include <opencv2/videoio.hpp>
 #endif
 
 int main() {
-	std::string filepath = "../rsrc/video.mp4";
+	std::filesystem::path filepath = "../rsrc/video.mp4";
 	cv::TickMeter tm;
 	std::vector<double> gpu_times;
 	int gpu_frame_count = 0;
 #ifdef HAVE_OPENCV_CUDACODEC
-	cv::Ptr<cv::cudacodec::VideoReader> cuda_reader = cv::cudacodec::createVideoReader(filepath);
+	cv::Ptr<cv::cudacodec::VideoReader> cuda_reader = cv::cudacodec::createVideoReader(filepath.string());
 	cv::cuda::GpuMat frame;
 	cuda_reader->nextFrame(frame);
 	while (true) {

@@ -69,7 +69,7 @@ int main() {
 	std::cout << std::endl;
 
 	int similarity = interval_comparison(interval_sec_1, interval_sec_2);
-	double matched_percentage = 100.0 * similarity / interval_sec_2.size();
+	double matched_percentage = 100.0 * similarity / interval_sec_1.size();
 	printf("similarity: %f%%\n", matched_percentage);
 	for (Key_Frame* key_frame : key_frames_1) {
 		delete key_frame;

@@ -1,5 +1,6 @@
 #include "common.h"
 #include "io.h"
+#include "utils.h"
 
 std::vector<int> read_csv(std::string s) {
     std::vector<int> interval;
@@ -15,6 +16,27 @@ std::vector<int> read_csv(std::string s) {
     return interval;
 }
 
+std::string form_update_sql(const std::string& ID, const double interval_by_sec, const std::string& existing_value) {
+    std::string update_sql = "";
+    if (existing_value.empty()) {
+        std::string db_value = ID + ",";
+        update_sql += "INSERT INTO INVERT_INDEX (INTERVAL,ID) VALUES (";
+        update_sql += std::to_string(interval_by_sec);
+        update_sql += ",'";
+        update_sql += db_value;
+        update_sql += "');";
+    }
+    else {
+        std::string db_value = existing_value + ID + ",";
+        update_sql += "UPDATE INVERT_INDEX SET ID = '";
+        update_sql += db_value;
+        update_sql += "' WHERE INTERVAL = ";
+        update_sql += std::to_string(interval_by_sec);
+        update_sql += ";";
+    }
+    return update_sql;
+}
+
 int main() {
     // create 2 DB Connector, one for interval table and one for invert index table
     std::unique_ptr<DB_Connector> DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
@@ -24,6 +46,7 @@ int main() {
     // for each video in interval table
     for (pqxx::result::const_iterator c = R->begin(); c != R->end(); ++c) {
         std::vector<int> interval;
+        std::vector<int> dup_guard;
         std::string ID = c[0].as<std::string>();
         int fps = c[2].as<int>();
         std::string interval_str = c[3].as<std::string>();
@@ -34,19 +57,15 @@ int main() {
             if (interval_by_sec <= 3) {
                 continue;
             }
+            if (vector_contain(dup_guard, interval_by_sec)) {
+                continue;
+            }
             std::string locate_sql = "SELECT * FROM INVERT_INDEX WHERE interval = " + std::to_string(interval_by_sec);
             std::unique_ptr<pqxx::result>& query_result = DB_invert_index->performQuery(locate_sql);
-            if (query_result->empty()) { // interval not exists in invert index
-                std::string db_value = ID + ",";
-                std::string insert_sql = std::format("INSERT INTO INVERT_INDEX (INTERVAL,ID) VALUES ({},'{}');", interval_by_sec, db_value);
-                DB_invert_index->performQuery(insert_sql);
-            }
-            else { //interval exists in invert index
-                std::string db_value = query_result->begin()[1].as<std::string>();
-                db_value += ID + ",";
-                std::string insert_sql = std::format("UPDATE INVERT_INDEX SET ID = '{}' WHERE INTERVAL = {};", db_value, interval_by_sec);
-                DB_invert_index->performQuery(insert_sql);
-            }
+            std::string existing_value = query_result->empty() ? "" : query_result->begin()[1].as<std::string>();
+            std::string insert_sql = form_update_sql(ID, interval_by_sec, existing_value);
+            DB_invert_index->performQuery(insert_sql);
+            dup_guard.push_back(interval_by_sec);
         }
     }
     cout << "Operation done successfully" << endl;

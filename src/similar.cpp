@@ -62,7 +62,7 @@ void RadonTransform(cv::cuda::GpuMat& src,
 	_radon.download(dst);
 
 	dst.convertTo(dst, CV_32FC1);
-	dst /= dst.rows * dst.cols;
+	dst /= src.rows * src.cols;
 }
 #endif
 
@@ -110,7 +110,7 @@ void RadonTransform(cv::Mat& src,
 	_radon.copyTo(dst);
 
 	dst.convertTo(dst, CV_32FC1);
-	dst /= dst.rows * dst.cols;
+	dst /= src.rows * src.cols;
 }
 
 cv::Vec2i _path_back_trace(const cv::Mat& m, const cv::Mat& path_trace, const cv::Vec2i& path) {

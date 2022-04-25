@@ -14,5 +14,5 @@ inline std::filesystem::path index_path = "D:\\MUSCLE_VCD_2007";           // Pa
 inline int frame_difference_threshold = 1500;   // Threshold of treating two adjacent frames as different frames 
 inline int min_matched_interval = 3;            // Minimum value can be returned by inverval_comparison(). 
    							                    // If the value is too low, queries with too few intervals may be wrongly matched
-inline int min_matched_percentage = 30;         // Queries with matched intervals above this threshold will be considered duplicate
+inline int min_matched_percentage = 50;         // Queries with matched intervals above this threshold will be considered duplicate
 inline double interval_matching_epsilon = 0.5;  // difference smaller than epsilon, match found

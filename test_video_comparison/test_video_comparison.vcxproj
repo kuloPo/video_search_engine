@@ -74,7 +74,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -93,6 +93,7 @@
   <ItemGroup>
     <ClInclude Include="..\header\algo.h" />
     <ClInclude Include="..\header\common.h" />
+    <ClInclude Include="..\header\config.h" />
     <ClInclude Include="..\header\similar.h" />
     <ClInclude Include="..\header\utils.h" />
   </ItemGroup>
