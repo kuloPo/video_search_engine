@@ -1,5 +1,4 @@
 #include <iostream>
-#include <rapidjson/document.h>
 #include <fstream>
 
 #include "common.h"
