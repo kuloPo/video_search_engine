@@ -5,10 +5,7 @@
 #include "io.h"
 #include "common.h"
 
-std::mutex stdout_mutex;
-std::mutex db_mutex;
 std::unique_ptr<DB_Connector> DB;
-
 std::queue<std::filesystem::path> working_queue;
 std::mutex queue_mutex;
 

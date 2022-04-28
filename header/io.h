@@ -20,49 +20,19 @@ public:
         const std::string& h,
         const std::string& pswd,
         const std::string& db,
-        const std::string& p)
-        :user{ "user=" + u }, host{ " host=" + h }, password{ " password=" + pswd }, dbname{ " dbname=" + db }, port{ " port=" + p }
-    {
-        initConnection(conn, user, host, password, dbname, port);
-    }
+        const std::string& p);
 
-    ~DB_Connector() {
-        conn->close();
-    }
+    ~DB_Connector();
 
     void initConnection(std::unique_ptr<pqxx::connection>& c,
         const std::string& u,
         const std::string& h,
         const std::string& pswd,
         const std::string& db,
-        const std::string& port)
-    {
-        try {
-            conn = std::make_unique<pqxx::connection>(user + host + password + dbname + port);
-            std::cout << "Connected to " << conn->dbname() << '\n';
-        }
-        catch (const std::exception& e) {
-            std::cerr << e.what() << '\n';
-            exit(1);
-        }
-    }
+        const std::string& port);
 
-    std::unique_ptr<pqxx::result>& performQuery(const std::string& query)
-    {
-        try {
-            db_mutex.lock();
-            trans = std::make_unique<pqxx::work>(*conn, "trans");
-            res = std::make_unique<pqxx::result>(trans->exec(query));
-            trans->commit();
-            db_mutex.unlock();
-        }
-        catch (const std::exception& e) {
-            std::cerr << e.what() << '\n';
-            exit(1);
-        }
+    std::unique_ptr<pqxx::result>& performQuery(const std::string& query);
 
-        return res;
-    }
 private:
     std::unique_ptr<pqxx::connection> conn;
     std::unique_ptr<pqxx::work> trans;

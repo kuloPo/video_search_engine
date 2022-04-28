@@ -33,6 +33,3 @@ struct Key_Frame {
 };
 inline cv::Mat empty_frame;
 #endif
-
-extern std::mutex db_mutex;
-extern std::mutex stdout_mutex;
