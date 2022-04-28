@@ -4,6 +4,8 @@
 #include <vector>
 #include <filesystem>
 #include <regex>
+#include <stdio.h>
+#include <stdarg.h>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
@@ -48,9 +50,11 @@ public:
     std::unique_ptr<pqxx::result>& performQuery(const std::string& query)
     {
         try {
+            db_mutex.lock();
             trans = std::make_unique<pqxx::work>(*conn, "trans");
             res = std::make_unique<pqxx::result>(trans->exec(query));
             trans->commit();
+            db_mutex.unlock();
         }
         catch (const std::exception& e) {
             std::cerr << e.what() << '\n';
@@ -115,3 +119,5 @@ std::string form_insert_sql(
     const std::string& FILENAME,
     const int FPS,
     const std::string& INTERVAL);
+
+void safe_printf(const char* format, ...);

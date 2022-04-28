@@ -103,3 +103,14 @@ std::string form_insert_sql(
 	ret += "');";
 	return ret;
 }
+
+void safe_printf(const char* format, ...) {
+	va_list argptr;
+	va_start(argptr, format);
+
+	stdout_mutex.lock();
+	vprintf(format, argptr);
+	stdout_mutex.unlock();
+
+	va_end(argptr);
+}

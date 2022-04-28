@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <iostream>
+#include <mutex>
 #include <opencv2/opencv_modules.hpp>
 
 #ifdef HAVE_OPENCV_CUDACODEC
@@ -32,3 +33,6 @@ struct Key_Frame {
 };
 inline cv::Mat empty_frame;
 #endif
+
+extern std::mutex db_mutex;
+extern std::mutex stdout_mutex;
