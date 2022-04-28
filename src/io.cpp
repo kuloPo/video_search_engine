@@ -27,7 +27,6 @@ std::string write_interval(const std::vector<int>& interval, const std::filesyst
 	std::string interval_str = "";
 
 	picosha2::hash256_hex_string(filename.string(), ID);
-	std::filesystem::create_directory(index_path / filename);
 
 	// concatenate interva into string
 	for (int i : interval) {
