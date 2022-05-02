@@ -1,4 +1,5 @@
 #include <queue>
+#include <thread>
 
 #include "similar.h"
 #include "algo.h"
