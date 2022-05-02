@@ -92,7 +92,7 @@ void RadonTransform(cv::Mat& src,
 		(_col_num - _srcMat.rows) / 2,
 		_srcMat.cols, _srcMat.rows)));
 
-	cv::Mat _radon(_row_num, _col_num, CV_32SC1);
+	cv::Mat _radon(_row_num, _col_num, CV_32FC1);
 
 	parallel_for_(cv::Range(0, _row_num), [&](const cv::Range& range) {
 		for (int _row = range.start; _row < range.end; _row++) {
@@ -103,7 +103,7 @@ void RadonTransform(cv::Mat& src,
 			cv::warpAffine(_masked_src, _rotated_src, _r_matrix, _masked_src.size());
 			cv::Mat _col_mat = _radon.row(_row);
 			// make projection
-			cv::reduce(_rotated_src, _col_mat, 0, cv::REDUCE_SUM, CV_32SC1);
+			cv::reduce(_rotated_src, _col_mat, 0, cv::REDUCE_SUM, CV_32FC1);
 		}
 	});
 	cv::transpose(_radon, _radon);

@@ -11,6 +11,7 @@
 #endif
 
 #include "config.h"
+#include "debug.h"
 
 using std::cout;
 using std::endl;

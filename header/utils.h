@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <opencv2/core.hpp>
 
 /*
 @brief Merge all intervals that are less than one second. 
@@ -21,6 +22,14 @@ void interval_merge(const std::vector<int>& interval, const int fps, std::vector
 @param interval_sec Destination of the converted interval vector
 */
 void interval_to_sec(const std::vector<int>& interval, const int fps, std::vector<double>& interval_sec);
+
+double max(const cv::Mat& m);
+
+double min(const cv::Mat& m);
+
+double average(const cv::Mat& m);
+
+double sum(const cv::Mat& m);
 
 /*
 @brief Check if the element is inside a vector

@@ -1,7 +1,7 @@
 #include "algo.h"
 
 std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
-	cv::Mat first_radon, second_radon;
+	cv::Mat first_radon, second_radon, edge_frame, edge_frame_norm;
 #ifdef HAVE_OPENCV_CUDACODEC
 	cv::cuda::GpuMat first_frame, second_frame;
 	cv::Ptr<cv::cudacodec::VideoReader> cuda_reader = cv::cudacodec::createVideoReader(filename.string());
@@ -12,9 +12,13 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 	video_reader >> first_frame;
 #endif
 	frame_preprocessing(first_frame);
+	edge_detection(first_frame, edge_frame);
+
+	edge_frame.convertTo(edge_frame, CV_32FC1);
+	edge_frame_norm = edge_frame / sum(edge_frame);
 
 	//first_frame.download(first_frame_cpu);
-	RadonTransform(first_frame, first_radon, 45, 0, 180);
+	RadonTransform(edge_frame_norm, first_radon, 45, 0, 180);
 
 	std::vector<Key_Frame*> key_frames;
 	
@@ -36,20 +40,27 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 		if (second_frame.empty())
 			break;
 #endif
-		// frame preprocessing
-		frame_preprocessing(second_frame);
+		if (gpu_frame_count % 1 == 0) {
+			// frame preprocessing
+			frame_preprocessing(second_frame);
+			edge_detection(second_frame, edge_frame);
 
-		// calculate histogram and the distance between hist
-		RadonTransform(second_frame, second_radon, 45, 0, 180);
-		double d = radon_distance(first_radon, second_radon);
+			edge_frame.convertTo(edge_frame, CV_32FC1);
+			edge_frame_norm = edge_frame / sum(edge_frame);
+			edge_frame.convertTo(edge_frame, CV_8UC1);
 
-		// If delta is greater threshold, write the information into vector
-		if (d > frame_difference_threshold) {
-			add_key_frame(key_frames, d, gpu_frame_count, first_frame, second_frame);
+			// calculate histogram and the distance between hist
+			RadonTransform(edge_frame_norm, second_radon, 45, 0, 180);
+			double d = radon_distance(first_radon, second_radon);
+
+			// If delta is greater threshold, write the information into vector
+			if (d > frame_difference_threshold) {
+				add_key_frame(key_frames, d, gpu_frame_count, first_frame, second_frame);
+			}
+
+			first_frame = second_frame;
+			second_radon.copyTo(first_radon);
 		}
-
-		first_frame = second_frame;
-		first_radon = second_radon;
 
 		tm.stop();
 		gpu_times.push_back(tm.getTimeMilli());
@@ -97,7 +108,29 @@ void add_key_frame(std::vector<Key_Frame*>& key_frames, int delta, int frame_num
 
 void frame_preprocessing(cv::cuda::GpuMat& frame) {
 	cv::cuda::resize(frame, frame, cv::Size(128, 128));
-	cv::cuda::cvtColor(frame, frame, cv::COLOR_BGRA2GRAY);
+	if (frame.channels() == 4) {
+		cv::cuda::cvtColor(frame, frame, cv::COLOR_BGRA2GRAY);
+	}
+	else if (frame.channels() == 3) {
+		cv::cuda::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
+	}
+}
+
+void edge_detection(cv::cuda::GpuMat& frame, cv::Mat& edge_frame) {
+	frame.download(edge_frame);
+	cv::GaussianBlur(edge_frame, edge_frame, cv::Size(3, 3), 1, 1, cv::BORDER_DEFAULT);
+	cv::Mat sobel_x, sobel_y;
+	cv::Mat kernel_x = (cv::Mat_<double>(3, 3) << 1, 2, 1, 0, 0, 0, -1, -2, -1);
+	cv::Mat kernel_y = (cv::Mat_<double>(3, 3) << -1, 0, 1, -2, 0, 2, -1, 0, 1);
+	cv::filter2D(edge_frame, sobel_x, -1, kernel_x, cv::Point(-1, -1), 0, 4);
+	cv::filter2D(edge_frame, sobel_y, -1, kernel_y, cv::Point(-1, -1), 0, 4);
+	sobel_x.convertTo(sobel_x, CV_32FC1);
+	sobel_y.convertTo(sobel_y, CV_32FC1);
+	edge_frame.convertTo(edge_frame, CV_32FC1);
+	cv::pow(sobel_x, 2, sobel_x);
+	cv::pow(sobel_y, 2, sobel_y);
+	cv::sqrt((sobel_x + sobel_y), edge_frame);
+	edge_frame.convertTo(edge_frame, CV_8UC1);
 }
 
 #else
@@ -114,7 +147,28 @@ void add_key_frame(std::vector<Key_Frame*>& key_frames, int delta, int frame_num
 
 void frame_preprocessing(cv::Mat& frame) {
 	cv::resize(frame, frame, cv::Size(128, 128));
-	cv::cvtColor(frame, frame, cv::COLOR_BGRA2GRAY);
+	if (frame.channels() == 4) {
+		cv::cvtColor(frame, frame, cv::COLOR_BGRA2GRAY);
+	}
+	else if (frame.channels() == 3) {
+		cv::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
+	}
+}
+
+void edge_detection(cv::Mat& frame, cv::Mat& edge_frame) {
+	cv::GaussianBlur(frame, edge_frame, cv::Size(3, 3), 1, 1, cv::BORDER_DEFAULT);
+	cv::Mat sobel_x, sobel_y;
+	cv::Mat kernel_x = (cv::Mat_<double>(3, 3) << 1, 2, 1, 0, 0, 0, -1, -2, -1);
+	cv::Mat kernel_y = (cv::Mat_<double>(3, 3) << -1, 0, 1, -2, 0, 2, -1, 0, 1);
+	cv::filter2D(edge_frame, sobel_x, -1, kernel_x, cv::Point(-1, -1), 0, 4);
+	cv::filter2D(edge_frame, sobel_y, -1, kernel_y, cv::Point(-1, -1), 0, 4);
+	sobel_x.convertTo(sobel_x, CV_32FC1);
+	sobel_y.convertTo(sobel_y, CV_32FC1);
+	edge_frame.convertTo(edge_frame, CV_32FC1);
+	cv::pow(sobel_x, 2, sobel_x);
+	cv::pow(sobel_y, 2, sobel_y);
+	cv::sqrt((sobel_x + sobel_y), edge_frame);
+	edge_frame.convertTo(edge_frame, CV_8UC1);
 }
 
 #endif

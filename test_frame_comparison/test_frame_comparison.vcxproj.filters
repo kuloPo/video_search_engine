@@ -15,10 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="test_create_index.cpp">
+    <ClCompile Include="test_frame_comparison.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\algo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\similar.cpp">
@@ -27,24 +30,18 @@
     <ClCompile Include="..\src\utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\debug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\header\algo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\header\common.h">
+    <ClInclude Include="..\header\debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\header\similar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\header\utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\header\debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

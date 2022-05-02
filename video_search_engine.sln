@@ -21,6 +21,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_interval_comparison", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_radon_transform", "test_radon_transform\test_radon_transform.vcxproj", "{8EE9914B-BB13-4F28-A808-56D52F050BA2}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_frame_comparison", "test_frame_comparison\test_frame_comparison.vcxproj", "{E785438C-54F8-407E-80F0-FC39B84B4A1E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -59,6 +61,10 @@ Global
 		{8EE9914B-BB13-4F28-A808-56D52F050BA2}.Debug|x64.Build.0 = Debug|x64
 		{8EE9914B-BB13-4F28-A808-56D52F050BA2}.Release|x64.ActiveCfg = Release|x64
 		{8EE9914B-BB13-4F28-A808-56D52F050BA2}.Release|x64.Build.0 = Release|x64
+		{E785438C-54F8-407E-80F0-FC39B84B4A1E}.Debug|x64.ActiveCfg = Debug|x64
+		{E785438C-54F8-407E-80F0-FC39B84B4A1E}.Debug|x64.Build.0 = Debug|x64
+		{E785438C-54F8-407E-80F0-FC39B84B4A1E}.Release|x64.ActiveCfg = Release|x64
+		{E785438C-54F8-407E-80F0-FC39B84B4A1E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,6 +75,7 @@ Global
 		{9453BAA3-7854-46C1-9AB2-CD40225BB8D0} = {0058079C-6220-4A6A-95A5-B16E45266A07}
 		{8F92D01B-367F-4CF5-8EED-4A4DAA77AE53} = {0058079C-6220-4A6A-95A5-B16E45266A07}
 		{8EE9914B-BB13-4F28-A808-56D52F050BA2} = {0058079C-6220-4A6A-95A5-B16E45266A07}
+		{E785438C-54F8-407E-80F0-FC39B84B4A1E} = {0058079C-6220-4A6A-95A5-B16E45266A07}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1C120B20-06B1-4A00-8C7F-5166F39CAFBF}
