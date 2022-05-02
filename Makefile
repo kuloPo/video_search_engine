@@ -8,13 +8,17 @@ TARGET   = test_create_index test_interval_comparison test_radon_transform test_
 SRC_DIR  = ./src
 BIN_DIR  = ./bin
 
-LIBS     = -lstdc++ -lstdc++fs -lm -lpq -lpqxx -lopencv_core -lopencv_videoio -lopencv_imgproc -lopencv_ximgproc -lopencv_highgui -lopencv_imgcodecs -lopencv_shape
+LIBS     = -lstdc++ -lstdc++fs -lm -lpthread -lpq -lpqxx -lopencv_core -lopencv_videoio -lopencv_imgproc -lopencv_ximgproc -lopencv_highgui -lopencv_imgcodecs -lopencv_shape
 
 all: $(TARGET)
 
 test_create_index:
 	@mkdir -p $(BIN_DIR)
-	$(CC) -D DEBUG_CREATE_INDEX -std=c++17 -Iheader -I$(OPENCV_I) -I$(PQXX_I) -L$(OPENCV_L) -L$(PQXX_L) ./src/algo.cpp ./src/similar.cpp ./src/utils.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
+	$(CC) -D DEBUG_CREATE_INDEX -std=c++17 -Iheader -I$(OPENCV_I) -I$(PQXX_I) -L$(OPENCV_L) -L$(PQXX_L) ./src/algo.cpp ./src/debug.cpp ./src/similar.cpp ./src/utils.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
+
+test_frame_comparison:
+	@mkdir -p $(BIN_DIR)
+	$(CC) -std=c++17 -Iheader -I$(OPENCV_I) -I$(PQXX_I) -L$(OPENCV_L) -L$(PQXX_L) ./src/algo.cpp ./src/debug.cpp ./src/similar.cpp ./src/utils.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
 
 test_interval_comparison:
 	@mkdir -p $(BIN_DIR)
