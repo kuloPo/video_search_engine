@@ -1,5 +1,54 @@
 #include "io.h"
 
+std::mutex stdout_mutex;
+std::mutex db_mutex;
+
+DB_Connector::DB_Connector(const std::string& u,
+	const std::string& h,
+	const std::string& pswd,
+	const std::string& db,
+	const std::string& p)
+	:user{ "user=" + u }, host{ " host=" + h }, password{ " password=" + pswd }, dbname{ " dbname=" + db }, port{ " port=" + p }
+{
+	initConnection(conn, user, host, password, dbname, port);
+}
+
+DB_Connector::~DB_Connector() {
+	conn->close();
+}
+
+void DB_Connector::initConnection(std::unique_ptr<pqxx::connection>& c,
+	const std::string& u,
+	const std::string& h,
+	const std::string& pswd,
+	const std::string& db,
+	const std::string& port)
+{
+	try {
+		conn = std::make_unique<pqxx::connection>(user + host + password + dbname + port);
+		std::cout << "Connected to " << conn->dbname() << '\n';
+	}
+	catch (const std::exception& e) {
+		std::cerr << e.what() << '\n';
+		exit(1);
+	}
+}
+
+std::unique_ptr<pqxx::result>& DB_Connector::performQuery(const std::string& query) {
+	try {
+		db_mutex.lock();
+		trans = std::make_unique<pqxx::work>(*conn, "trans");
+		res = std::make_unique<pqxx::result>(trans->exec(query));
+		trans->commit();
+		db_mutex.unlock();
+	}
+	catch (const std::exception& e) {
+		std::cerr << e.what() << '\n';
+		exit(1);
+	}
+
+	return res;
+}
 
 void show_image(const std::vector<Key_Frame*>& key_frames) {
 	for (Key_Frame* key_frame : key_frames) {
@@ -27,7 +76,6 @@ std::string write_interval(const std::vector<int>& interval, const std::filesyst
 	std::string interval_str = "";
 
 	picosha2::hash256_hex_string(filename.string(), ID);
-	std::filesystem::create_directory(index_path / filename);
 
 	// concatenate interva into string
 	for (int i : interval) {
@@ -102,4 +150,15 @@ std::string form_insert_sql(
 	ret += INTERVAL;
 	ret += "');";
 	return ret;
+}
+
+void safe_printf(const char* format, ...) {
+	va_list argptr;
+	va_start(argptr, format);
+
+	stdout_mutex.lock();
+	vprintf(format, argptr);
+	stdout_mutex.unlock();
+
+	va_end(argptr);
 }
