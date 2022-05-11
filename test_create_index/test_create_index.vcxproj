@@ -94,6 +94,7 @@
   <ItemGroup>
     <ClInclude Include="..\header\algo.h" />
     <ClInclude Include="..\header\common.h" />
+    <ClInclude Include="..\header\config.h" />
     <ClInclude Include="..\header\debug.h" />
     <ClInclude Include="..\header\similar.h" />
     <ClInclude Include="..\header\utils.h" />

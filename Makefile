@@ -8,7 +8,7 @@ TARGET   = test_create_index test_interval_comparison test_radon_transform test_
 SRC_DIR  = ./src
 BIN_DIR  = ./bin
 
-LIBS     = -lstdc++ -lstdc++fs -lm -lpthread -lpq -lpqxx -lopencv_core -lopencv_videoio -lopencv_imgproc -lopencv_ximgproc -lopencv_highgui -lopencv_imgcodecs -lopencv_shape
+LIBS     = -lstdc++ -lstdc++fs -lm -lpthread -lpq -lpqxx -lopencv_core -lopencv_videoio -lopencv_imgproc -lopencv_ximgproc -lopencv_highgui -lopencv_imgcodecs -lopencv_shape -lopencv_plot
 
 all: $(TARGET)
 

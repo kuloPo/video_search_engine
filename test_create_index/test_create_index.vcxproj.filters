@@ -47,6 +47,9 @@
     <ClInclude Include="..\header\debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\header\config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\header\utils.tpp">

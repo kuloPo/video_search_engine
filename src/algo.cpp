@@ -1,7 +1,7 @@
 #include "algo.h"
 
 std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
-	cv::Mat first_radon, second_radon, edge_frame, edge_frame_norm;
+	cv::Mat first_radon, second_radon, edge_frame, edge_frame_norm ,edge_frame_prev;
 #ifdef HAVE_OPENCV_CUDACODEC
 	cv::cuda::GpuMat first_frame, second_frame;
 	cv::Ptr<cv::cudacodec::VideoReader> cuda_reader = cv::cudacodec::createVideoReader(filename.string());
@@ -40,14 +40,13 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 		if (second_frame.empty())
 			break;
 #endif
-		if (gpu_frame_count % 1 == 0) {
+		if (gpu_frame_count % 3 == 0) {
 			// frame preprocessing
 			frame_preprocessing(second_frame);
 			edge_detection(second_frame, edge_frame);
 
 			edge_frame.convertTo(edge_frame, CV_32FC1);
 			edge_frame_norm = edge_frame / sum(edge_frame);
-			edge_frame.convertTo(edge_frame, CV_8UC1);
 
 			// calculate histogram and the distance between hist
 			RadonTransform(edge_frame_norm, second_radon, 45, 0, 180);
