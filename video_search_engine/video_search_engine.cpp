@@ -75,6 +75,7 @@ void thread_invoker(int deviceID) {
 }
 
 int main() {
+	cv::setNumThreads(0);
 	DB = init_db();
 	
 	for (const auto& entry : std::filesystem::directory_iterator(video_path)) {
