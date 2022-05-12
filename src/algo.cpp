@@ -40,7 +40,7 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 		if (second_frame.empty())
 			break;
 #endif
-		if (gpu_frame_count % 3 == 0) {
+		if (gpu_frame_count % (jumped_frame + 1) == 0) {
 			// frame preprocessing
 			frame_preprocessing(second_frame);
 			edge_detection(second_frame, edge_frame);
