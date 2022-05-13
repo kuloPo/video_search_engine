@@ -40,9 +40,13 @@ cv::Vec2i Interval_Comparison::find_direct_match() {
 
 bool Interval_Comparison::expand(Direction direction) {
 	double sum1, sum2, increment;
+	int cnt = 0;
 	sum1 = sum2 = 0;
 	while (abs(sum1 - sum2) > 0.5 || sum1 == 0 && sum2 == 0) {
-		if (sum1 < sum2 || sum1 == 0 && sum2 == 0) {
+		if (cnt > 6) {
+			return false;
+		}
+		if (sum1 < sum2 || (sum1 == 0 && sum2 == 0)) {
 			increment = this->explore(this->interval1, this->matched1, this->main_p[0], direction);
 			if (increment == -1) {
 				return false;
@@ -58,6 +62,7 @@ bool Interval_Comparison::expand(Direction direction) {
 			sum2 += increment;
 			this->main_p[1] += direction;
 		}
+		cnt++;
 	}
 	this->mark(this->matched1, this->main_p[0], direction);
 	this->mark(this->matched2, this->main_p[1], direction);
