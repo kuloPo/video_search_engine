@@ -88,12 +88,12 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 	add_key_frame(key_frames, 0, gpu_frame_count, first_frame, empty_frame);
 	
 #if defined DEBUG_CREATE_INDEX || defined DEBUG_PERFORMANCE
-	if (!gpu_times.empty())
-	{
-		std::cout << std::endl << "Results:" << std::endl;
+	if (!gpu_times.empty())	{
 		std::sort(gpu_times.begin(), gpu_times.end());
-		double gpu_avg = std::accumulate(gpu_times.begin(), gpu_times.end(), 0.0) / gpu_times.size();
-		std::cout << "GPU : Avg : " << gpu_avg << " ms FPS : " << 1000.0 / gpu_avg << " Frames " << gpu_frame_count << std::endl;
+		double total_time = std::accumulate(gpu_times.begin(), gpu_times.end(), 0.0);
+		double gpu_avg = total_time / gpu_frame_count;
+		//std::cout << "GPU : Avg : " << gpu_avg << " ms FPS : " << 1000.0 / gpu_avg << " Frames " << gpu_frame_count << std::endl;
+		printf("%s %.2f %d\n", filename.filename().string().c_str(), total_time, gpu_frame_count);
 	}
 #endif // DEBUG_CREATE_INDEX
 	

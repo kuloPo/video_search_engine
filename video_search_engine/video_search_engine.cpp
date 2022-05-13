@@ -82,7 +82,7 @@ void thread_invoker(int deviceID) {
 		std::filesystem::path filename = working_queue.front();
 		working_queue.pop();
 		queue_mutex.unlock();
-		safe_printf("%s start. thread: %d\n", filename.string().c_str(), deviceID);
+		// safe_printf("%s start. thread: %d\n", filename.string().c_str(), deviceID);
 		build_index(filename);
 	}
 }
