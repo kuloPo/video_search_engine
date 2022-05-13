@@ -156,7 +156,7 @@ int main() {
 	DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
 
 	for (int i = 1; i <= 15; i++) {
-		std::filesystem::path filename = std::string("D:\\datasets\\ST1\\ST1Query") + std::to_string(i) + ".mpeg";
+		std::filesystem::path filename = std::string("D:\\datasets\\cropped\\ST1Query") + std::to_string(i) + ".mpeg";
 		query(filename);
 		cout << endl;
 	};
