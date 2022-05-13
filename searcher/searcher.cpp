@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 #include "common.h"
 #include "algo.h"
@@ -77,7 +78,6 @@ std::string invert_index_search_sql(const int interval_floor, const int interval
 }
 
 void query(const std::filesystem::path& filename) {
-	cout << filename << endl;
 	int input_fps = get_fps(filename);
 	// extract interval of the query video
 	std::vector<Key_Frame*> key_frames = std::move(create_index(filename));
@@ -124,9 +124,10 @@ void query(const std::filesystem::path& filename) {
 	std::cout << std::endl;
 
 	cout << search_range.size() << " videos in search range\n" << endl;
-#endif // DEBUG_SEARCHER
-
 	std::cout << "result from interval matching:" << std::endl;
+#endif // DEBUG_SEARCHER
+	
+	std::vector<std::pair<double, std::string>> result;
 
 	// try to match each video in search range
 	for (std::string ID : search_range) {
@@ -140,9 +141,15 @@ void query(const std::filesystem::path& filename) {
 		int similarity = interval_comparison(input_interval_sec, interval_db);
 		double matched_percentage = 100.0 * similarity / input_interval_sec.size();
 		if (matched_percentage >= min_matched_percentage) {
-			printf("%s, matched interval: %.f%%\n", filename.c_str(), matched_percentage);
+			result.push_back(std::pair<double, std::string>(matched_percentage, filename));
 		}
 	}
+
+	std::sort(result.begin(), result.end(), std::greater<std::pair<double, std::string>>());
+	if (result.size() == 0) {
+		result.push_back(std::pair<double, std::string>(0, "not_in_db"));
+	}
+	printf("%s %s %.2f%%\n", filename.filename().string().c_str(), result[0].second.c_str(), result[0].first);
 
 	tm.stop();
 	search_times.push_back(tm.getTimeMilli());
@@ -158,7 +165,6 @@ int main() {
 	for (int i = 1; i <= 15; i++) {
 		std::filesystem::path filename = std::string("D:\\datasets\\cropped\\ST1Query") + std::to_string(i) + ".mpeg";
 		query(filename);
-		cout << endl;
 	};
 
 	std::sort(search_times.begin(), search_times.end());
