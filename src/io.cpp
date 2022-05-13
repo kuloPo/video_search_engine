@@ -180,3 +180,7 @@ void safe_printf(const char* format, ...) {
 
 	va_end(argptr);
 }
+
+std::string delete_db_data() {
+	return "DELETE FROM interval; DELETE FROM invert_index;";
+}

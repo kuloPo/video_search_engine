@@ -109,3 +109,5 @@ std::string form_insert_sql(
     const std::string& INTERVAL);
 
 void safe_printf(const char* format, ...);
+
+std::string delete_db_data();

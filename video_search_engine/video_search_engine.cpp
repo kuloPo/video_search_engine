@@ -77,6 +77,9 @@ void thread_invoker(int deviceID) {
 int main() {
 	cv::setNumThreads(0);
 	DB = init_db();
+
+	std::string delete_sql = delete_db_data();
+	DB->performQuery(delete_sql);
 	
 	for (const auto& entry : std::filesystem::directory_iterator(video_path)) {
 		working_queue.push(entry.path().filename());
