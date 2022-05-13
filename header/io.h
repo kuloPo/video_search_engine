@@ -31,6 +31,7 @@
 
 #include "common.h"
 #include "picosha2.h"
+#include "ini.h"
 
 class DB_Connector {
 public:
@@ -111,3 +112,5 @@ std::string form_insert_sql(
 void safe_printf(const char* format, ...);
 
 std::string delete_db_data();
+
+void read_config(const std::filesystem::path& config_path);

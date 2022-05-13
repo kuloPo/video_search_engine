@@ -20,6 +20,19 @@
 #include "io.h"
 #include "utils.h"
 
+std::string DB_address;
+std::string DB_port;
+std::string DB_user;
+std::string DB_password;
+std::string DB_name;
+std::filesystem::path video_path;
+double frame_difference_threshold;
+int min_matched_interval;
+int jumped_frame;
+double interval_matching_epsilon;
+int min_matched_percentage;
+int thread_num;
+
 std::vector<int> read_csv(std::string s) {
     std::vector<int> interval;
     std::string delimiter = ",";
@@ -56,6 +69,7 @@ std::string form_update_sql(const std::string& ID, const double interval_by_sec,
 }
 
 int main() {
+    read_config("../rsrc/config.ini");
     // create 2 DB Connector, one for interval table and one for invert index table
     std::unique_ptr<DB_Connector> DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
     std::string search_sql = "SELECT * FROM INTERVAL";

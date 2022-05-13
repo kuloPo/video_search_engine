@@ -184,3 +184,26 @@ void safe_printf(const char* format, ...) {
 std::string delete_db_data() {
 	return "DELETE FROM interval; DELETE FROM invert_index;";
 }
+
+void read_config(const std::filesystem::path& config_path) {
+	mINI::INIFile file(config_path.string());
+	mINI::INIStructure ini;
+	file.read(ini);
+
+	DB_address = ini["Database"]["address"];
+	DB_port = ini["Database"]["port"];
+	DB_user = ini["Database"]["user"];
+	DB_password = ini["Database"]["password"];
+	DB_name = ini["Database"]["name"];
+
+	video_path = ini["Filepath"]["video_path"];
+
+	frame_difference_threshold = std::stod(ini["Search_Engine"]["frame_difference_threshold"]);
+	min_matched_interval = std::stoi(ini["Search_Engine"]["min_matched_interval"]);
+	jumped_frame = std::stoi(ini["Search_Engine"]["jumped_frame"]);
+
+	interval_matching_epsilon = std::stod(ini["Searcher"]["interval_matching_epsilon"]);
+	min_matched_percentage = std::stoi(ini["Searcher"]["min_matched_percentage"]);
+
+	thread_num = std::stoi(ini["Performance"]["thread_num"]);
+}

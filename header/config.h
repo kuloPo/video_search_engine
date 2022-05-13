@@ -20,20 +20,20 @@
 
 #include <string>
 
-inline std::string DB_address = "127.0.0.1";
-inline std::string DB_port = "5432";
-inline std::string DB_user = "postgres";
-inline std::string DB_password = "123456";
-inline std::string DB_name = "MUSCLE_VCD_2007";
+extern std::string DB_address;
+extern std::string DB_port;
+extern std::string DB_user;
+extern std::string DB_password;
+extern std::string DB_name;
 
-inline std::filesystem::path video_path = "D:\\datasets\\MUSCLE_VCD_2007"; // Path of the folder containing source videos
-inline std::filesystem::path index_path = "D:\\MUSCLE_VCD_2007";           // Path for storing key frame images
+extern std::filesystem::path video_path; // Path of the folder containing source videos
 
-inline double frame_difference_threshold = 0.00030;   // Threshold of treating two adjacent frames as different frames 
-inline int min_matched_interval = 3;            // Minimum value can be returned by inverval_comparison(). 
+extern double frame_difference_threshold;   // Threshold of treating two adjacent frames as different frames 
+extern int min_matched_interval;            // Minimum value can be returned by inverval_comparison(). 
    							                    // If the value is too low, queries with too few intervals may be wrongly matched
-inline int min_matched_percentage = 30;         // Queries with matched intervals above this threshold will be considered duplicate
-inline double interval_matching_epsilon = 0.5;  // difference smaller than epsilon, match found
-inline int jumped_frame = 9;
+extern int jumped_frame;
 
-inline int thread_num = 1;
+extern double interval_matching_epsilon;  // difference smaller than epsilon, match found
+extern int min_matched_percentage;         // Queries with matched intervals above this threshold will be considered duplicate
+
+extern int thread_num;

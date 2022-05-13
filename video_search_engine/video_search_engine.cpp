@@ -24,6 +24,19 @@
 #include "io.h"
 #include "common.h"
 
+std::string DB_address;
+std::string DB_port;
+std::string DB_user;
+std::string DB_password;
+std::string DB_name;
+std::filesystem::path video_path;
+double frame_difference_threshold;
+int min_matched_interval;
+int jumped_frame;
+double interval_matching_epsilon;
+int min_matched_percentage;
+int thread_num;
+
 std::unique_ptr<DB_Connector> DB;
 std::queue<std::filesystem::path> working_queue;
 std::mutex queue_mutex;
@@ -76,6 +89,7 @@ void thread_invoker(int deviceID) {
 
 int main() {
 	cv::setNumThreads(0);
+	read_config("../rsrc/config.ini");
 	DB = init_db();
 
 	std::string delete_sql = delete_db_data();

@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\header\common.h" />
+    <ClInclude Include="..\header\ini.h" />
     <ClInclude Include="..\header\io.h" />
     <ClInclude Include="..\header\utils.h" />
     <ClInclude Include="..\header\utils.tpp" />
