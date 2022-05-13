@@ -44,7 +44,6 @@ void DB_Connector::initConnection(std::unique_ptr<pqxx::connection>& c,
 {
 	try {
 		conn = std::make_unique<pqxx::connection>(user + host + password + dbname + port);
-		std::cout << "Connected to " << conn->dbname() << '\n';
 	}
 	catch (const std::exception& e) {
 		std::cerr << e.what() << '\n';
