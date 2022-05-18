@@ -18,6 +18,135 @@
 
 #include "similar.h"
 
+Interval_Comparison::Interval_Comparison(const std::vector<double>& interval1, const std::vector<double>& interval2) {
+	this->interval1 = interval1;
+	this->interval2 = interval2;
+	this->matched1 = std::vector<Status>(interval1.size(), Status::NOT_MATCHED);
+	this->matched2 = std::vector<Status>(interval2.size(), Status::NOT_MATCHED);
+	this->main_p = cv::Vec2i(0, 0);
+}
+
+cv::Vec2i Interval_Comparison::find_direct_match() {
+	for (int i = this->main_p[0]; i < this->interval1.size(); i++) {
+		for (int j = this->main_p[1]; j < this->interval2.size(); j++) {
+			if (abs(interval1[i] - interval2[j]) <= 0.5 &&
+				interval1[i] >= 10 and interval2[j] >= 10) {
+				return cv::Vec2i(i, j);
+			}
+		}
+	}
+	return cv::Vec2i(-1, -1);
+}
+
+bool Interval_Comparison::expand(Direction direction) {
+	double sum1, sum2, increment;
+	int cnt = 0;
+	sum1 = sum2 = 0;
+	while (abs(sum1 - sum2) > 0.5 || sum1 == 0 && sum2 == 0) {
+		if (cnt > 6) {
+			return false;
+		}
+		if (sum1 < sum2 || (sum1 == 0 && sum2 == 0)) {
+			increment = this->explore(this->interval1, this->matched1, this->main_p[0], direction);
+			if (increment == -1) {
+				return false;
+			}
+			sum1 += increment;
+			this->main_p[0] += direction;
+		}
+		else {
+			increment = this->explore(this->interval2, this->matched2, this->main_p[1], direction);
+			if (increment == -1) {
+				return false;
+			}
+			sum2 += increment;
+			this->main_p[1] += direction;
+		}
+		cnt++;
+	}
+	this->mark(this->matched1, this->main_p[0], direction);
+	this->mark(this->matched2, this->main_p[1], direction);
+	return true;
+}
+
+double Interval_Comparison::explore(
+	const std::vector<double>& interval,
+	const std::vector<Status>& matched,
+	int p, Direction direction) const
+{
+	if (direction == Direction::LEFT && p == 0) {
+		return -1;
+	}
+	if (direction == Direction::RIGHT && p == interval.size() - 1) {
+		return -1;
+	}
+	if (matched[p + direction] != Status::NOT_MATCHED) {
+		return -1;
+	}
+	return interval[p + direction];
+}
+
+void Interval_Comparison::mark(std::vector<Status>& matched, int p, Direction direction) {
+	matched[p] = Status::EXPAND_MATCH_BOUNDARY;
+	p += direction * -1;
+	while (matched[p] != Status::DIRECT_MATCH && matched[p] != Status::EXPAND_MATCH_BOUNDARY) {
+		matched[p] = Status::EXPAND_MATCH;
+		p += direction * -1;
+	}
+}
+
+void Interval_Comparison::compare() {
+	this->main_p = this->find_direct_match();
+	while (this->main_p != cv::Vec2i(-1, -1)) {
+		this->matched1[this->main_p[0]] = Status::DIRECT_MATCH;
+		this->matched2[this->main_p[1]] = Status::DIRECT_MATCH;
+		while (this->expand(Direction::LEFT));
+		while (this->matched1[this->main_p[0]] != Status::DIRECT_MATCH) {
+			this->main_p[0]++;
+		}
+		while (this->matched2[this->main_p[1]] != Status::DIRECT_MATCH) {
+			this->main_p[1]++;
+		}
+		while (this->expand(Direction::RIGHT));
+		while (this->matched1[this->main_p[0]] == Status::NOT_MATCHED) {
+			this->main_p[0]--;
+		}
+		while (this->matched2[this->main_p[1]] == Status::NOT_MATCHED) {
+			this->main_p[1]--;
+		}
+		this->main_p[0]++;
+		this->main_p[1]++;
+		this->main_p = this->find_direct_match();
+	}
+}
+
+int Interval_Comparison::get_matched() const {
+	int sum = 0;
+	for (Status i : this->matched1) {
+		if (i != Status::NOT_MATCHED) {
+			sum++;
+		}
+	}
+	return sum;
+}
+
+void Interval_Comparison::print_matched() const {
+	cout << "interval 1: \n";
+	for (int i = 0; i < this->interval1.size(); i++) {
+		double interval = this->interval1[i];
+		Status status = this->matched1[i];
+		printf("\x1B[%dm%.2f\033[0m ", 31 + status, interval);
+	}
+	cout << endl;
+	cout << "interval 2: \n";
+	for (int i = 0; i < this->interval2.size(); i++) {
+		double interval = this->interval2[i];
+		Status status = this->matched2[i];
+		printf("\x1B[%dm%.2f\033[0m ", 31 + status, interval);
+	}
+	cout << endl;
+}
+
 #ifdef HAVE_OPENCV_CUDACODEC
 cv::cuda::GpuMat get_histogram(const cv::cuda::GpuMat img) {
 	cv::cuda::GpuMat hist;
@@ -293,3 +422,12 @@ double radon_distance(const cv::Mat& radon1, const cv::Mat& radon2) {
 	}
 	return std::accumulate(integral_distance.begin(), integral_distance.end(), 0.0) / integral_distance.size();
 	}
+
+int interval_comparison_new(const std::vector<double>& v1, const std::vector<double>& v2) {
+	Interval_Comparison comp(v1, v2);
+	comp.compare();
+#ifdef DEBUG_INTERVAL_COMPARISON
+	comp.print_matched();
+#endif
+	return comp.get_matched();
+}

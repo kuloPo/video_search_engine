@@ -35,6 +35,43 @@
 #include "common.h"
 #include "utils.h"
 
+class Interval_Comparison {
+private:
+	enum Direction {
+		LEFT = -1,
+		RIGHT = 1,
+	};
+
+	enum Status {
+		NOT_MATCHED = 0,
+		DIRECT_MATCH = 1,
+		EXPAND_MATCH = 2,
+		EXPAND_MATCH_BOUNDARY = 3,
+	};
+
+public:
+	Interval_Comparison(const std::vector<double>& interval1, const std::vector<double>& interval2);
+	void compare();
+	int get_matched() const;
+	void print_matched() const;
+
+private:
+	cv::Vec2i find_direct_match();
+	bool expand(Direction direction);
+	double explore(
+		const std::vector<double>& interval,
+		const std::vector<Status>& matched,
+		int p, Direction direction) const;
+	void mark(std::vector<Status>& matched, int p, Direction direction);
+
+private:
+	std::vector<double> interval1;
+	std::vector<double> interval2;
+	std::vector<Status> matched1;
+	std::vector<Status> matched2;
+	cv::Vec2i main_p;
+};
+
 #ifdef HAVE_OPENCV_CUDACODEC
 /*
 @brief Calculate the histogram of a grayscale image
@@ -100,3 +137,5 @@ int interval_comparison(const std::vector<double>& v1, const std::vector<double>
 @return Radon space distance between the two iamges
 */
 double radon_distance(const cv::Mat& radon1, const cv::Mat& radon2);
+
+int interval_comparison_new(const std::vector<double>& v1, const std::vector<double>& v2);
