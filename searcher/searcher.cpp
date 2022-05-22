@@ -90,7 +90,7 @@ std::string invert_index_search_sql(const int interval_floor, const int interval
 	return ret;
 }
 
-void query(const std::filesystem::path& filename) {
+std::string query(const std::filesystem::path& filename) {
 	int input_fps = get_fps(filename);
 	// extract interval of the query video
 	std::vector<Key_Frame*> key_frames = std::move(create_index(filename));
@@ -171,7 +171,17 @@ void query(const std::filesystem::path& filename) {
 	if (result_new.size() == 0) {
 		result_new.push_back(std::pair<double, std::string>(0, "not_in_db"));
 	}
-	printf("%s %s %.2f%% %s %.2f%%\n", filename.filename().string().c_str(), result[0].second.c_str(), result[0].first, result_new[0].second.c_str(), result_new[0].first);
+	std::string search_result = "";
+	search_result += filename.filename().string();
+	search_result += " ";
+	search_result += result[0].second;
+	search_result += " ";
+	search_result += std::to_string(result[0].first);
+	search_result += "% ";
+	search_result += result_new[0].second;
+	search_result += " ";
+	search_result += std::to_string(result_new[0].first);
+	search_result += "%";
 
 	tm.stop();
 	search_times.push_back(tm.getTimeMilli());
@@ -179,16 +189,25 @@ void query(const std::filesystem::path& filename) {
 	for (Key_Frame* key_frame : key_frames) {
 		delete key_frame;
 	}
+
+	return search_result;
 }
 
 int main() {
 	read_config("../rsrc/config.ini");
 	DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
+	std::vector<std::string> search_result(15);
 
-	for (int i = 1; i <= 15; i++) {
-		std::filesystem::path filename = std::string("D:\\datasets\\cropped\\ST1Query") + std::to_string(i) + ".mpeg";
-		query(filename);
-	};
+	parallel_for_(cv::Range(1, 15), [&](const cv::Range& range) {
+		for (int i = range.start; i <= range.end; i++) {
+			std::filesystem::path filename = std::string("D:\\datasets\\cropped\\ST1Query") + std::to_string(i) + ".mpeg";
+			search_result[i - 1] = query(filename);
+		}
+	}, thread_num);
+
+	for (std::string result : search_result) {
+		cout << result << endl;
+	}
 
 	std::sort(search_times.begin(), search_times.end());
 	double time_avg = std::accumulate(search_times.begin(), search_times.end(), 0.0) / search_times.size();
