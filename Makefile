@@ -40,6 +40,14 @@ create_invert_index:
 	@mkdir -p $(BIN_DIR)
 	$(CC) -std=c++17 -Iheader -I$(OPENCV_I) -I$(PQXX_I) -L$(OPENCV_L) -L$(PQXX_L) ./src/io.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
 
+create_query_videos:
+	@mkdir -p $(BIN_DIR)
+	$(CC) -std=c++17 -Iheader -I$(OPENCV_I) -I$(PQXX_I) -L$(OPENCV_L) -L$(PQXX_L) ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
+
+demo_searcher:
+	@mkdir -p $(BIN_DIR)
+	$(CC) -D SHOW_PROGRESS -std=c++17 -Iheader -I$(OPENCV_I) -I$(PQXX_I) -L$(OPENCV_L) -L$(PQXX_L) ./src/algo.cpp ./src/similar.cpp ./src/utils.cpp ./src/io.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
+
 searcher:
 	@mkdir -p $(BIN_DIR)
 	$(CC) -std=c++17 -Iheader -I$(OPENCV_I) -I$(PQXX_I) -L$(OPENCV_L) -L$(PQXX_L) ./src/algo.cpp ./src/similar.cpp ./src/utils.cpp ./src/io.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
