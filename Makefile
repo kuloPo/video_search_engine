@@ -42,7 +42,7 @@ create_invert_index:
 
 create_query_videos:
 	@mkdir -p $(BIN_DIR)
-	$(CC) -std=c++17 -Iheader -I$(OPENCV_I) -I$(PQXX_I) -L$(OPENCV_L) -L$(PQXX_L) ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
+	$(CC) -std=c++17 -Iheader -I$(OPENCV_I) -I$(PQXX_I) -L$(OPENCV_L) -L$(PQXX_L) ./src/io.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
 
 demo_searcher:
 	@mkdir -p $(BIN_DIR)

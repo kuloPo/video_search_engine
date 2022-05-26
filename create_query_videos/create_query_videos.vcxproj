@@ -76,7 +76,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\io.cpp" />
     <ClCompile Include="create_query_videos.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\header\io.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

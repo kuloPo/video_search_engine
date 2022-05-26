@@ -19,6 +19,7 @@
 #include <iostream>
 #include <filesystem>
 #include <queue>
+#include <thread>
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
@@ -29,8 +30,16 @@
 #include <opencv2/videoio.hpp>
 #endif
 
+#include "io.h"
+
 using std::cout;
 using std::endl;
+
+int thread_num = 50;
+std::filesystem::path output_dir = "../output";
+
+std::queue<std::filesystem::path> working_queue;
+std::mutex queue_mutex;
 
 void add_flip(cv::Mat& frame) {
     cv::flip(frame, frame, 1);
@@ -60,7 +69,9 @@ void add_crop(cv::Mat& frame) {
     int h = frame.rows;
     int w = frame.cols;
     int cropped_amount = h * 0.1;
-    frame = frame(cv::Range(cropped_amount, h - cropped_amount), cv::Range(0, w));
+    cv::Mat cropped = frame(cv::Range(cropped_amount, h - cropped_amount), cv::Range(0, w));
+    frame = cv::Mat(frame.size(), frame.type(), cv::Scalar(0));
+    cropped.copyTo(frame(cv::Rect(0, cropped_amount, cropped.cols, cropped.rows)));
 }
 
 void add_logo(cv::Mat& frame) {
@@ -73,21 +84,55 @@ void add_logo(cv::Mat& frame) {
         10);
 }
 
-int main() {
-    //std::queue<std::filesystem::path> working_queue;
-    //std::filesystem::path video_path = "D:\\datasets\\MUSCLE_VCD_2007";
-    //for (const auto& entry : std::filesystem::directory_iterator(video_path)) {
-    //  working_queue.push(entry.path().filename());
-    //}
-    //while (working_queue.empty() == false) {
-    //  std::filesystem::path filename = working_queue.front();
-    //  working_queue.pop();
-    //  cout << filename << endl;
-    //}
-    std::filesystem::path filepath = "../rsrc/video.mp4";
+std::vector<void (*)(cv::Mat& frame)> filters{
+    add_flip, 
+    add_blur, 
+    add_resize, 
+    add_noise,
+    add_brightness,
+    add_crop,
+    add_logo,
+};
+
+std::vector<std::string> filters_name{
+    "flip",
+    "blur",
+    "resize",
+    "noise",
+    "brightness",
+    "crop",
+    "logo",
+};
+
+void apply_filters(cv::Mat& frame, const std::vector<int>& filter_ID) {
+    for (int i : filter_ID) {
+        (*filters[i])(frame);
+    }
+}
+
+std::vector<int> choose_filter() {
+    std::vector<int> filter_ID;
+    for (int i = 0; i < filters.size(); i++) {
+        if ((float)rand() / RAND_MAX < 0.2) {
+            filter_ID.push_back(i);
+            cout << i << endl;
+        }
+    }
+    return filter_ID;
+}
+
+void create_filter(const std::filesystem::path& video_path) {
+    std::filesystem::path output_path = output_dir / video_path.filename();
+    output_path.replace_extension("avi");
+    std::vector<int> filter_ID = choose_filter();
+    for (int i : filter_ID) {
+        cout << filters_name[i] << " ";
+    }
+    cout << endl;
+
     cv::Mat frame;
 #ifdef HAVE_OPENCV_CUDACODEC
-    cv::Ptr<cv::cudacodec::VideoReader> video_reader = cv::cudacodec::createVideoReader(filepath.string());
+    cv::Ptr<cv::cudacodec::VideoReader> video_reader = cv::cudacodec::createVideoReader(video_path.string());
     cv::cuda::GpuMat gpu_frame;
     video_reader->nextFrame(gpu_frame);
     gpu_frame.download(frame);
@@ -95,7 +140,7 @@ int main() {
     cv::VideoCapture video_reader(filepath.string());
     video_reader >> frame;
 #endif
-    cv::VideoWriter video_writer("outcpp.avi", cv::VideoWriter::fourcc('X', 'V', 'I', 'D'), 25, frame.size());
+    cv::VideoWriter video_writer(output_path.string(), cv::VideoWriter::fourcc('H', '2', '6', '4'), get_fps(video_path), frame.size());
     while (true) {
 #ifdef HAVE_OPENCV_CUDACODEC
         if (!video_reader->nextFrame(gpu_frame))
@@ -106,19 +151,40 @@ int main() {
         if (frame.empty())
             break;
 #endif
-
-        //add_flip(frame);
-        //add_blur(frame);
-        //add_resize(frame);
-        //add_noise(frame);
-        //add_brightness(frame);
-        //add_crop(frame);
-        //add_logo(frame);
-
-        //cv::imshow("", frame);
-        //cv::waitKey(25);
-        video_writer.write(frame);
+        apply_filters(frame, filter_ID);
+        video_writer << frame;
     }
     video_reader.release();
     video_writer.release();
+}
+
+void thread_invoker(int deviceID) {
+#ifdef HAVE_OPENCV_CUDACODEC
+    cv::cuda::setDevice(deviceID);
+#endif
+    while (working_queue.empty() == false) {
+        queue_mutex.lock();
+        std::filesystem::path filename = working_queue.front();
+        working_queue.pop();
+        queue_mutex.unlock();
+        create_filter(filename);
+    }
+}
+
+int main() {
+    srand(time(0));
+    std::filesystem::path video_path = "D:\\datasets\\MUSCLE_VCD_2007";
+    for (const auto& entry : std::filesystem::directory_iterator(video_path)) {
+      working_queue.push(entry.path().filename());
+    }
+
+    std::vector<std::thread> thread_list;
+    for (int i = 0; i < thread_num; i++) {
+        std::thread t(thread_invoker, i);
+        thread_list.push_back(std::move(t));
+    }
+
+    for (auto iter = thread_list.begin(); iter != thread_list.end(); iter++) {
+        iter->join();
+    }
 }
