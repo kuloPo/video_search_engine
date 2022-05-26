@@ -96,6 +96,8 @@ std::string write_interval(const std::vector<int>& interval, const std::filesyst
 */
 int get_fps(const std::filesystem::path& filename);
 
+int get_total_frames(const std::filesystem::path& filename);
+
 /*
 @brief Initialize database. Call when program starts. 
 */

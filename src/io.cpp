@@ -127,6 +127,14 @@ int get_fps(const std::filesystem::path& filename) {
 	return fps;
 }
 
+int get_total_frames(const std::filesystem::path& filename) {
+	int frames;
+	cv::VideoCapture cap(filename.string());
+	frames = cvRound(cap.get(cv::CAP_PROP_FRAME_COUNT));
+	cap.release();
+	return frames;
+}
+
 std::unique_ptr<DB_Connector> init_db() {
 	// Connect to database
 	std::unique_ptr<DB_Connector> DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
