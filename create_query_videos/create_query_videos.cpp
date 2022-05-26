@@ -93,7 +93,6 @@ int main() {
     gpu_frame.download(frame);
 #else
     cv::VideoCapture video_reader(filepath.string());
-    cv::Mat frame;
     video_reader >> frame;
 #endif
     cv::VideoWriter video_writer("outcpp.avi", cv::VideoWriter::fourcc('X', 'V', 'I', 'D'), 25, frame.size());
