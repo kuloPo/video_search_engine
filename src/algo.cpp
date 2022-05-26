@@ -58,6 +58,11 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 		if (second_frame.empty())
 			break;
 #endif
+#ifdef SHOW_PROGRESS
+		if (gpu_frame_count % 1000 == 0) {
+			cout << gpu_frame_count << " frames completed" << endl;
+		}
+#endif
 		if (gpu_frame_count % (jumped_frame + 1) == 0) {
 			// frame preprocessing
 			frame_preprocessing(second_frame);

@@ -23,6 +23,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_radon_transform", "tes
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_frame_comparison", "test_frame_comparison\test_frame_comparison.vcxproj", "{E785438C-54F8-407E-80F0-FC39B84B4A1E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "demo_searcher", "demo_searcher\demo_searcher.vcxproj", "{2B29B72A-D0A4-40D8-96C6-AF0C84E9965E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -65,6 +67,10 @@ Global
 		{E785438C-54F8-407E-80F0-FC39B84B4A1E}.Debug|x64.Build.0 = Debug|x64
 		{E785438C-54F8-407E-80F0-FC39B84B4A1E}.Release|x64.ActiveCfg = Release|x64
 		{E785438C-54F8-407E-80F0-FC39B84B4A1E}.Release|x64.Build.0 = Release|x64
+		{2B29B72A-D0A4-40D8-96C6-AF0C84E9965E}.Debug|x64.ActiveCfg = Debug|x64
+		{2B29B72A-D0A4-40D8-96C6-AF0C84E9965E}.Debug|x64.Build.0 = Debug|x64
+		{2B29B72A-D0A4-40D8-96C6-AF0C84E9965E}.Release|x64.ActiveCfg = Release|x64
+		{2B29B72A-D0A4-40D8-96C6-AF0C84E9965E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
