@@ -137,7 +137,7 @@ void create_filter(const std::filesystem::path& video_path) {
     video_reader->nextFrame(gpu_frame);
     gpu_frame.download(frame);
 #else
-    cv::VideoCapture video_reader(filepath.string());
+    cv::VideoCapture video_reader(video_path.string());
     video_reader >> frame;
 #endif
     cv::VideoWriter video_writer(output_path.string(), cv::VideoWriter::fourcc('H', '2', '6', '4'), get_fps(video_path), frame.size());
