@@ -25,19 +25,6 @@
 #include "utils.h"
 #include "io.h"
 
-std::string DB_address;
-std::string DB_port;
-std::string DB_user;
-std::string DB_password;
-std::string DB_name;
-std::filesystem::path video_path;
-double frame_difference_threshold;
-int min_matched_interval;
-int jumped_frame;
-double interval_matching_epsilon;
-int min_matched_percentage;
-int thread_num;
-
 std::unique_ptr<DB_Connector> DB;
 cv::TickMeter tm;
 std::vector<double> search_times;
