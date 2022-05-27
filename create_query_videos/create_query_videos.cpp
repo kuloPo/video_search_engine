@@ -174,8 +174,8 @@ void thread_invoker(int deviceID) {
 int main() {
     srand(time(0));
     std::filesystem::path video_path = "D:\\datasets\\MUSCLE_VCD_2007";
-    for (const auto& entry : std::filesystem::directory_iterator(video_path)) {
-      working_queue.push(entry.path().filename());
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(video_path)) {
+        working_queue.push(entry.path().filename());
     }
 
     std::vector<std::thread> thread_list;
