@@ -35,7 +35,6 @@
 using std::cout;
 using std::endl;
 
-int thread_num = 50;
 std::filesystem::path output_dir = "../output";
 
 std::queue<std::filesystem::path> working_queue;
@@ -57,7 +56,7 @@ void add_resize(cv::Mat& frame) {
 
 void add_noise(cv::Mat& frame) {
     cv::Mat noise(frame.size(), frame.type());
-    cv::randn(noise, 20, 10);
+    cv::randn(noise, 30, 15);
     frame += noise;
 }
 
@@ -84,6 +83,13 @@ void add_logo(cv::Mat& frame) {
         10);
 }
 
+void add_perspective(cv::Mat& frame) {
+    cv::Mat srcTri = (cv::Mat_<float>(4, 2) << 56, 65, 368, 52, 28, 387, 389, 390);
+    cv::Mat dstTri = (cv::Mat_<float>(4, 2) << 0, 0, 300, 0, 0, 300, 300, 300);
+    cv::Mat M = cv::getPerspectiveTransform(srcTri, dstTri);
+    cv::warpPerspective(frame, frame, M, frame.size(), cv::INTER_LINEAR, cv::BORDER_CONSTANT, cv::Scalar());
+}
+
 std::vector<void (*)(cv::Mat& frame)> filters{
     add_flip, 
     add_blur, 
@@ -92,6 +98,7 @@ std::vector<void (*)(cv::Mat& frame)> filters{
     add_brightness,
     add_crop,
     add_logo,
+    add_perspective,
 };
 
 std::vector<std::string> filters_name{
@@ -102,6 +109,7 @@ std::vector<std::string> filters_name{
     "brightness",
     "crop",
     "logo",
+    "perspective",
 };
 
 void apply_filters(cv::Mat& frame, const std::vector<int>& filter_ID) {
@@ -113,9 +121,8 @@ void apply_filters(cv::Mat& frame, const std::vector<int>& filter_ID) {
 std::vector<int> choose_filter() {
     std::vector<int> filter_ID;
     for (int i = 0; i < filters.size(); i++) {
-        if ((float)rand() / RAND_MAX < 0.2) {
+        if ((float)rand() / RAND_MAX < 0.3) {
             filter_ID.push_back(i);
-            cout << i << endl;
         }
     }
     return filter_ID;
@@ -125,10 +132,6 @@ void create_filter(const std::filesystem::path& video_path) {
     std::filesystem::path output_path = output_dir / video_path.filename();
     output_path.replace_extension("avi");
     std::vector<int> filter_ID = choose_filter();
-    for (int i : filter_ID) {
-        cout << filters_name[i] << " ";
-    }
-    cout << endl;
 
     cv::Mat frame;
 #ifdef HAVE_OPENCV_CUDACODEC
@@ -140,7 +143,7 @@ void create_filter(const std::filesystem::path& video_path) {
     cv::VideoCapture video_reader(video_path.string());
     video_reader >> frame;
 #endif
-    cv::VideoWriter video_writer(output_path.string(), cv::VideoWriter::fourcc('H', '2', '6', '4'), get_fps(video_path), frame.size());
+    cv::VideoWriter video_writer(output_path.string(), cv::VideoWriter::fourcc('M', 'P', 'E', 'G'), get_fps(video_path), frame.size());
     while (true) {
 #ifdef HAVE_OPENCV_CUDACODEC
         if (!video_reader->nextFrame(gpu_frame))
@@ -173,9 +176,11 @@ void thread_invoker(int deviceID) {
 
 int main() {
     srand(time(0));
+    cv::setNumThreads(0);
+    read_config("../rsrc/config.ini");
     std::filesystem::path video_path = "D:\\datasets\\MUSCLE_VCD_2007";
     for (const auto& entry : std::filesystem::recursive_directory_iterator(video_path)) {
-        working_queue.push(entry.path().filename());
+        working_queue.push(entry.path());
     }
 
     std::vector<std::thread> thread_list;
