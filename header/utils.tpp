@@ -50,3 +50,9 @@ template <typename T> int argmax_3(T x, T y, T z) {
 	}
 	return index;
 }
+
+template <typename T> T vector_median(std::vector<T>& v) {
+	int n = v.size();
+	std::nth_element(v.begin(), v.begin() + n / 2, v.end());
+	return v[n / 2];
+}

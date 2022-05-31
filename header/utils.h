@@ -73,4 +73,6 @@ template <typename T> T max_3(T x, T y, T z);
 @return 0, 1, or 2
 */
 template <typename T> int argmax_3(T x, T y, T z);
+
+template <typename T> T vector_median(std::vector<T>& v);
 #include "utils.tpp"
