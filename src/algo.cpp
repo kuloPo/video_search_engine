@@ -19,6 +19,7 @@
 #include "algo.h"
 
 std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
+	cv::Rect bounding_box = find_bounding_box(filename);
 	cv::Mat first_radon, second_radon, edge_frame, edge_frame_norm ,edge_frame_prev;
 #ifdef HAVE_OPENCV_CUDACODEC
 	cv::cuda::GpuMat first_frame, second_frame;
@@ -29,6 +30,9 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 	cv::VideoCapture video_reader(filename.string());
 	video_reader >> first_frame;
 #endif
+	if (bounding_box != cv::Rect()) {
+		first_frame = first_frame(bounding_box);
+	}
 	frame_preprocessing(first_frame);
 	edge_detection(first_frame, edge_frame);
 
@@ -64,6 +68,9 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
 		}
 #endif
 		if (gpu_frame_count % (jumped_frame + 1) == 0) {
+			if (bounding_box != cv::Rect()) {
+				second_frame = second_frame(bounding_box);
+			}
 			// frame preprocessing
 			frame_preprocessing(second_frame);
 			edge_detection(second_frame, edge_frame);
@@ -114,6 +121,55 @@ void calc_interval(const std::vector<Key_Frame*>& key_frames, std::vector<int>& 
 		interval.push_back(key_frame->frame_num - last_frame);
 		last_frame = key_frame->frame_num;
 	}
+}
+
+cv::Rect find_bounding_box(const std::filesystem::path& video_path) {
+	cv::Mat frame;
+	int gpu_frame_count = 0;
+	cv::Rect bounding_box, tmp_box;
+	std::vector<int> x, y, w, h;
+#ifdef HAVE_OPENCV_CUDACODEC
+	cv::cuda::GpuMat gpu_frame;
+	cv::Ptr<cv::cudacodec::VideoReader> cuda_reader = cv::cudacodec::createVideoReader(video_path.string());
+	cuda_reader->nextFrame(gpu_frame);
+	gpu_frame.download(frame);
+#else
+	cv::VideoCapture video_reader(filename.string());
+	video_reader >> frame;
+#endif
+	cv::Size raw_size = frame.size();
+	while (true) {
+#ifdef HAVE_OPENCV_CUDACODEC
+		if (!cuda_reader->nextFrame(gpu_frame))
+			break;
+		cv::cuda::cvtColor(gpu_frame, gpu_frame, cv::COLOR_BGRA2GRAY);
+		gpu_frame.download(frame);
+#else 
+		video_reader >> frame;
+		cv::cvtColor(frame, frame, cv::COLOR_BGRA2GRAY);
+		if (frame.empty())
+			break;
+#endif
+		cv::threshold(frame, frame, 40, 255, cv::THRESH_BINARY);
+		tmp_box = cv::boundingRect(frame);
+		x.push_back(tmp_box.x);
+		y.push_back(tmp_box.y);
+		w.push_back(tmp_box.width);
+		h.push_back(tmp_box.height);
+		gpu_frame_count++;
+		if (gpu_frame_count == 1000) {
+			break;
+		}
+	}
+	int width = vector_median(w);
+	int height = vector_median(h);
+	if (1.0 * width / raw_size.width >= 0.95 && 1.0 * height / raw_size.height) {
+		return cv::Rect();
+	}
+	return cv::Rect(
+		vector_median(x),
+		vector_median(y),
+		width, height);
 }
 
 #ifdef HAVE_OPENCV_CUDACODEC

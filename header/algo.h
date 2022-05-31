@@ -33,6 +33,7 @@
 
 #include "common.h"
 #include "similar.h"
+#include "utils.h"
 
 /*
 @brief This function calculates the position of key frames of the given video
@@ -54,6 +55,8 @@ given its vector of Key_Frame.
 @param interval Destination of the interval vector
 */
 void calc_interval(const std::vector<Key_Frame*>& key_frames, std::vector<int>& interval);
+
+cv::Rect find_bounding_box(const std::filesystem::path& video_path);
 
 #ifdef HAVE_OPENCV_CUDACODEC
 
