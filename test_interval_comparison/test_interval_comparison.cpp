@@ -20,10 +20,13 @@
 
 #include "similar.h"
 
+int min_matched_interval = 3;
+double interval_matching_epsilon = 0.5;
+
 int main() {
-    std::vector<double> interval_sec_1 = { 1,2,3,4,2.5,2.5,6 };
-    std::vector<double> interval_sec_2 = { 1,2,1.5,1.5,4,5,6 };
-    int similarity = interval_comparison(interval_sec_1, interval_sec_2);
+    std::vector<double> interval_sec_1 = { 10,20,30,40,25,25,60 };
+    std::vector<double> interval_sec_2 = { 10,20,15,15,40,50,60 };
+    int similarity = interval_comparison_new(interval_sec_1, interval_sec_2);
     std::cout << "similarity: " << similarity << std::endl;
     return 0;
 }
