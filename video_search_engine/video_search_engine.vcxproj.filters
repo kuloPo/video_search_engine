@@ -61,8 +61,5 @@
     <None Include="..\header\utils.tpp">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="..\rsrc\config.ini">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

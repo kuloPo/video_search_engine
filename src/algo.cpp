@@ -146,9 +146,9 @@ cv::Rect find_bounding_box(const std::filesystem::path& video_path) {
 		gpu_frame.download(frame);
 #else 
 		video_reader >> frame;
+		cv::cvtColor(frame, frame, cv::COLOR_BGRA2GRAY);
 		if (frame.empty())
 			break;
-		cv::cvtColor(frame, frame, cv::COLOR_BGRA2GRAY);
 #endif
 		cv::threshold(frame, frame, 40, 255, cv::THRESH_BINARY);
 		tmp_box = cv::boundingRect(frame);

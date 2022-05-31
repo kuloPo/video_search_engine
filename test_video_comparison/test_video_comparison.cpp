@@ -24,14 +24,9 @@
 #include "similar.h"
 #include "utils.h"
 
-int min_matched_interval = 3;
-double interval_matching_epsilon = 0.5;
-int jumped_frame = 9;
-double frame_difference_threshold = 0.00030;
-
 int main() {
 	std::filesystem::path filepath_1 = "../rsrc/video.mp4";
-	std::filesystem::path filepath_2 = "../rsrc/out.avi";
+	std::filesystem::path filepath_2 = "../rsrc/video_flip.mp4";
 
 	std::vector<Key_Frame*> key_frames_1 = std::move(create_index(filepath_1));
 	std::vector<Key_Frame*> key_frames_2 = std::move(create_index(filepath_2));
