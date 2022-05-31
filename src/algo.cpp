@@ -134,7 +134,7 @@ cv::Rect find_bounding_box(const std::filesystem::path& video_path) {
 	cuda_reader->nextFrame(gpu_frame);
 	gpu_frame.download(frame);
 #else
-	cv::VideoCapture video_reader(filename.string());
+	cv::VideoCapture video_reader(video_path.string());
 	video_reader >> frame;
 #endif
 	cv::Size raw_size = frame.size();
