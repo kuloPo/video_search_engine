@@ -20,6 +20,8 @@
 #include <filesystem>
 #include <queue>
 #include <thread>
+#include <fstream>
+#include <mutex>
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
@@ -38,7 +40,8 @@ using std::endl;
 std::filesystem::path output_dir = "../output";
 
 std::queue<std::filesystem::path> working_queue;
-std::mutex queue_mutex;
+std::mutex queue_mutex, f_mutex;
+std::ofstream fd;
 
 void add_flip(cv::Mat& frame) {
     cv::flip(frame, frame, 1);
@@ -132,6 +135,16 @@ void create_filter(const std::filesystem::path& video_path) {
     std::filesystem::path output_path = output_dir / video_path.filename();
     output_path.replace_extension("avi");
     std::vector<int> filter_ID = choose_filter();
+    f_mutex.lock();
+    cout << video_path.filename().string() << " ";
+    fd << video_path.filename().string() << " ";
+    for (int ID : filter_ID) {
+        cout << filters_name[ID] << " ";
+        fd << filters_name[ID] << " ";
+    }
+    cout << endl;
+    fd << endl;
+    f_mutex.unlock();
 
     cv::Mat frame;
 #ifdef HAVE_OPENCV_CUDACODEC
@@ -178,6 +191,9 @@ int main() {
     srand(time(0));
     cv::setNumThreads(0);
     read_config("../rsrc/config.ini");
+    std::filesystem::path log_path = "./ground_truth_" + std::to_string(time(0)) + ".log";
+    fd.open(log_path, std::ios::in | std::ios::trunc);
+
     std::filesystem::path video_path = "D:\\datasets\\MUSCLE_VCD_2007";
     for (const auto& entry : std::filesystem::recursive_directory_iterator(video_path)) {
         working_queue.push(entry.path());
@@ -192,4 +208,5 @@ int main() {
     for (auto iter = thread_list.begin(); iter != thread_list.end(); iter++) {
         iter->join();
     }
+    fd.close();
 }
