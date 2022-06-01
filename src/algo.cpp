@@ -161,15 +161,14 @@ cv::Rect find_bounding_box(const std::filesystem::path& video_path) {
 			break;
 		}
 	}
-	int width = vector_median(w);
-	int height = vector_median(h);
+	int p_x = vector_median(x);
+	int p_y = vector_median(y);
+	int width = std::min(vector_median(w), raw_size.width - p_x);
+	int height = std::min(vector_median(h), raw_size.height - p_y);
 	if (1.0 * width / raw_size.width >= 0.95 && 1.0 * height / raw_size.height) {
 		return cv::Rect();
 	}
-	return cv::Rect(
-		vector_median(x),
-		vector_median(y),
-		width, height);
+	return cv::Rect(p_x, p_y, width, height);
 }
 
 #ifdef HAVE_OPENCV_CUDACODEC
