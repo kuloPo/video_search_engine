@@ -127,7 +127,8 @@ std::string query(const std::filesystem::path& filename) {
 	std::cout << "result from interval matching:" << std::endl;
 #endif // DEBUG_SEARCHER
 	
-	std::vector<std::pair<double, std::string>> result, result_new;
+	std::vector<std::pair<double, std::string>> result;
+	//std::vector<std::pair<double, std::string>> result_new;
 
 	// try to match each video in search range
 	for (std::string ID : search_range) {
@@ -143,31 +144,31 @@ std::string query(const std::filesystem::path& filename) {
 		if (matched_percentage >= min_matched_percentage) {
 			result.push_back(std::pair<double, std::string>(matched_percentage, filename));
 		}
-		int similarity_new = interval_comparison_new(input_interval_sec, interval_db);
-		double matched_percentage_new = 100.0 * similarity_new / input_interval_sec.size();
-		if (matched_percentage_new >= min_matched_percentage) {
-			result_new.push_back(std::pair<double, std::string>(matched_percentage_new, filename));
-		}
+		//int similarity_new = interval_comparison_new(input_interval_sec, interval_db);
+		//double matched_percentage_new = 100.0 * similarity_new / input_interval_sec.size();
+		//if (matched_percentage_new >= min_matched_percentage) {
+		//	result_new.push_back(std::pair<double, std::string>(matched_percentage_new, filename));
+		//}
 	}
 
 	std::sort(result.begin(), result.end(), std::greater<std::pair<double, std::string>>());
 	if (result.size() == 0) {
 		result.push_back(std::pair<double, std::string>(0, "not_in_db"));
 	}
-	std::sort(result_new.begin(), result_new.end(), std::greater<std::pair<double, std::string>>());
-	if (result_new.size() == 0) {
-		result_new.push_back(std::pair<double, std::string>(0, "not_in_db"));
-	}
+	//std::sort(result_new.begin(), result_new.end(), std::greater<std::pair<double, std::string>>());
+	//if (result_new.size() == 0) {
+	//	result_new.push_back(std::pair<double, std::string>(0, "not_in_db"));
+	//}
 	std::string search_result = "";
 	search_result += filename.filename().string();
 	search_result += " ";
 	search_result += result[0].second;
 	search_result += " ";
 	search_result += std::to_string(result[0].first);
-	search_result += "% ";
-	search_result += result_new[0].second;
-	search_result += " ";
-	search_result += std::to_string(result_new[0].first);
+	//search_result += "% ";
+	//search_result += result_new[0].second;
+	//search_result += " ";
+	//search_result += std::to_string(result_new[0].first);
 	search_result += "%";
 
 	tm.stop();
@@ -187,7 +188,7 @@ int main() {
 
 	parallel_for_(cv::Range(1, 15), [&](const cv::Range& range) {
 		for (int i = range.start; i <= range.end; i++) {
-			std::filesystem::path filename = std::string("D:\\datasets\\cropped\\ST1Query") + std::to_string(i) + ".mpeg";
+			std::filesystem::path filename = std::string("D:\\datasets\\ST1\\ST1Query") + std::to_string(i) + ".mpeg";
 			search_result[i - 1] = query(filename);
 		}
 	}, thread_num);
@@ -196,8 +197,8 @@ int main() {
 		cout << result << endl;
 	}
 
-	std::sort(search_times.begin(), search_times.end());
-	double time_avg = std::accumulate(search_times.begin(), search_times.end(), 0.0) / search_times.size();
+	//std::sort(search_times.begin(), search_times.end());
+	//double time_avg = std::accumulate(search_times.begin(), search_times.end(), 0.0) / search_times.size();
 	//printf("Average search time: %.f ms\n", time_avg);
 
 	return 0;
