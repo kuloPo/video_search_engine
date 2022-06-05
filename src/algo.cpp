@@ -150,24 +150,24 @@ cv::Rect find_bounding_box(const std::filesystem::path& video_path) {
 			break;
 		cv::cvtColor(frame, frame, cv::COLOR_BGRA2GRAY);
 #endif
-		cv::threshold(frame, frame, 40, 255, cv::THRESH_BINARY);
+		cv::threshold(frame, frame, 30, 255, cv::THRESH_BINARY);
 		tmp_box = cv::boundingRect(frame);
 		x.push_back(tmp_box.x);
 		y.push_back(tmp_box.y);
 		w.push_back(tmp_box.width);
 		h.push_back(tmp_box.height);
 		gpu_frame_count++;
-		if (gpu_frame_count == 1000) {
-			break;
-		}
+		//if (gpu_frame_count == 1000) {
+		//	break;
+		//}
 	}
 	int p_x = vector_median(x);
 	int p_y = vector_median(y);
 	int width = std::min(vector_median(w), raw_size.width - p_x);
 	int height = std::min(vector_median(h), raw_size.height - p_y);
-	if (1.0 * width / raw_size.width >= 0.95 && 1.0 * height / raw_size.height) {
-		return cv::Rect();
-	}
+	//if (1.0 * width / raw_size.width >= 0.95 && 1.0 * height / raw_size.height) {
+	//	return cv::Rect();
+	//}
 	return cv::Rect(p_x, p_y, width, height);
 }
 
