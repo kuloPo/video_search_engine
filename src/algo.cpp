@@ -157,9 +157,9 @@ cv::Rect find_bounding_box(const std::filesystem::path& video_path) {
 		w.push_back(tmp_box.width);
 		h.push_back(tmp_box.height);
 		gpu_frame_count++;
-		//if (gpu_frame_count == 1000) {
-		//	break;
-		//}
+		if (gpu_frame_count == 1000) {
+			break;
+		}
 	}
 	int p_x = vector_median(x);
 	int p_y = vector_median(y);
