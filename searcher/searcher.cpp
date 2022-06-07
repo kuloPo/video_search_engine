@@ -80,7 +80,7 @@ std::string invert_index_search_sql(const int interval_floor, const int interval
 std::string query(const std::filesystem::path& filename) {
 	int input_fps = get_fps(filename);
 	// extract interval of the query video
-	std::vector<Key_Frame*> key_frames = std::move(create_index(filename));
+	std::vector<Key_Frame*> key_frames = std::move(create_index(filename, MODE::SEARCHER));
 
 	std::vector<int> input_interval, interval_merged;
 	std::vector<double> input_interval_sec;
@@ -196,6 +196,9 @@ int main() {
 	for (std::string result : search_result) {
 		cout << result << endl;
 	}
+
+	//std::filesystem::path filename = std::string("D:\\datasets\\ST1\\ST1Query10.mpeg");
+	//cout << query(filename) << endl;
 
 	//std::sort(search_times.begin(), search_times.end());
 	//double time_avg = std::accumulate(search_times.begin(), search_times.end(), 0.0) / search_times.size();

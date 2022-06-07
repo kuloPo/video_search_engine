@@ -40,7 +40,7 @@ void build_index(std::filesystem::path filename) {
 	}
 
 	// extract key frames
-	std::vector<Key_Frame*> key_frames = std::move(create_index(video_path / filename));
+	std::vector<Key_Frame*> key_frames = std::move(create_index(video_path / filename, MODE::INDEXER));
 	// get interval
 	int fps = get_fps(video_path / filename);
 	std::vector<int> interval, interval_merged;
