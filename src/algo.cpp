@@ -18,8 +18,8 @@
 
 #include "algo.h"
 
-std::vector<Key_Frame*> create_index(const std::filesystem::path& filename) {
-	cv::Rect bounding_box = find_bounding_box(filename);
+std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, const MODE mode) {
+	cv::Rect bounding_box = mode == MODE::SEARCHER ? find_bounding_box(filename) : cv::Rect();
 	cv::Mat first_radon, second_radon, edge_frame, edge_frame_norm ,edge_frame_prev;
 #ifdef HAVE_OPENCV_CUDACODEC
 	cv::cuda::GpuMat first_frame, second_frame;
