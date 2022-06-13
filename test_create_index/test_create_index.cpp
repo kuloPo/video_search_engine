@@ -23,10 +23,12 @@
 #include "common.h"
 #include "similar.h"
 #include "utils.h"
+#include "io.h"
 
 #include <vector>
 
 int main() {
+	read_config();
 	std::filesystem::path filepath = "../rsrc/video.mp4";
 	std::vector<Key_Frame*> key_frames = std::move(create_index(filepath));
 	for (Key_Frame* key_frame : key_frames) {

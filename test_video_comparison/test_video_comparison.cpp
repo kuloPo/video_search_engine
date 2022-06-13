@@ -23,8 +23,11 @@
 #include "common.h"
 #include "similar.h"
 #include "utils.h"
+#include "io.h"
 
 int main() {
+	read_config();
+
 	std::filesystem::path filepath_1 = "../rsrc/video.mp4";
 	std::filesystem::path filepath_2 = "../rsrc/video_flip.mp4";
 

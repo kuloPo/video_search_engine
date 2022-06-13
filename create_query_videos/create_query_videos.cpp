@@ -190,7 +190,7 @@ void thread_invoker(int deviceID) {
 int main() {
     srand(time(0));
     cv::setNumThreads(0);
-    read_config("../rsrc/config.ini");
+    read_config();
     std::filesystem::path log_path = "./ground_truth_" + std::to_string(time(0)) + ".log";
     fd.open(log_path, std::ios::in | std::ios::trunc);
 

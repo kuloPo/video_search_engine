@@ -18,8 +18,10 @@
 
 #include "similar.h"
 #include "algo.h"
+#include "io.h"
 
 int main() {
+	read_config();
 	cv::Mat img1 = cv::imread("1.png");
 	cv::Mat img2 = cv::imread("2.png");
 	cv::Mat radon1, edge_frame1, radon2, edge_frame2;

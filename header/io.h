@@ -115,4 +115,4 @@ void safe_printf(const char* format, ...);
 
 std::string delete_db_data();
 
-void read_config(const std::filesystem::path& config_path);
+void read_config();

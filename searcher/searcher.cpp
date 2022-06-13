@@ -182,7 +182,7 @@ std::string query(const std::filesystem::path& filename) {
 }
 
 int main() {
-	read_config("../rsrc/config.ini");
+	read_config();
 	DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
 	std::vector<std::string> search_result(15);
 
@@ -196,9 +196,6 @@ int main() {
 	for (std::string result : search_result) {
 		cout << result << endl;
 	}
-
-	//std::filesystem::path filename = std::string("D:\\datasets\\ST1\\ST1Query10.mpeg");
-	//cout << query(filename) << endl;
 
 	//std::sort(search_times.begin(), search_times.end());
 	//double time_avg = std::accumulate(search_times.begin(), search_times.end(), 0.0) / search_times.size();

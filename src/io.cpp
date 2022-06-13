@@ -205,7 +205,18 @@ std::string delete_db_data() {
 	return "DELETE FROM interval; DELETE FROM invert_index;";
 }
 
-void read_config(const std::filesystem::path& config_path) {
+void read_config() {
+	std::filesystem::path config_path;
+	if (std::filesystem::exists("../rsrc/config.ini")) {
+		config_path = "../rsrc/config.ini";
+	}
+	else if (std::filesystem::exists("./rsrc/config.ini")) {
+		config_path = "./rsrc/config.ini";
+	}
+	else {
+		throw "config file not exists";
+	}
+
 	mINI::INIFile file(config_path.string());
 	mINI::INIStructure ini;
 	file.read(ini);

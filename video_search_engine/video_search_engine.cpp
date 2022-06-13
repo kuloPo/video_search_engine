@@ -76,7 +76,7 @@ void thread_invoker(int deviceID) {
 
 int main() {
 	cv::setNumThreads(0);
-	read_config("../rsrc/config.ini");
+	read_config();
 	DB = init_db();
 
 	std::string delete_sql = delete_db_data();

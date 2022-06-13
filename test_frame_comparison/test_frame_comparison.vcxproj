@@ -84,6 +84,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\algo.cpp" />
     <ClCompile Include="..\src\debug.cpp" />
+    <ClCompile Include="..\src\io.cpp" />
     <ClCompile Include="..\src\similar.cpp" />
     <ClCompile Include="..\src\utils.cpp" />
     <ClCompile Include="test_frame_comparison.cpp" />
@@ -91,6 +92,8 @@
   <ItemGroup>
     <ClInclude Include="..\header\algo.h" />
     <ClInclude Include="..\header\debug.h" />
+    <ClInclude Include="..\header\ini.h" />
+    <ClInclude Include="..\header\io.h" />
     <ClInclude Include="..\header\similar.h" />
     <ClInclude Include="..\header\utils.h" />
   </ItemGroup>

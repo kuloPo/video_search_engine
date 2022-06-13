@@ -19,8 +19,10 @@
 #include <iostream>
 
 #include "similar.h"
+#include "io.h"
 
 int main() {
+    read_config();
     std::vector<double> interval_sec_1 = { 1,2,3,4,2.5,2.5,6 };
     std::vector<double> interval_sec_2 = { 1,2,1.5,1.5,4,5,6 };
     int similarity = interval_comparison(interval_sec_1, interval_sec_2);

@@ -56,7 +56,7 @@ std::string form_update_sql(const std::string& ID, const double interval_by_sec,
 }
 
 int main() {
-    read_config("../rsrc/config.ini");
+    read_config();
     // create 2 DB Connector, one for interval table and one for invert index table
     std::unique_ptr<DB_Connector> DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
     std::string search_sql = "SELECT * FROM INTERVAL";

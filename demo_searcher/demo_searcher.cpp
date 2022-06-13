@@ -143,7 +143,7 @@ std::string query(const std::filesystem::path& filename) {
 }
 
 int main(int argc, char** argv) {
-	read_config("./config.ini");
+	read_config();
 	DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
 	std::string filepath = argv[1];
 	int total_frames = get_total_frames(filepath);
