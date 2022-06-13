@@ -19,6 +19,8 @@
 #include "algo.h"
 
 std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, const MODE mode) {
+	cv::TickMeter index_time;
+	index_time.reset(); index_time.start();
 	cv::Rect bounding_box = mode == MODE::SEARCHER ? find_bounding_box(filename) : cv::Rect();
 	cv::Mat first_radon, second_radon, edge_frame, edge_frame_norm ,edge_frame_prev;
 #ifdef HAVE_OPENCV_CUDACODEC
@@ -98,6 +100,7 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, cons
 	
 	// add last frame into index
 	add_key_frame(key_frames, 0, gpu_frame_count, first_frame, empty_frame);
+	index_time.stop();
 	
 #if defined DEBUG_CREATE_INDEX || defined DEBUG_PERFORMANCE
 	if (!gpu_times.empty())	{
@@ -105,7 +108,7 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, cons
 		double total_time = std::accumulate(gpu_times.begin(), gpu_times.end(), 0.0);
 		double gpu_avg = total_time / gpu_frame_count;
 		//std::cout << "GPU : Avg : " << gpu_avg << " ms FPS : " << 1000.0 / gpu_avg << " Frames " << gpu_frame_count << std::endl;
-		printf("%s %.2f %d\n", filename.filename().string().c_str(), total_time, gpu_frame_count);
+		printf("%s %.2f %d %.2f\n", filename.filename().string().c_str(), total_time, gpu_frame_count, index_time.getTimeSec());
 	}
 #endif // DEBUG_CREATE_INDEX
 	
