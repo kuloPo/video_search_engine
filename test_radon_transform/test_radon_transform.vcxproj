@@ -84,11 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\similar.cpp" />
     <ClCompile Include="test_radon_transform.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\header\similar.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
