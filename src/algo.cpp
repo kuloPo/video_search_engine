@@ -42,7 +42,7 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, cons
 	edge_frame_norm = edge_frame / sum(edge_frame);
 
 	//first_frame.download(first_frame_cpu);
-	RadonTransform(edge_frame_norm, first_radon, 45, 0, 180);
+	Radon_Transform(edge_frame_norm, first_radon, 45, 0, 180);
 
 	std::vector<Key_Frame*> key_frames;
 	
@@ -81,7 +81,9 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, cons
 			edge_frame_norm = edge_frame / sum(edge_frame);
 
 			// calculate histogram and the distance between hist
-			RadonTransform(edge_frame_norm, second_radon, 45, 0, 180);
+			//RadonTransform(edge_frame_norm, second_radon, 45, 0, 180);
+			Radon_Transform(edge_frame_norm, second_radon, 45, 0, 180);
+
 			double d = radon_distance(first_radon, second_radon);
 
 			// If delta is greater threshold, write the information into vector
