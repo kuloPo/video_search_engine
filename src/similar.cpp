@@ -169,45 +169,15 @@ int direct_distance(const cv::cuda::GpuMat& img1, const cv::cuda::GpuMat& img2) 
 	return cv::cuda::sum(tmp)[0] / (img1.rows * img1.cols);
 }
 
-void RadonTransform(cv::cuda::GpuMat& src,
+void Radon_Transform(cv::cuda::GpuMat& src,
 	cv::Mat& dst,
 	double theta,
 	double start_angle,
 	double end_angle)
 {
-	cv::cuda::GpuMat _srcMat;
-	src.copyTo(_srcMat);
-
-	int _row_num, _col_num, _out_mat_type;
-	_row_num = cvRound((end_angle - start_angle) / theta);
-	cv::Point _center;
-
-	// avoid cropping corner when rotating
-	_col_num = cvCeil(sqrt(_srcMat.rows * _srcMat.rows + _srcMat.cols * _srcMat.cols));
-	cv::cuda::GpuMat _masked_src(cv::Size(_col_num, _col_num), _srcMat.type(), cv::Scalar(0));
-	_center = cv::Point(_masked_src.cols / 2, _masked_src.rows / 2);
-	_srcMat.copyTo(_masked_src(cv::Rect(
-		(_col_num - _srcMat.cols) / 2,
-		(_col_num - _srcMat.rows) / 2,
-		_srcMat.cols, _srcMat.rows)));
-
-	cv::cuda::GpuMat _radon(_row_num, _col_num, CV_32SC1);
-
-	//parallel_for_(cv::Range(0, _row_num), [&](const cv::Range& range) {
-		for (int _row = 0; _row < _row_num; _row++) {
-			// rotate the source by _t
-			double _t = (start_angle + _row * theta);
-			cv::cuda::GpuMat _rotated_src;
-			cv::Mat _r_matrix = cv::getRotationMatrix2D(_center, _t, 1);
-			cv::cuda::warpAffine(_masked_src, _rotated_src, _r_matrix, _masked_src.size());
-			cv::cuda::GpuMat _col_mat = _radon.row(_row);
-			// make projection
-			cv::cuda::reduce(_rotated_src, _col_mat, 0, cv::REDUCE_SUM, CV_32SC1);
-		}
-	//	});
-	cv::cuda::transpose(_radon, _radon);
-	_radon.download(dst);
-
+	cv::Mat src_cpu;
+	src.download(src_cpu);
+	cv::ximgproc::RadonTransform(src, dst, theta, start_angle, end_angle);
 	dst.convertTo(dst, CV_32FC1);
 	dst /= src.rows * src.cols;
 }
@@ -217,45 +187,13 @@ double wasserstein_distance(const cv::Mat& hist1, const cv::Mat& hist2) {
 	return cv::EMDL1(hist1, hist2);
 }
 
-void RadonTransform(cv::Mat& src,
+void Radon_Transform(cv::Mat& src,
 	cv::Mat& dst,
 	double theta,
 	double start_angle,
 	double end_angle)
 {
-	cv::Mat _srcMat;
-	src.copyTo(_srcMat);
-
-	int _row_num, _col_num, _out_mat_type;
-	_row_num = cvRound((end_angle - start_angle) / theta);
-	cv::Point _center;
-
-	// avoid cropping corner when rotating
-	_col_num = cvCeil(sqrt(_srcMat.rows * _srcMat.rows + _srcMat.cols * _srcMat.cols));
-	cv::Mat _masked_src(cv::Size(_col_num, _col_num), _srcMat.type(), cv::Scalar(0));
-	_center = cv::Point(_masked_src.cols / 2, _masked_src.rows / 2);
-	_srcMat.copyTo(_masked_src(cv::Rect(
-		(_col_num - _srcMat.cols) / 2,
-		(_col_num - _srcMat.rows) / 2,
-		_srcMat.cols, _srcMat.rows)));
-
-	cv::Mat _radon(_row_num, _col_num, CV_32FC1);
-
-	parallel_for_(cv::Range(0, _row_num), [&](const cv::Range& range) {
-		for (int _row = range.start; _row < range.end; _row++) {
-			// rotate the source by _t
-			double _t = (start_angle + _row * theta);
-			cv::Mat _rotated_src;
-			cv::Mat _r_matrix = cv::getRotationMatrix2D(_center, _t, 1);
-			cv::warpAffine(_masked_src, _rotated_src, _r_matrix, _masked_src.size());
-			cv::Mat _col_mat = _radon.row(_row);
-			// make projection
-			cv::reduce(_rotated_src, _col_mat, 0, cv::REDUCE_SUM, CV_32FC1);
-		}
-	});
-	cv::transpose(_radon, _radon);
-	_radon.copyTo(dst);
-
+	cv::ximgproc::RadonTransform(src, dst, theta, start_angle, end_angle);
 	dst.convertTo(dst, CV_32FC1);
 	dst /= src.rows * src.cols;
 }

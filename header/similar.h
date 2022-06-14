@@ -100,13 +100,13 @@ double wasserstein_distance(const cv::cuda::GpuMat& hist1, const cv::cuda::GpuMa
 */
 int direct_distance(const cv::cuda::GpuMat& img1, const cv::cuda::GpuMat& img2);
 
-void RadonTransform(cv::cuda::GpuMat& src,
+void Radon_Transform(cv::cuda::GpuMat& src,
 	cv::Mat& dst,
 	double theta,
 	double start_angle,
 	double end_angle);
 #endif
-void RadonTransform(cv::Mat& src,
+void Radon_Transform(cv::Mat& src,
 	cv::Mat& dst,
 	double theta,
 	double start_angle,
