@@ -128,7 +128,6 @@ std::string query(const std::filesystem::path& filename) {
 #endif // DEBUG_SEARCHER
 	
 	std::vector<std::pair<double, std::string>> result;
-	//std::vector<std::pair<double, std::string>> result_new;
 
 	// try to match each video in search range
 	for (std::string ID : search_range) {
@@ -144,31 +143,18 @@ std::string query(const std::filesystem::path& filename) {
 		if (matched_percentage >= min_matched_percentage) {
 			result.push_back(std::pair<double, std::string>(matched_percentage, filename));
 		}
-		//int similarity_new = interval_comparison_new(input_interval_sec, interval_db);
-		//double matched_percentage_new = 100.0 * similarity_new / input_interval_sec.size();
-		//if (matched_percentage_new >= min_matched_percentage) {
-		//	result_new.push_back(std::pair<double, std::string>(matched_percentage_new, filename));
-		//}
 	}
 
 	std::sort(result.begin(), result.end(), std::greater<std::pair<double, std::string>>());
 	if (result.size() == 0) {
 		result.push_back(std::pair<double, std::string>(0, "not_in_db"));
 	}
-	//std::sort(result_new.begin(), result_new.end(), std::greater<std::pair<double, std::string>>());
-	//if (result_new.size() == 0) {
-	//	result_new.push_back(std::pair<double, std::string>(0, "not_in_db"));
-	//}
 	std::string search_result = "";
 	search_result += filename.filename().string();
 	search_result += " ";
 	search_result += result[0].second;
 	search_result += " ";
 	search_result += std::to_string(result[0].first);
-	//search_result += "% ";
-	//search_result += result_new[0].second;
-	//search_result += " ";
-	//search_result += std::to_string(result_new[0].first);
 	search_result += "%";
 
 	tm.stop();
