@@ -77,7 +77,7 @@ std::string invert_index_search_sql(const int interval_floor, const int interval
 	return ret;
 }
 
-std::string query(const std::filesystem::path& filename) {
+std::string query(const std::filesystem::path& filename, bool print_full = false) {
 	int input_fps = get_fps(filename);
 	// extract interval of the query video
 	std::vector<Key_Frame*> key_frames = std::move(create_index(filename, MODE::SEARCHER));
@@ -156,6 +156,17 @@ std::string query(const std::filesystem::path& filename) {
 	search_result += " ";
 	search_result += std::to_string(result[0].first);
 	search_result += "%";
+	if (print_full) {
+		for (int i = 1; i < result.size(); i++) {
+			search_result += "\n";
+			search_result += filename.filename().string();
+			search_result += " ";
+			search_result += result[i].second;
+			search_result += " ";
+			search_result += std::to_string(result[i].first);
+			search_result += "%";
+		}
+	}
 
 	tm.stop();
 	search_times.push_back(tm.getTimeMilli());
@@ -170,14 +181,22 @@ std::string query(const std::filesystem::path& filename) {
 int main() {
 	read_config();
 	DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
-	std::vector<std::string> search_result(15);
 
-	parallel_for_(cv::Range(1, 15), [&](const cv::Range& range) {
+	//std::vector<std::string> search_result(15);
+	//parallel_for_(cv::Range(1, 15), [&](const cv::Range& range) {
+	//	for (int i = range.start; i <= range.end; i++) {
+	//		std::filesystem::path filename = std::string("D:\\datasets\\ST1\\ST1Query") + std::to_string(i) + ".mpeg";
+	//		search_result[i - 1] = query(filename);
+	//	}
+	//}, thread_num);
+
+	std::vector<std::string> search_result(3);
+	parallel_for_(cv::Range(1, 3), [&](const cv::Range& range) {
 		for (int i = range.start; i <= range.end; i++) {
-			std::filesystem::path filename = std::string("D:\\datasets\\ST1\\ST1Query") + std::to_string(i) + ".mpeg";
-			search_result[i - 1] = query(filename);
+			std::filesystem::path filename = std::string("D:\\datasets\\ST2\\ST2Query") + std::to_string(i) + ".mpeg";
+			search_result[i - 1] = query(filename, true);
 		}
-	}, thread_num);
+		}, thread_num);
 
 	for (std::string result : search_result) {
 		cout << result << endl;
