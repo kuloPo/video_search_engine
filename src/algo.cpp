@@ -21,8 +21,8 @@
 std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, const MODE mode) {
 	cv::TickMeter index_time;
 	index_time.reset(); index_time.start();
-	cv::Rect bounding_box = mode == MODE::SEARCHER ? find_bounding_box(filename) : cv::Rect();
 	cv::Mat first_radon, second_radon, edge_frame, edge_frame_norm ,edge_frame_prev;
+	std::vector<Key_Frame*> key_frames;
 #ifdef HAVE_OPENCV_CUDACODEC
 	cv::cuda::GpuMat first_frame, second_frame;
 	cv::Ptr<cv::cudacodec::VideoReader> cuda_reader = cv::cudacodec::createVideoReader(filename.string());
@@ -32,6 +32,12 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, cons
 	cv::VideoCapture video_reader(filename.string());
 	video_reader >> first_frame;
 #endif
+	if (first_frame.empty()) {
+		add_key_frame(key_frames, 0, 0, empty_frame, empty_frame);
+		return key_frames;
+	}
+
+	cv::Rect bounding_box = mode == MODE::SEARCHER ? find_bounding_box(filename) : cv::Rect();
 	if (bounding_box != cv::Rect()) {
 		first_frame = first_frame(bounding_box);
 	}
@@ -43,8 +49,6 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, cons
 
 	//first_frame.download(first_frame_cpu);
 	Radon_Transform(edge_frame_norm, first_radon, 45, 0, 180);
-
-	std::vector<Key_Frame*> key_frames;
 	
 	// add first frame into index
 	add_key_frame(key_frames, 0, 0, first_frame, empty_frame);
