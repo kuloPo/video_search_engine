@@ -19,6 +19,9 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <thread>
+#include <queue>
+#include <mutex>
 
 #include "common.h"
 #include "algo.h"
@@ -28,6 +31,9 @@
 std::unique_ptr<DB_Connector> DB;
 cv::TickMeter tm;
 std::vector<double> search_times;
+
+std::queue<std::filesystem::path> working_queue;
+std::mutex queue_mutex;
 
 /*
 @brief Read ID of videos from inverted index
@@ -75,6 +81,25 @@ std::string invert_index_search_sql(const int interval_floor, const int interval
 	ret += std::to_string(interval_ceil);
 	ret += ";";
 	return ret;
+}
+
+void write_result(
+	std::string& result_str,
+	const std::filesystem::path& filename,
+	const std::pair<double, std::string>& result
+) {
+	if (filename.filename().string() == result.second) {
+		return;
+	}
+	if (!result_str.empty()) {
+		result_str += "\n";
+	}
+	result_str += filename.filename().string();
+	result_str += " ";
+	result_str += result.second;
+	result_str += " ";
+	result_str += std::to_string(result.first);
+	result_str += "%";
 }
 
 std::string query(const std::filesystem::path& filename, bool print_full = false) {
@@ -150,21 +175,10 @@ std::string query(const std::filesystem::path& filename, bool print_full = false
 		result.push_back(std::pair<double, std::string>(0, "not_in_db"));
 	}
 	std::string search_result = "";
-	search_result += filename.filename().string();
-	search_result += " ";
-	search_result += result[0].second;
-	search_result += " ";
-	search_result += std::to_string(result[0].first);
-	search_result += "%";
+	write_result(search_result, filename, result[0]);
 	if (print_full) {
 		for (int i = 1; i < result.size(); i++) {
-			search_result += "\n";
-			search_result += filename.filename().string();
-			search_result += " ";
-			search_result += result[i].second;
-			search_result += " ";
-			search_result += std::to_string(result[i].first);
-			search_result += "%";
+			write_result(search_result, filename, result[i]);
 		}
 	}
 
@@ -176,6 +190,20 @@ std::string query(const std::filesystem::path& filename, bool print_full = false
 	}
 
 	return search_result;
+}
+
+void thread_invoker(int deviceID) {
+#ifdef HAVE_OPENCV_CUDACODEC
+	cv::cuda::setDevice(deviceID);
+#endif
+	while (working_queue.empty() == false) {
+		queue_mutex.lock();
+		std::filesystem::path filename = working_queue.front();
+		working_queue.pop();
+		queue_mutex.unlock();
+		std::string result = query(filename.string());
+		printf("%s\n", result.c_str());
+	}
 }
 
 int main() {
@@ -190,16 +218,28 @@ int main() {
 	//	}
 	//}, thread_num);
 
-	std::vector<std::string> search_result(3);
-	parallel_for_(cv::Range(1, 3), [&](const cv::Range& range) {
-		for (int i = range.start; i <= range.end; i++) {
-			std::filesystem::path filename = std::string("D:\\datasets\\ST2\\ST2Query") + std::to_string(i) + ".mpeg";
-			search_result[i - 1] = query(filename, true);
-		}
-		}, thread_num);
+	//std::vector<std::string> search_result(3);
+	//parallel_for_(cv::Range(1, 3), [&](const cv::Range& range) {
+	//	for (int i = range.start; i <= range.end; i++) {
+	//		std::filesystem::path filename = std::string("D:\\datasets\\ST2\\ST2Query") + std::to_string(i) + ".mpg";
+	//		search_result[i - 1] = query(filename, true);
+	//	}
+	//	}, thread_num);
+	//for (std::string result : search_result) {
+	//	cout << result << endl;
+	//}
 
-	for (std::string result : search_result) {
-		cout << result << endl;
+	std::filesystem::path query_dir = "D:\\datasets\\CC_WEB_VIDEO_converted";
+	for (const auto& entry : std::filesystem::directory_iterator(video_path)) {
+		working_queue.push(entry.path());
+	}
+	std::vector<std::thread> thread_list;
+	for (int i = 0; i < thread_num; i++) {
+		std::thread t(thread_invoker, i);
+		thread_list.push_back(std::move(t));
+	}
+	for (auto iter = thread_list.begin(); iter != thread_list.end(); iter++) {
+		iter->join();
 	}
 
 	//std::sort(search_times.begin(), search_times.end());
