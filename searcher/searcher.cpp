@@ -88,9 +88,6 @@ void write_result(
 	const std::filesystem::path& filename,
 	const std::pair<double, std::string>& result
 ) {
-	if (filename.filename().string() == result.second) {
-		return;
-	}
 	if (!result_str.empty()) {
 		result_str += "\n";
 	}
@@ -158,15 +155,16 @@ std::string query(const std::filesystem::path& filename, bool print_full = false
 	for (std::string ID : search_range) {
 		std::string search_sql = form_search_sql(ID);
 		std::unique_ptr<pqxx::result>& query_result = DB->performQuery(search_sql);
-		std::string filename = query_result->begin()[1].as<std::string>();
+		std::string videoname = query_result->begin()[1].as<std::string>();
 		int fps = query_result->begin()[2].as<int>();
 		std::string interval_str = query_result->begin()[3].as<std::string>();
 		std::vector<double> interval_db;
 		read_interval(interval_str, fps, interval_db);
 		int similarity = interval_comparison(input_interval_sec, interval_db);
 		double matched_percentage = 100.0 * similarity / input_interval_sec.size();
-		if (matched_percentage >= min_matched_percentage) {
-			result.push_back(std::pair<double, std::string>(matched_percentage, filename));
+		if (filename.filename().string() != videoname && 
+			matched_percentage >= min_matched_percentage) {
+			result.push_back(std::pair<double, std::string>(matched_percentage, videoname));
 		}
 	}
 
