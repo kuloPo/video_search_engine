@@ -47,7 +47,7 @@ void build_index(std::filesystem::path filename) {
 	calc_interval(key_frames, interval);
 	interval_merge(interval, fps, interval_merged);
 	// write interval to database
-	std::string interval_str = write_interval(interval_merged, filename);
+	std::string interval_str = write_interval(interval_merged);
 	std::string filename_str = filename.string();
 	filename_str = std::regex_replace(filename_str, std::regex("'"), "''");
 	std::string insert_sql = form_insert_sql(ID, filename_str, fps, interval_str);

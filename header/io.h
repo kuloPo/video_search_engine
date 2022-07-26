@@ -77,7 +77,7 @@ void show_image(const std::vector<Key_Frame*>& key_frames);
 @param interval Interval vector of the video
 @param filename Path to the video
 */
-std::string write_interval(const std::vector<int>& interval, const std::filesystem::path& filename);
+std::string write_interval(const std::vector<int>& interval);
 
 /*
 @brief Write the key frame images to disk.

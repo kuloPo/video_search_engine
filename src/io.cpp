@@ -107,12 +107,8 @@ void show_image(const std::vector<Key_Frame*>& key_frames) {
 }
 
 
-std::string write_interval(const std::vector<int>& interval, const std::filesystem::path& filename) {
-	std::string ID;
+std::string write_interval(const std::vector<int>& interval) {
 	std::string interval_str = "";
-
-	picosha2::hash256_hex_string(filename.string(), ID);
-
 	// concatenate interva into string
 	for (int i : interval) {
 		std::string frame_interval_str = std::to_string(i);
