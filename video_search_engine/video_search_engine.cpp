@@ -28,27 +28,27 @@ std::unique_ptr<DB_Connector> DB;
 std::queue<std::filesystem::path> working_queue;
 std::mutex queue_mutex;
 
-void build_index(std::filesystem::path filename) {
+void build_index(std::filesystem::path filepath) {
 	// check if already exist in db
 	std::string ID;
-	picosha2::hash256_hex_string(filename.string(), ID);
+	picosha2::hash256_hex_string(filepath.string(), ID);
 	std::string search_sql = form_search_sql(ID);
 	std::unique_ptr<pqxx::result>& query_result = DB->performQuery(search_sql);
 	if (!query_result->empty()) {
-		safe_printf("%s Already indexed\n", filename.string().c_str());
+		safe_printf("%s Already indexed\n", filepath.string().c_str());
 		return;
 	}
 
 	// extract key frames
-	std::vector<Key_Frame*> key_frames = std::move(create_index(video_path / filename, MODE::INDEXER));
+	std::vector<Key_Frame*> key_frames = std::move(create_index(filepath, MODE::INDEXER));
 	// get interval
-	int fps = get_fps(video_path / filename);
+	int fps = get_fps(filepath);
 	std::vector<int> interval, interval_merged;
 	calc_interval(key_frames, interval);
 	interval_merge(interval, fps, interval_merged);
 	// write interval to database
 	std::string interval_str = write_interval(interval_merged);
-	std::string filename_str = filename.string();
+	std::string filename_str = filepath.filename().string();
 	filename_str = std::regex_replace(filename_str, std::regex("'"), "''");
 	std::string insert_sql = form_insert_sql(ID, filename_str, fps, interval_str);
 	DB->performQuery(insert_sql);
