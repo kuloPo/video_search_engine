@@ -83,7 +83,7 @@ int main() {
 	DB->performQuery(delete_sql);
 	
 	for (const auto& entry : std::filesystem::directory_iterator(video_path)) {
-		working_queue.push(entry.path().filename());
+		working_queue.push(entry.path());
 	}
 	
 	std::vector<std::thread> thread_list;
