@@ -37,3 +37,8 @@ extern double interval_matching_epsilon;  // difference smaller than epsilon, ma
 extern int min_matched_percentage;         // Queries with matched intervals above this threshold will be considered duplicate
 
 extern int thread_num;
+
+extern std::string MUSCLE_VCD_2007;
+extern std::string MUSCLE_VCD_2007_ST1;
+extern std::string MUSCLE_VCD_2007_ST2;
+extern std::string CC_WEB_VIDEO;

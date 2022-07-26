@@ -23,6 +23,7 @@ std::string DB_port;
 std::string DB_user;
 std::string DB_password;
 std::string DB_name;
+
 std::filesystem::path video_path;
 double frame_difference_threshold;
 int min_matched_interval;
@@ -30,6 +31,11 @@ int jumped_frame;
 double interval_matching_epsilon;
 int min_matched_percentage;
 int thread_num;
+
+std::string MUSCLE_VCD_2007;
+std::string MUSCLE_VCD_2007_ST1;
+std::string MUSCLE_VCD_2007_ST2;
+std::string CC_WEB_VIDEO;
 
 std::mutex stdout_mutex;
 std::mutex db_mutex;
@@ -237,4 +243,9 @@ void read_config() {
 	min_matched_percentage = std::stoi(ini["Searcher"]["min_matched_percentage"]);
 
 	thread_num = std::stoi(ini["Performance"]["thread_num"]);
+
+	MUSCLE_VCD_2007 = ini["Dataset"]["MUSCLE_VCD_2007"];
+	MUSCLE_VCD_2007_ST1 = ini["Dataset"]["MUSCLE_VCD_2007_ST1"];
+	MUSCLE_VCD_2007_ST2 = ini["Dataset"]["MUSCLE_VCD_2007_ST2"];
+	CC_WEB_VIDEO = ini["Dataset"]["CC_WEB_VIDEO"];
 }
