@@ -27,6 +27,7 @@
 #include "algo.h"
 #include "utils.h"
 #include "io.h"
+#include "similar.h"
 
 std::unique_ptr<DB_Connector> DB;
 cv::TickMeter tm;
