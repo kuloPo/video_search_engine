@@ -27,6 +27,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "demo_searcher", "demo_searc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "create_query_videos", "create_query_videos\create_query_videos.vcxproj", "{F4AC6277-734A-4489-A8D0-4729D6550504}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resource Files", "Resource Files", "{8C63C28E-8BBF-47A4-A17B-1EED427BF075}"
+	ProjectSection(SolutionItems) = preProject
+		rsrc\config.ini = rsrc\config.ini
+		Makefile = Makefile
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
