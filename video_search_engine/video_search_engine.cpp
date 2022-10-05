@@ -19,10 +19,10 @@
 #include <queue>
 #include <thread>
 
+#include "common.h"
 #include "similar.h"
 #include "algo.h"
 #include "io.h"
-#include "common.h"
 
 std::unique_ptr<DB_Connector> DB;
 std::queue<std::filesystem::path> working_queue;
@@ -31,7 +31,7 @@ std::mutex queue_mutex;
 void build_index(std::filesystem::path filepath) {
 	// check if already exist in db
 	std::string ID;
-	picosha2::hash256_hex_string(filepath.string(), ID);
+	hash_string(filepath.string(), ID);
 	std::string search_sql = form_search_sql(ID);
 	std::unique_ptr<pqxx::result>& query_result = DB->performQuery(search_sql);
 	if (!query_result->empty()) {
@@ -82,7 +82,7 @@ int main() {
 	std::string delete_sql = delete_db_data();
 	DB->performQuery(delete_sql);
 	
-	for (const auto& entry : std::filesystem::directory_iterator(video_path)) {
+	for (const auto& entry : std::filesystem::directory_iterator(MUSCLE_VCD_2007)) {
 		working_queue.push(entry.path());
 	}
 	

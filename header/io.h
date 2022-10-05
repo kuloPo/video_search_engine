@@ -20,18 +20,11 @@
 
 #include <string>
 #include <vector>
-#include <filesystem>
 #include <regex>
-#include <stdio.h>
 #include <stdarg.h>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/videoio.hpp>
 #include <pqxx/pqxx>
 
 #include "common.h"
-#include "picosha2.h"
-#include "ini.h"
 
 class DB_Connector {
 public:
@@ -63,13 +56,6 @@ private:
     std::string dbname;
     std::string port;
 };
-
-/*
-@brief Display the key frames of a video
-
-@param key_frames Vector containing the pointers of Key_Frame of the source video
-*/
-void show_image(const std::vector<Key_Frame*>& key_frames);
 
 /*
 @brief Convert the interval vector of a video into a SQL insert query, together with other video information.  
@@ -116,3 +102,5 @@ void safe_printf(const char* format, ...);
 std::string delete_db_data();
 
 void read_config();
+
+void hash_string(const std::string& str, std::string& dst);

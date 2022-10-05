@@ -18,6 +18,22 @@
 
 #include "algo.h"
 
+#include <algorithm>
+#include <numeric>
+#include <iomanip>
+
+#ifdef HAVE_OPENCV_CUDACODEC
+#include <opencv2/cudacodec.hpp>
+#include <opencv2/cudawarping.hpp>
+#include <opencv2/cudaimgproc.hpp>
+#else
+#include <opencv2/videoio.hpp>
+#include <opencv2/imgproc.hpp>
+#endif
+
+#include "similar.h"
+#include "utils.h"
+
 std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, const MODE mode) {
 	cv::TickMeter index_time;
 	index_time.reset(); index_time.start();

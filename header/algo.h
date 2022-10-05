@@ -19,21 +19,9 @@
 #pragma once
 
 #include <vector>
-#include <algorithm>
-#include <numeric>
-#include <iomanip>
 #include <opencv2/opencv_modules.hpp>
 
-#ifdef HAVE_OPENCV_CUDACODEC
-#include <opencv2/cudacodec.hpp>
-#include <opencv2/cudawarping.hpp>
-#else
-#include <opencv2/videoio.hpp>
-#endif
-
 #include "common.h"
-#include "similar.h"
-#include "utils.h"
 
 enum MODE {
 	INDEXER,

@@ -18,6 +18,9 @@
 
 #include "io.h"
 
+#include "picosha2.h"
+#include "ini.h"
+
 std::string DB_address;
 std::string DB_port;
 std::string DB_user;
@@ -86,27 +89,6 @@ std::unique_ptr<pqxx::result>& DB_Connector::performQuery(const std::string& que
 	return res;
 }
 
-void show_image(const std::vector<Key_Frame*>& key_frames) {
-	for (Key_Frame* key_frame : key_frames) {
-		printf("%d %.2f\n", key_frame->frame_num, key_frame->delta);
-#ifdef HAVE_OPENCV_CUDACODEC
-		cv::Mat tmp_1, tmp_2;
-		key_frame->first_frame.download(tmp_1);
-		key_frame->second_frame.download(tmp_2);
-		cv::imshow("", tmp_1);
-		cv::waitKey();
-		cv::imshow("", tmp_2);
-		cv::waitKey();
-#else 
-		cv::imshow("", key_frame->first_frame);
-		cv::waitKey();
-		cv::imshow("", key_frame->second_frame);
-		cv::waitKey();
-#endif
-	}
-}
-
-
 std::string write_interval(const std::vector<int>& interval) {
 	std::string interval_str = "";
 	// concatenate interva into string
@@ -117,22 +99,6 @@ std::string write_interval(const std::vector<int>& interval) {
 	}
 	return interval_str;
 }
-
-/*
-void write_key_frame(const std::vector<Key_Frame*>& key_frames, const std::filesystem::path& path, const std::filesystem::path& filename) {
-	for (Key_Frame* key_frame : key_frames) {
-		cv::Mat tmp;
-		std::string frame_num_str;
-		key_frame->first_frame.download(tmp);
-		frame_num_str = std::to_string(key_frame->frame_num);
-		cv::imwrite((index_path / filename / (frame_num_str + "_1.png")).string(), tmp);
-		if (key_frame->delta != 0) { // not the first or last frame
-			key_frame->second_frame.download(tmp);
-			cv::imwrite((index_path / filename / (frame_num_str + "_2.png")).string(), tmp);
-		}
-	}
-}
-*/
 
 int get_fps(const std::filesystem::path& filename) {
 	int fps;
@@ -244,4 +210,8 @@ void read_config() {
 	MUSCLE_VCD_2007_ST1 = ini["Dataset"]["MUSCLE_VCD_2007_ST1"];
 	MUSCLE_VCD_2007_ST2 = ini["Dataset"]["MUSCLE_VCD_2007_ST2"];
 	CC_WEB_VIDEO = ini["Dataset"]["CC_WEB_VIDEO"];
+}
+
+void hash_string(const std::string& str, std::string& dst) {
+	picosha2::hash256_hex_string(str, dst);
 }

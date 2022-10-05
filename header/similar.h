@@ -19,18 +19,6 @@
 #pragma once
 
 #include <vector>
-#include <numeric>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/shape/emdL1.hpp>
-#include <opencv2/ximgproc/radon_transform.hpp>
-
-#ifdef HAVE_OPENCV_CUDACODEC
-#include <opencv2/core/cuda.hpp>
-#include <opencv2/cudawarping.hpp>
-#include <opencv2/cudaimgproc.hpp>
-#include <opencv2/cudaarithm.hpp>
-#endif
 
 #include "common.h"
 #include "utils.h"
