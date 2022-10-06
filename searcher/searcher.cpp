@@ -100,10 +100,10 @@ void write_result(
 	result_str += "%";
 }
 
-std::string query(const std::filesystem::path& filename, bool print_full = false) {
+std::string query(const std::filesystem::path& filename, bool print_full = false, double video_length_cut = 1.0) {
 	int input_fps = get_fps(filename);
 	// extract interval of the query video
-	std::vector<Key_Frame*> key_frames = std::move(create_index(filename, MODE::SEARCHER));
+	std::vector<Key_Frame*> key_frames = std::move(create_index(filename, MODE::SEARCHER, video_length_cut));
 
 	std::vector<int> input_interval, interval_merged;
 	std::vector<double> input_interval_sec;

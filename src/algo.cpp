@@ -35,7 +35,8 @@
 #include "utils.h"
 #include "io.h"
 
-std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, const MODE mode) {
+std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, const MODE mode, double video_length_cut) {
+	int total_frame = get_total_frames(filename);
 	cv::TickMeter index_time;
 	index_time.reset(); index_time.start();
 	cv::Mat first_radon, second_radon, edge_frame, edge_frame_norm ,edge_frame_prev;
@@ -85,6 +86,9 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, cons
 		if (second_frame.empty())
 			break;
 #endif
+		if (frame_count > total_frame) {
+			break;
+		}
 #ifdef SHOW_PROGRESS
 		if (gpu_frame_count % 1000 == 0) {
 			cout << gpu_frame_count << " frames completed" << endl;

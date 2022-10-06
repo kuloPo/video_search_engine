@@ -38,7 +38,7 @@ First and last frame of a video will always be returned.
 @param filename Path of the video to create index
 @return A vector containing the pointers of Key_Frame
 */
-std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, const MODE mode = MODE::INDEXER);
+std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, const MODE mode = MODE::INDEXER, double video_length_cut = 1.0);
 
 /*
 @brief This function calculates the interval (in frame number) of a video
