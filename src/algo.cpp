@@ -86,7 +86,7 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, cons
 		if (second_frame.empty())
 			break;
 #endif
-		if (frame_count > total_frame) {
+		if (frame_count > total_frame * video_length_cut) {
 			break;
 		}
 #ifdef SHOW_PROGRESS
