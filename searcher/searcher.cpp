@@ -212,7 +212,7 @@ int main() {
 	std::vector<std::string> search_result(15);
 	parallel_for_(cv::Range(1, 15), [&](const cv::Range& range) {
 		for (int i = range.start; i <= range.end; i++) {
-			std::filesystem::path filename = MUSCLE_VCD_2007_ST1 + "\\ST1Query" + std::to_string(i) + ".mpeg";
+			std::filesystem::path filename = std::filesystem::path(MUSCLE_VCD_2007_ST1) / ("ST1Query" + std::to_string(i) + ".mpeg");
 			search_result[i - 1] = query(filename);
 		}
 	}, thread_num);
@@ -223,10 +223,10 @@ int main() {
 	//std::vector<std::string> search_result(3);
 	//parallel_for_(cv::Range(1, 3), [&](const cv::Range& range) {
 	//	for (int i = range.start; i <= range.end; i++) {
-	//		std::filesystem::path filename = MUSCLE_VCD_2007_ST2 + "\\ST2Query" + std::to_string(i) + ".mpg";
+	//		std::filesystem::path filename = std::filesystem::path(MUSCLE_VCD_2007_ST2) / ("ST2Query" + std::to_string(i) + ".mpg");
 	//		search_result[i - 1] = query(filename, true);
 	//	}
-	//	}, thread_num);
+	//}, thread_num);
 	//for (std::string result : search_result) {
 	//	cout << result << endl;
 	//}
