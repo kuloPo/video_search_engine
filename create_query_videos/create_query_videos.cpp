@@ -196,7 +196,9 @@ int main() {
 
     std::filesystem::path video_path = "D:\\datasets\\MUSCLE_VCD_2007";
     for (const auto& entry : std::filesystem::recursive_directory_iterator(video_path)) {
-        working_queue.push(entry.path());
+        if (std::filesystem::is_regular_file(entry.path())) {
+            working_queue.push(entry.path());
+        }
     }
 
     std::vector<std::thread> thread_list;
