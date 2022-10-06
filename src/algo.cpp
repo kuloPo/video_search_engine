@@ -33,6 +33,7 @@
 
 #include "similar.h"
 #include "utils.h"
+#include "io.h"
 
 std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, const MODE mode) {
 	cv::TickMeter index_time;
@@ -71,8 +72,8 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, cons
 	
 	// variables for measuring performance
 	cv::TickMeter tm;
-	std::vector<double> gpu_times;
-	int gpu_frame_count = 0;
+	std::vector<double> times;
+	int frame_count = 0;
 	
 	while (true) {
 		tm.reset(); tm.start();
@@ -89,7 +90,7 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, cons
 			cout << gpu_frame_count << " frames completed" << endl;
 		}
 #endif
-		if (gpu_frame_count % (jumped_frame + 1) == 0) {
+		if (frame_count % (jumped_frame + 1) == 0) {
 			if (bounding_box != cv::Rect()) {
 				second_frame = second_frame(bounding_box);
 			}
@@ -107,7 +108,7 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, cons
 
 			// If delta is greater threshold, write the information into vector
 			if (d > frame_difference_threshold) {
-				add_key_frame(key_frames, d, gpu_frame_count, first_frame, second_frame);
+				add_key_frame(key_frames, d, frame_count, first_frame, second_frame);
 			}
 
 			first_frame = second_frame;
@@ -115,21 +116,20 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, cons
 		}
 
 		tm.stop();
-		gpu_times.push_back(tm.getTimeMilli());
-		gpu_frame_count++;
+		times.push_back(tm.getTimeMilli());
+		frame_count++;
 	}
 	
 	// add last frame into index
-	add_key_frame(key_frames, 0, gpu_frame_count, first_frame, empty_frame);
+	add_key_frame(key_frames, 0, frame_count, first_frame, empty_frame);
 	index_time.stop();
 	
 #if defined DEBUG_CREATE_INDEX || defined DEBUG_PERFORMANCE
-	if (!gpu_times.empty())	{
-		std::sort(gpu_times.begin(), gpu_times.end());
-		double total_time = std::accumulate(gpu_times.begin(), gpu_times.end(), 0.0);
-		double gpu_avg = total_time / gpu_frame_count;
-		//std::cout << "GPU : Avg : " << gpu_avg << " ms FPS : " << 1000.0 / gpu_avg << " Frames " << gpu_frame_count << std::endl;
-		printf("%s %.2f %d %.2f\n", filename.filename().string().c_str(), total_time, gpu_frame_count, index_time.getTimeSec());
+	if (!times.empty())	{
+		std::sort(times.begin(), times.end());
+		double total_time = std::accumulate(times.begin(), times.end(), 0.0);
+		double avg = total_time / frame_count;
+		printf("%s %.2f %d %.2f\n", filename.filename().string().c_str(), total_time, frame_count, index_time.getTimeSec());
 	}
 #endif // DEBUG_CREATE_INDEX
 	
