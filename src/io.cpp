@@ -39,6 +39,8 @@ std::string MUSCLE_VCD_2007;
 std::string MUSCLE_VCD_2007_ST1;
 std::string MUSCLE_VCD_2007_ST2;
 std::string CC_WEB_VIDEO;
+std::string NIST_TREC;
+std::string NIST_TREC_query;
 
 std::mutex stdout_mutex;
 std::mutex db_mutex;
@@ -210,6 +212,8 @@ void read_config() {
 	MUSCLE_VCD_2007_ST1 = ini["Dataset"]["MUSCLE_VCD_2007_ST1"];
 	MUSCLE_VCD_2007_ST2 = ini["Dataset"]["MUSCLE_VCD_2007_ST2"];
 	CC_WEB_VIDEO = ini["Dataset"]["CC_WEB_VIDEO"];
+	NIST_TREC = ini["Dataset"]["NIST_TREC"];
+	NIST_TREC_query = ini["Dataset"]["NIST_TREC_query"];
 }
 
 void hash_string(const std::string& str, std::string& dst) {

@@ -42,3 +42,5 @@ extern std::string MUSCLE_VCD_2007;
 extern std::string MUSCLE_VCD_2007_ST1;
 extern std::string MUSCLE_VCD_2007_ST2;
 extern std::string CC_WEB_VIDEO;
+extern std::string NIST_TREC;
+extern std::string NIST_TREC_query;
