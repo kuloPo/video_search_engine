@@ -195,8 +195,12 @@ void thread_invoker(int deviceID) {
 #ifdef HAVE_OPENCV_CUDACODEC
 	cv::cuda::setDevice(deviceID);
 #endif
-	while (working_queue.empty() == false) {
+	while (true) {
 		queue_mutex.lock();
+		if (working_queue.empty()) {
+			queue_mutex.unlock();
+			break;
+		}
 		std::filesystem::path filename = working_queue.front();
 		working_queue.pop();
 		queue_mutex.unlock();
