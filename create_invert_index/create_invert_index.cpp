@@ -60,7 +60,7 @@ int main() {
     // create 2 DB Connector, one for interval table and one for invert index table
     std::unique_ptr<DB_Connector> DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
     std::string search_sql = "SELECT * FROM INTERVAL";
-    std::unique_ptr<pqxx::result>& R = DB->performQuery(search_sql);
+    std::unique_ptr<pqxx::result> R = DB->performQuery(search_sql);
     std::unique_ptr<DB_Connector> DB_invert_index = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
     // for each video in interval table
     for (pqxx::result::const_iterator c = R->begin(); c != R->end(); ++c) {
@@ -80,7 +80,7 @@ int main() {
                 continue;
             }
             std::string locate_sql = "SELECT * FROM INVERT_INDEX WHERE interval = " + std::to_string(interval_by_sec);
-            std::unique_ptr<pqxx::result>& query_result = DB_invert_index->performQuery(locate_sql);
+            std::unique_ptr<pqxx::result> query_result = DB_invert_index->performQuery(locate_sql);
             std::string existing_value = query_result->empty() ? "" : query_result->begin()[1].as<std::string>();
             std::string insert_sql = form_update_sql(ID, interval_by_sec, existing_value);
             DB_invert_index->performQuery(insert_sql);

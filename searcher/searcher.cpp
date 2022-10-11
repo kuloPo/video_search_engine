@@ -139,7 +139,7 @@ std::string query(const std::filesystem::path& filename, bool print_full = false
 
 	for (std::string ID : search_range) {
 		std::string search_sql = form_search_sql(ID);
-		std::unique_ptr<pqxx::result>& query_result = DB->performQuery(search_sql);
+		std::unique_ptr<pqxx::result> query_result = DB->performQuery(search_sql);
 		std::string filename = query_result->begin()[1].as<std::string>();
 		cout << filename << endl;
 	}

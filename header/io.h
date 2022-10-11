@@ -28,7 +28,8 @@
 
 class DB_Connector {
 public:
-    DB_Connector(const std::string& u,
+    DB_Connector(
+        const std::string& u,
         const std::string& h,
         const std::string& pswd,
         const std::string& db,
@@ -36,7 +37,8 @@ public:
 
     ~DB_Connector();
 
-    void initConnection(std::unique_ptr<pqxx::connection>& c,
+    void initConnection(
+        std::unique_ptr<pqxx::connection>& c,
         const std::string& u,
         const std::string& h,
         const std::string& pswd,

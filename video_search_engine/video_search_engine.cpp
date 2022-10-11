@@ -33,7 +33,7 @@ void build_index(std::filesystem::path filepath) {
 	std::string ID;
 	hash_string(filepath.string(), ID);
 	std::string search_sql = form_search_sql(ID);
-	std::unique_ptr<pqxx::result>& query_result = DB->performQuery(search_sql);
+	std::unique_ptr<pqxx::result> query_result = DB->performQuery(search_sql);
 	if (!query_result->empty()) {
 		safe_printf("%s Already indexed\n", filepath.string().c_str());
 		return;

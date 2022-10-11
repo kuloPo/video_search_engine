@@ -95,7 +95,7 @@ std::string query(const std::filesystem::path& filename) {
 
 	for (double interval : input_interval_sec) {
 		std::string search_sql = invert_index_search_sql(std::floor(interval), std::ceil(interval));
-		std::unique_ptr<pqxx::result>& query_result = DB->performQuery(search_sql);
+		std::unique_ptr<pqxx::result> query_result = DB->performQuery(search_sql);
 		if (!query_result->empty()) {
 			std::string ID = query_result->begin()[1].as<std::string>();
 			read_ID(ID, search_range);
@@ -107,7 +107,7 @@ std::string query(const std::filesystem::path& filename) {
 	// try to match each video in search range
 	for (std::string ID : search_range) {
 		std::string search_sql = form_search_sql(ID);
-		std::unique_ptr<pqxx::result>& query_result = DB->performQuery(search_sql);
+		std::unique_ptr<pqxx::result> query_result = DB->performQuery(search_sql);
 		std::string filename = query_result->begin()[1].as<std::string>();
 		int fps = query_result->begin()[2].as<int>();
 		std::string interval_str = query_result->begin()[3].as<std::string>();
