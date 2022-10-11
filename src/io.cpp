@@ -75,10 +75,11 @@ void DB_Connector::initConnection(std::unique_ptr<pqxx::connection>& c,
 	}
 }
 
-std::unique_ptr<pqxx::result>& DB_Connector::performQuery(const std::string& query) {
+std::unique_ptr<pqxx::result> DB_Connector::performQuery(const std::string& query) {
+	std::unique_ptr<pqxx::result> res;
 	try {
 		db_mutex.lock();
-		trans = std::make_unique<pqxx::work>(*conn, "trans");
+		trans = std::make_unique<pqxx::nontransaction>(*conn);
 		res = std::make_unique<pqxx::result>(trans->exec(query));
 		trans->commit();
 		db_mutex.unlock();

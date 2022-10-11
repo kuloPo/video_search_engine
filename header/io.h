@@ -43,12 +43,11 @@ public:
         const std::string& db,
         const std::string& port);
 
-    std::unique_ptr<pqxx::result>& performQuery(const std::string& query);
+    std::unique_ptr<pqxx::result> performQuery(const std::string& query);
 
 private:
     std::unique_ptr<pqxx::connection> conn;
-    std::unique_ptr<pqxx::work> trans;
-    std::unique_ptr<pqxx::result> res;
+    std::unique_ptr<pqxx::nontransaction> trans;
 
     std::string user;
     std::string host;
