@@ -31,37 +31,33 @@
 int main() {
 	std::filesystem::path filepath = "../rsrc/video.mp4";
 	cv::TickMeter tm;
-	std::vector<double> gpu_times;
-	int gpu_frame_count = 0;
+	std::vector<double> times;
+	int frame_count = 0;
 #ifdef HAVE_OPENCV_CUDACODEC
-	cv::Ptr<cv::cudacodec::VideoReader> cuda_reader = cv::cudacodec::createVideoReader(filepath.string());
 	cv::cuda::GpuMat frame;
-	cuda_reader->nextFrame(frame);
+	cv::Ptr<cv::cudacodec::VideoReader> cuda_reader = cv::cudacodec::createVideoReader(filepath.string());
+#else
+	cv::Mat frame;
+	cv::VideoCapture video_reader(filepath.string());
+#endif
+
 	while (true) {
 		tm.reset(); tm.start();
+#ifdef HAVE_OPENCV_CUDACODEC
 		if (!cuda_reader->nextFrame(frame))
 			break;
-		tm.stop();
-		gpu_times.push_back(tm.getTimeMilli());
-		gpu_frame_count++;
-	}
-#else
-	cv::VideoCapture video_reader(filepath.string());
-	cv::Mat frame;
-	video_reader >> frame;
-	while (true) {
-		tm.reset(); tm.start();
+#else 
 		video_reader >> frame;
 		if (frame.empty())
 			break;
-		tm.stop();
-		gpu_times.push_back(tm.getTimeMilli());
-		gpu_frame_count++;
-	}
 #endif
-	std::cout << std::endl << "Results:" << std::endl;
-	std::sort(gpu_times.begin(), gpu_times.end());
-	double gpu_avg = std::accumulate(gpu_times.begin(), gpu_times.end(), 0.0) / gpu_times.size();
-	std::cout << "Perf : Avg : " << gpu_avg << " ms FPS : " << 1000.0 / gpu_avg << " Frames " << gpu_frame_count << std::endl;
+		tm.stop();
+		times.push_back(tm.getTimeMilli());
+		frame_count++;
+	}
+
+	std::sort(times.begin(), times.end());
+	double time_avg = std::accumulate(times.begin(), times.end(), 0.0) / times.size();
+	std::cout << "Perf : Avg : " << time_avg << " ms FPS : " << 1000.0 / time_avg << " Frames " << frame_count << std::endl;
 	return 0;
 }
