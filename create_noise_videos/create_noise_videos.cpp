@@ -34,12 +34,20 @@
 using std::cout;
 using std::endl;
 
-std::filesystem::path output_dir = "D:\\datasets\\NIST_TREC_VIDEO_BG_100";
+std::filesystem::path output_dir;
+double SNR;
 
 std::queue<std::filesystem::path> working_queue;
 std::mutex queue_mutex;
 
-void create_video(const std::filesystem::path& video_path) {
+void make_noise(const cv::Mat& frame, const double SNR) {
+    cv::Mat noise_frame = frame.clone();
+    cv::randShuffle(noise_frame);
+    noise_frame /= SNR;
+    frame += noise_frame;
+}
+
+void create_video(const std::filesystem::path& video_path, const double SNR) {
     std::filesystem::path output_path = output_dir / video_path.filename();
     output_path.replace_extension("mp4");
 
@@ -64,7 +72,7 @@ void create_video(const std::filesystem::path& video_path) {
         if (frame.empty())
             break;
 #endif
-        
+        make_noise(frame, SNR);
         video_writer << frame;
     }
     video_reader.release();
@@ -84,11 +92,18 @@ void thread_invoker(int deviceID) {
         std::filesystem::path filename = working_queue.front();
         working_queue.pop();
         queue_mutex.unlock();
-        create_video(filename);
+        create_video(filename, SNR);
     }
 }
 
-int main() {
+int main(int argc, char** argv) {
+    if (argc != 3) {
+        // TODO add help info
+        return -1;
+    }
+    output_dir = argv[1];
+    SNR = std::stod(argv[2]);
+
     srand(time(0));
     cv::setNumThreads(0);
     read_config();
