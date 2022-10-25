@@ -86,16 +86,16 @@ int main() {
 	std::string delete_sql = delete_db_data();
 	DB->performQuery(delete_sql);
 	
-	//for (const auto& entry : std::filesystem::directory_iterator(MUSCLE_VCD_2007)) {
-	//	working_queue.push(entry.path());
-	//}
-
-	for (const auto& entry : std::filesystem::recursive_directory_iterator(NIST_TREC)) {
-		if (std::filesystem::is_regular_file(entry.path()) &&
-			entry.path().stem().string().back() != '0') { // remove all videos end with 0 to simulate non-existing queries. 
-			working_queue.push(entry.path());
-		}
+	for (const auto& entry : std::filesystem::directory_iterator(MUSCLE_VCD_2007)) {
+		working_queue.push(entry.path());
 	}
+
+	//for (const auto& entry : std::filesystem::recursive_directory_iterator(NIST_TREC)) {
+	//	if (std::filesystem::is_regular_file(entry.path()) &&
+	//		entry.path().stem().string().back() != '0') { // remove all videos end with 0 to simulate non-existing queries. 
+	//		working_queue.push(entry.path());
+	//	}
+	//}
 	
 	std::vector<std::thread> thread_list;
 	for (int i = 0; i < thread_num; i++) {
