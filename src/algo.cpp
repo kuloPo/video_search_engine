@@ -91,8 +91,8 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, cons
 			break;
 		}
 #ifdef SHOW_PROGRESS
-		if (gpu_frame_count % 1000 == 0) {
-			cout << gpu_frame_count << " frames completed" << endl;
+		if (frame_count % 1000 == 0) {
+			cout << frame_count << " frames completed" << endl;
 		}
 #endif
 		if (frame_count % (jumped_frame + 1) == 0) {
