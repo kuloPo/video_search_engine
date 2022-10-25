@@ -26,6 +26,7 @@
 #include <opencv2/cudacodec.hpp>
 #include <opencv2/cudawarping.hpp>
 #include <opencv2/cudaimgproc.hpp>
+#include <opencv2/cudaarithm.hpp>
 #else
 #include <opencv2/videoio.hpp>
 #include <opencv2/imgproc.hpp>
@@ -102,7 +103,7 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, cons
 			frame_preprocessing(second_frame);
 			edge_detection(second_frame, edge_frame);
 
-			edge_frame.convertTo(edge_frame, CV_32FC1);
+			//edge_frame.convertTo(edge_frame, CV_64FC1);
 			edge_frame_norm = edge_frame / sum(edge_frame);
 
 			// calculate histogram and the distance between hist
@@ -185,17 +186,11 @@ cv::Rect find_bounding_box(const std::filesystem::path& video_path) {
 		w.push_back(tmp_box.width);
 		h.push_back(tmp_box.height);
 		gpu_frame_count++;
-		//if (gpu_frame_count == 1000) {
-		//	break;
-		//}
 	}
 	int p_x = vector_median(x);
 	int p_y = vector_median(y);
 	int width = std::min(vector_median(w), raw_size.width - p_x);
 	int height = std::min(vector_median(h), raw_size.height - p_y);
-	//if (1.0 * width / raw_size.width >= 0.95 && 1.0 * height / raw_size.height) {
-	//	return cv::Rect();
-	//}
 	return cv::Rect(p_x, p_y, width, height);
 }
 
@@ -219,6 +214,8 @@ void frame_preprocessing(cv::cuda::GpuMat& frame) {
 	else if (frame.channels() == 3) {
 		cv::cuda::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
 	}
+	frame.convertTo(frame, CV_64FC1);
+	cv::cuda::divide(frame, 255, frame);
 }
 
 void edge_detection(cv::cuda::GpuMat& frame, cv::Mat& edge_frame) {
@@ -229,13 +226,12 @@ void edge_detection(cv::cuda::GpuMat& frame, cv::Mat& edge_frame) {
 	cv::Mat kernel_y = (cv::Mat_<double>(3, 3) << -1, 0, 1, -2, 0, 2, -1, 0, 1);
 	cv::filter2D(edge_frame, sobel_x, -1, kernel_x, cv::Point(-1, -1), 0, 4);
 	cv::filter2D(edge_frame, sobel_y, -1, kernel_y, cv::Point(-1, -1), 0, 4);
-	sobel_x.convertTo(sobel_x, CV_32FC1);
-	sobel_y.convertTo(sobel_y, CV_32FC1);
-	edge_frame.convertTo(edge_frame, CV_32FC1);
+	sobel_x.convertTo(sobel_x, CV_64FC1);
+	sobel_y.convertTo(sobel_y, CV_64FC1);
+	edge_frame.convertTo(edge_frame, CV_64FC1);
 	cv::pow(sobel_x, 2, sobel_x);
 	cv::pow(sobel_y, 2, sobel_y);
 	cv::sqrt((sobel_x + sobel_y), edge_frame);
-	edge_frame.convertTo(edge_frame, CV_8UC1);
 }
 
 #else
@@ -258,6 +254,8 @@ void frame_preprocessing(cv::Mat& frame) {
 	else if (frame.channels() == 3) {
 		cv::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
 	}
+	frame.convertTo(frame, CV_64FC1);
+	cv::divide(frame, 255, frame);
 }
 
 void edge_detection(cv::Mat& frame, cv::Mat& edge_frame) {
@@ -267,13 +265,12 @@ void edge_detection(cv::Mat& frame, cv::Mat& edge_frame) {
 	cv::Mat kernel_y = (cv::Mat_<double>(3, 3) << -1, 0, 1, -2, 0, 2, -1, 0, 1);
 	cv::filter2D(edge_frame, sobel_x, -1, kernel_x, cv::Point(-1, -1), 0, 4);
 	cv::filter2D(edge_frame, sobel_y, -1, kernel_y, cv::Point(-1, -1), 0, 4);
-	sobel_x.convertTo(sobel_x, CV_32FC1);
-	sobel_y.convertTo(sobel_y, CV_32FC1);
-	edge_frame.convertTo(edge_frame, CV_32FC1);
+	sobel_x.convertTo(sobel_x, CV_64FC1);
+	sobel_y.convertTo(sobel_y, CV_64FC1);
+	edge_frame.convertTo(edge_frame, CV_64FC1);
 	cv::pow(sobel_x, 2, sobel_x);
 	cv::pow(sobel_y, 2, sobel_y);
 	cv::sqrt((sobel_x + sobel_y), edge_frame);
-	edge_frame.convertTo(edge_frame, CV_8UC1);
 }
 
 #endif
