@@ -108,7 +108,7 @@ int main(int argc, char** argv) {
     cv::setNumThreads(0);
     read_config();
 
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(MUSCLE_VCD_2007)) {
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(NIST_TREC)) {
         if (std::filesystem::is_regular_file(entry.path())) {
             working_queue.push(entry.path());
         }
