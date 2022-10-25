@@ -103,7 +103,7 @@ std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, cons
 			frame_preprocessing(second_frame);
 			edge_detection(second_frame, edge_frame);
 
-			//edge_frame.convertTo(edge_frame, CV_64FC1);
+			//edge_frame.convertTo(edge_frame, CV_32FC1);
 			edge_frame_norm = edge_frame / sum(edge_frame);
 
 			// calculate histogram and the distance between hist
@@ -214,7 +214,7 @@ void frame_preprocessing(cv::cuda::GpuMat& frame) {
 	else if (frame.channels() == 3) {
 		cv::cuda::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
 	}
-	frame.convertTo(frame, CV_64FC1);
+	frame.convertTo(frame, CV_32FC1);
 	cv::cuda::divide(frame, 255, frame);
 }
 
@@ -226,9 +226,9 @@ void edge_detection(cv::cuda::GpuMat& frame, cv::Mat& edge_frame) {
 	cv::Mat kernel_y = (cv::Mat_<double>(3, 3) << -1, 0, 1, -2, 0, 2, -1, 0, 1);
 	cv::filter2D(edge_frame, sobel_x, -1, kernel_x, cv::Point(-1, -1), 0, 4);
 	cv::filter2D(edge_frame, sobel_y, -1, kernel_y, cv::Point(-1, -1), 0, 4);
-	sobel_x.convertTo(sobel_x, CV_64FC1);
-	sobel_y.convertTo(sobel_y, CV_64FC1);
-	edge_frame.convertTo(edge_frame, CV_64FC1);
+	sobel_x.convertTo(sobel_x, CV_32FC1);
+	sobel_y.convertTo(sobel_y, CV_32FC1);
+	edge_frame.convertTo(edge_frame, CV_32FC1);
 	cv::pow(sobel_x, 2, sobel_x);
 	cv::pow(sobel_y, 2, sobel_y);
 	cv::sqrt((sobel_x + sobel_y), edge_frame);
@@ -254,7 +254,7 @@ void frame_preprocessing(cv::Mat& frame) {
 	else if (frame.channels() == 3) {
 		cv::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
 	}
-	frame.convertTo(frame, CV_64FC1);
+	frame.convertTo(frame, CV_32FC1);
 	cv::divide(frame, 255, frame);
 }
 
@@ -265,9 +265,9 @@ void edge_detection(cv::Mat& frame, cv::Mat& edge_frame) {
 	cv::Mat kernel_y = (cv::Mat_<double>(3, 3) << -1, 0, 1, -2, 0, 2, -1, 0, 1);
 	cv::filter2D(edge_frame, sobel_x, -1, kernel_x, cv::Point(-1, -1), 0, 4);
 	cv::filter2D(edge_frame, sobel_y, -1, kernel_y, cv::Point(-1, -1), 0, 4);
-	sobel_x.convertTo(sobel_x, CV_64FC1);
-	sobel_y.convertTo(sobel_y, CV_64FC1);
-	edge_frame.convertTo(edge_frame, CV_64FC1);
+	sobel_x.convertTo(sobel_x, CV_32FC1);
+	sobel_y.convertTo(sobel_y, CV_32FC1);
+	edge_frame.convertTo(edge_frame, CV_32FC1);
 	cv::pow(sobel_x, 2, sobel_x);
 	cv::pow(sobel_y, 2, sobel_y);
 	cv::sqrt((sobel_x + sobel_y), edge_frame);

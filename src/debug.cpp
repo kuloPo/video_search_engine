@@ -26,7 +26,7 @@ void plot(
     const std::string& text)
 {
     cv::Mat src, plot_result;
-    data.convertTo(src, CV_64FC1);
+    data.convertTo(src, CV_32FC1);
 
     cv::Ptr<cv::plot::Plot2d> plot = cv::plot::Plot2d::create(src);
     plot->setShowGrid(false);
@@ -55,6 +55,6 @@ void plot_delta(double new_data, int frame_num, double max_h) {
         data.clear();
     }
     data.push_back(new_data);
-    cv::Mat data_mat(1, data.size(), CV_64F, data.data());
+    cv::Mat data_mat(1, data.size(), CV_32F, data.data());
     plot("plot", data_mat, max_h, 500, std::to_string(frame_num));
 }
