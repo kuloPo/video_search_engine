@@ -215,7 +215,7 @@ void frame_preprocessing(cv::cuda::GpuMat& frame) {
 		cv::cuda::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
 	}
 	frame.convertTo(frame, CV_32FC1);
-	cv::cuda::divide(frame, 255, frame);
+	// cv::cuda::divide(frame, 255, frame);
 }
 
 void edge_detection(cv::cuda::GpuMat& frame, cv::Mat& edge_frame) {
@@ -255,7 +255,7 @@ void frame_preprocessing(cv::Mat& frame) {
 		cv::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
 	}
 	frame.convertTo(frame, CV_32FC1);
-	cv::divide(frame, 255, frame);
+	// cv::divide(frame, 255, frame);
 }
 
 void edge_detection(cv::Mat& frame, cv::Mat& edge_frame) {
