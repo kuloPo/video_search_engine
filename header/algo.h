@@ -60,13 +60,13 @@ void frame_preprocessing(cv::cuda::GpuMat& frame);
 
 void edge_detection(cv::cuda::GpuMat& frame, cv::Mat& edge_frame);
 
+void edge_detection(cv::Mat& frame, cv::Mat& edge_frame);
+
 #else
 
 void add_key_frame(std::vector<Key_Frame*>& key_frames, int delta, int frame_num,
 	cv::Mat first_frame, cv::Mat second_frame);
 
 void frame_preprocessing(cv::Mat& frame);
-
-void edge_detection(cv::Mat& frame, cv::Mat& edge_frame);
 
 #endif
