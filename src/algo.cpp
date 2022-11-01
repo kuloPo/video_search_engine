@@ -36,6 +36,113 @@
 #include "utils.h"
 #include "io.h"
 
+Keyframe_Detector::Keyframe_Detector(const std::filesystem::path& filename) {
+	this->filename = filename;
+	this->total_frames = get_total_frames(filename);
+}
+
+std::vector<Key_Frame*> Keyframe_Detector::run() {
+	cv::TickMeter index_time, frame_time;
+
+	index_time.reset(); index_time.start();
+	this->init_video_reader();
+
+	// entire video is emtpy
+	if (first_frame.empty()) {
+		add_key_frame(key_frames, 0, 0, empty_frame, empty_frame);
+		return key_frames;
+	}
+
+	this->frame_process(first_frame, first_radon);
+
+	// add first frame into index
+	add_key_frame(key_frames, 0, 0, first_frame, empty_frame);
+
+	// variables for measuring performance
+	std::vector<double> times;
+	frame_count = 0;
+
+	while (true) {
+		frame_time.reset(); frame_time.start();
+		if (!this->read_frame())
+			break;
+#ifdef SHOW_PROGRESS
+		if (frame_count % 1000 == 0) {
+			cout << frame_count << " frames completed" << endl;
+		}
+#endif
+		if (frame_count % (jumped_frame + 1) == 0) {
+			this->frame_process(second_frame, second_radon);
+
+			double d = radon_distance(first_radon, second_radon);
+
+			// If delta is greater threshold, write the information into vector
+			if (d > frame_difference_threshold) {
+				add_key_frame(key_frames, d, frame_count, first_frame, second_frame);
+			}
+
+			first_frame = second_frame;
+			first_radon = second_radon;
+		}
+
+		frame_time.stop();
+		times.push_back(frame_time.getTimeMilli());
+		frame_count++;
+	}
+
+	// add last frame into index
+	add_key_frame(key_frames, 0, frame_count, first_frame, empty_frame);
+	index_time.stop();
+
+#if defined DEBUG_CREATE_INDEX || defined DEBUG_PERFORMANCE
+	if (!times.empty()) {
+		std::sort(times.begin(), times.end());
+		double total_time = std::accumulate(times.begin(), times.end(), 0.0);
+		double avg = total_time / frame_count;
+		printf("%s %.2f %d %.2f\n", filename.filename().string().c_str(), total_time, frame_count, index_time.getTimeSec());
+	}
+#endif // DEBUG_CREATE_INDEX
+
+	return key_frames;
+}
+
+void Keyframe_Detector::filter(cv::Mat& frame) {
+	return;
+}
+
+void Keyframe_Detector::init_video_reader() {
+#ifdef HAVE_OPENCV_CUDACODEC
+	cuda_reader = cv::cudacodec::createVideoReader(filename.string());
+	cuda_reader->nextFrame(first_frame);
+#else
+	video_reader = cv::VideoCapture(filename.string());
+	video_reader >> first_frame;
+#endif
+}
+
+bool Keyframe_Detector::read_frame() {
+#ifdef HAVE_OPENCV_CUDACODEC
+	return cuda_reader->nextFrame(second_frame);
+#else 
+	video_reader >> second_frame;
+	return !second_frame.empty();
+#endif
+}
+
+#ifdef HAVE_OPENCV_CUDACODEC
+void Keyframe_Detector::frame_process(cv::cuda::GpuMat& in_frame, cv::Mat& out_frame) {
+#else
+void Keyframe_Detector::frame_process(cv::Mat & in_frame, cv::Mat & out_frame) {
+#endif
+	// frame preprocessing
+	frame_preprocessing(in_frame);
+	// edge detection
+	edge_detection(in_frame, edge_frame);
+	cv::Mat edge_frame_normed = edge_frame / sum(edge_frame);
+	// calculate histogram and the distance between hist
+	Radon_Transform(edge_frame_normed, out_frame, 45, 0, 180);
+}
+
 std::vector<Key_Frame*> create_index(const std::filesystem::path& filename, const MODE mode, double video_length_cut) {
 	int total_frame = get_total_frames(filename);
 	cv::TickMeter index_time;
