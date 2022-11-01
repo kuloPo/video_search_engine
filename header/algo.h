@@ -38,17 +38,17 @@ class Keyframe_Detector {
 public:
 	Keyframe_Detector(const std::filesystem::path& filename);
 	std::vector<Key_Frame*> run();
-private:
+protected:
 	void filter(cv::Mat& frame);
 	void init_video_reader();
-	bool read_frame();
+	virtual bool read_frame();
 #ifdef HAVE_OPENCV_CUDACODEC
-	void frame_process(cv::cuda::GpuMat& in_frame, cv::Mat& out_frame);
+	virtual void frame_process(cv::cuda::GpuMat& in_frame, cv::Mat& out_frame);
 #else
-	void frame_process(cv::Mat& in_frame, cv::Mat& out_frame);
+	virtual void frame_process(cv::Mat& in_frame, cv::Mat& out_frame);
 #endif
 
-private:
+protected:
 	std::filesystem::path filename;
 	std::vector<Key_Frame*> key_frames;
 

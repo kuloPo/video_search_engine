@@ -36,6 +36,35 @@ std::vector<double> search_times;
 std::queue<std::filesystem::path> working_queue;
 std::mutex queue_mutex;
 
+class Keyframe_Detector_Searcher : public Keyframe_Detector {
+public:
+	Keyframe_Detector_Searcher(const std::filesystem::path& filename, double video_length_cut = 1.0) : Keyframe_Detector(filename) {
+		bounding_box = find_bounding_box(filename);
+		this->video_length_cut = video_length_cut;
+	}
+
+private:
+	bool read_frame() {
+		if (frame_count > total_frames * video_length_cut) {
+			return false;
+		}
+		return Keyframe_Detector::read_frame();
+	}
+
+#ifdef HAVE_OPENCV_CUDACODEC
+	void frame_process(cv::cuda::GpuMat& in_frame, cv::Mat& out_frame) {
+#else
+	void frame_process(cv::Mat & in_frame, cv::Mat & out_frame) {
+#endif
+		in_frame = in_frame(bounding_box);
+		Keyframe_Detector::frame_process(in_frame, out_frame);
+	}
+
+private:
+	cv::Rect bounding_box;
+	double video_length_cut;
+};
+
 /*
 @brief Read ID of videos from inverted index
 
@@ -103,7 +132,8 @@ void write_result(
 std::string query(const std::filesystem::path& filename, bool print_full = false, double video_length_cut = 1.0) {
 	int input_fps = get_fps(filename);
 	// extract interval of the query video
-	std::vector<Key_Frame*> key_frames = std::move(create_index(filename, MODE::SEARCHER, video_length_cut));
+	//std::vector<Key_Frame*> key_frames = std::move(create_index(filename, MODE::SEARCHER, video_length_cut));
+	std::vector<Key_Frame*> key_frames = std::move(Keyframe_Detector_Searcher(filename, video_length_cut).run());
 
 	std::vector<int> input_interval, interval_merged;
 	std::vector<double> input_interval_sec;
@@ -217,7 +247,7 @@ int main() {
 	parallel_for_(cv::Range(1, 15), [&](const cv::Range& range) {
 		for (int i = range.start; i <= range.end; i++) {
 			std::filesystem::path filename = std::filesystem::path(MUSCLE_VCD_2007_ST1) / ("ST1Query" + std::to_string(i) + ".mpeg");
-			search_result[i - 1] = query(filename);
+			search_result[i - 1] = query(filename, false, 0.5);
 		}
 	}, thread_num);
 	for (std::string result : search_result) {

@@ -40,7 +40,7 @@ void build_index(std::filesystem::path filepath) {
 	}
 
 	// extract key frames
-	std::vector<Key_Frame*> key_frames = std::move(create_index(filepath, MODE::INDEXER));
+	std::vector<Key_Frame*> key_frames = std::move(Keyframe_Detector(filepath).run());
 	// get interval
 	int fps = get_fps(filepath);
 	std::vector<int> interval, interval_merged;
@@ -86,7 +86,7 @@ int main() {
 	std::string delete_sql = delete_db_data();
 	DB->performQuery(delete_sql);
 	
-	for (const auto& entry : std::filesystem::directory_iterator(MUSCLE_VCD_2007)) {
+	for (const auto& entry : std::filesystem::directory_iterator("F:\\MUSCLE_VCD_2007_mini")) {
 		working_queue.push(entry.path());
 	}
 
