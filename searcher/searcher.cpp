@@ -129,11 +129,11 @@ void write_result(
 	result_str += "%";
 }
 
-std::string query(const std::filesystem::path& filename, bool print_full = false, double video_length_cut = 1.0) {
+std::string query(const std::filesystem::path& filename, Keyframe_Detector& detector, bool print_full = false) {
 	int input_fps = get_fps(filename);
 	// extract interval of the query video
 	//std::vector<Key_Frame*> key_frames = std::move(create_index(filename, MODE::SEARCHER, video_length_cut));
-	std::vector<Key_Frame*> key_frames = std::move(Keyframe_Detector_Searcher(filename, video_length_cut).run());
+	std::vector<Key_Frame*> key_frames = std::move(detector.run());
 
 	std::vector<int> input_interval, interval_merged;
 	std::vector<double> input_interval_sec;
@@ -221,23 +221,23 @@ std::string query(const std::filesystem::path& filename, bool print_full = false
 	return search_result;
 }
 
-void thread_invoker(int deviceID) {
-#ifdef HAVE_OPENCV_CUDACODEC
-	cv::cuda::setDevice(deviceID);
-#endif
-	while (true) {
-		queue_mutex.lock();
-		if (working_queue.empty()) {
-			queue_mutex.unlock();
-			break;
-		}
-		std::filesystem::path filename = working_queue.front();
-		working_queue.pop();
-		queue_mutex.unlock();
-		std::string result = query(filename.string());
-		safe_printf("%s\n", result.c_str());
-	}
-}
+//void thread_invoker(int deviceID) {
+//#ifdef HAVE_OPENCV_CUDACODEC
+//	cv::cuda::setDevice(deviceID);
+//#endif
+//	while (true) {
+//		queue_mutex.lock();
+//		if (working_queue.empty()) {
+//			queue_mutex.unlock();
+//			break;
+//		}
+//		std::filesystem::path filename = working_queue.front();
+//		working_queue.pop();
+//		queue_mutex.unlock();
+//		std::string result = query(filename.string());
+//		safe_printf("%s\n", result.c_str());
+//	}
+//}
 
 int main() {
 	read_config();
@@ -247,7 +247,8 @@ int main() {
 	parallel_for_(cv::Range(1, 15), [&](const cv::Range& range) {
 		for (int i = range.start; i <= range.end; i++) {
 			std::filesystem::path filename = std::filesystem::path(MUSCLE_VCD_2007_ST1) / ("ST1Query" + std::to_string(i) + ".mpeg");
-			search_result[i - 1] = query(filename, false, 0.5);
+			Keyframe_Detector_Searcher detector(filename.string());
+			search_result[i - 1] = query(filename, detector);
 		}
 	}, thread_num);
 	for (std::string result : search_result) {

@@ -39,7 +39,6 @@ public:
 	Keyframe_Detector(const std::filesystem::path& filename);
 	std::vector<Key_Frame*> run();
 protected:
-	void filter(cv::Mat& frame);
 	void init_video_reader();
 	virtual bool read_frame();
 #ifdef HAVE_OPENCV_CUDACODEC

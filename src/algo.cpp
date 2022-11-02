@@ -106,10 +106,6 @@ std::vector<Key_Frame*> Keyframe_Detector::run() {
 	return key_frames;
 }
 
-void Keyframe_Detector::filter(cv::Mat& frame) {
-	return;
-}
-
 void Keyframe_Detector::init_video_reader() {
 #ifdef HAVE_OPENCV_CUDACODEC
 	cuda_reader = cv::cudacodec::createVideoReader(filename.string());
