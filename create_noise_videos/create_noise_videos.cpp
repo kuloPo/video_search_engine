@@ -36,6 +36,7 @@ using std::endl;
 
 std::filesystem::path output_dir;
 double SNR;
+std::string seed_prefix;
 
 std::queue<std::filesystem::path> working_queue;
 std::mutex queue_mutex;
@@ -48,8 +49,13 @@ void make_noise(const cv::Mat& frame, const double SNR) {
 }
 
 void create_video(const std::filesystem::path& video_path, const double SNR) {
+    std::string hash;
+    hash_string(video_path.string(), hash);
+    std::string seed = seed_prefix + hash.substr(0, 15);
+    cv::theRNG().state = std::stoull(seed, nullptr, 16);
+
     std::filesystem::path output_path = output_dir / video_path.filename();
-    output_path.replace_extension("mp4");
+    output_path.replace_extension("avi");
 
     cv::Mat frame;
 #ifdef HAVE_OPENCV_CUDACODEC
@@ -61,7 +67,7 @@ void create_video(const std::filesystem::path& video_path, const double SNR) {
     cv::VideoCapture video_reader(video_path.string());
     video_reader >> frame;
 #endif
-    cv::VideoWriter video_writer(output_path.string(), cv::VideoWriter::fourcc('H', '2', '6', '4'), get_fps(video_path), frame.size());
+    cv::VideoWriter video_writer(output_path.string(), cv::VideoWriter::fourcc('m', 'p', 'g', '2'), get_fps(video_path), frame.size());
     while (true) {
 #ifdef HAVE_OPENCV_CUDACODEC
         if (!video_reader->nextFrame(gpu_frame))
@@ -97,14 +103,14 @@ void thread_invoker(int deviceID) {
 }
 
 int main(int argc, char** argv) {
-    if (argc != 3) {
+    if (argc < 3 || argc > 4) {
         // TODO add help info
         return -1;
     }
     output_dir = argv[1];
     SNR = std::stod(argv[2]);
+    seed_prefix = argc == 4 ? "0" : argv[3];
 
-    srand(time(0));
     cv::setNumThreads(0);
     read_config();
 
