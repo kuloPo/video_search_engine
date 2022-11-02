@@ -29,6 +29,9 @@
 #include "io.h"
 #include "similar.h"
 
+double SNR;
+std::string seed_prefix;
+
 std::unique_ptr<DB_Connector> DB;
 cv::TickMeter tm;
 std::vector<double> search_times;
@@ -63,6 +66,52 @@ private:
 private:
 	cv::Rect bounding_box;
 	double video_length_cut;
+};
+
+class Keyframe_Detector_Noise : public Keyframe_Detector {
+public:
+	Keyframe_Detector_Noise(const std::filesystem::path& filename) : Keyframe_Detector(filename) {
+		std::string hash;
+		hash_string(video_path.string(), hash);
+		this->seed = seed_prefix + hash.substr(0, 15);
+		cv::theRNG().state = std::stoull(seed, nullptr, 16);
+	}
+
+private:
+#ifdef HAVE_OPENCV_CUDACODEC
+	cv::Mat make_noise(cv::cuda::GpuMat& frame) {
+		cv::Mat frame_cpu;
+		frame.download(frame_cpu);
+		return make_noise(frame_cpu);
+	}
+#endif
+
+	cv::Mat make_noise(const cv::Mat& frame) {
+		cv::Mat noise_frame = frame.clone();
+		cv::randShuffle(noise_frame);
+		noise_frame /= SNR;
+		noise_frame += frame;
+		return noise_frame;
+	}
+
+#ifdef HAVE_OPENCV_CUDACODEC
+	void frame_process(cv::cuda::GpuMat& in_frame, cv::Mat& out_frame) {
+#else
+	void frame_process(cv::Mat & in_frame, cv::Mat & out_frame) {
+#endif
+		// frame preprocessing
+		frame_preprocessing(in_frame);
+		// add noise
+		cv::Mat noise = this->make_noise(in_frame);
+		// edge detection
+		edge_detection(noise, edge_frame);
+		cv::Mat edge_frame_normed = edge_frame / sum(edge_frame);
+		// calculate histogram and the distance between hist
+		Radon_Transform(edge_frame_normed, out_frame, 45, 0, 180);
+	}
+
+private:
+	std::string seed;
 };
 
 /*
@@ -221,39 +270,59 @@ std::string query(const std::filesystem::path& filename, Keyframe_Detector& dete
 	return search_result;
 }
 
-//void thread_invoker(int deviceID) {
-//#ifdef HAVE_OPENCV_CUDACODEC
-//	cv::cuda::setDevice(deviceID);
-//#endif
-//	while (true) {
-//		queue_mutex.lock();
-//		if (working_queue.empty()) {
-//			queue_mutex.unlock();
-//			break;
-//		}
-//		std::filesystem::path filename = working_queue.front();
-//		working_queue.pop();
-//		queue_mutex.unlock();
-//		std::string result = query(filename.string());
-//		safe_printf("%s\n", result.c_str());
-//	}
-//}
+void thread_invoker(int deviceID) {
+#ifdef HAVE_OPENCV_CUDACODEC
+	cv::cuda::setDevice(deviceID);
+#endif
+	while (true) {
+		queue_mutex.lock();
+		if (working_queue.empty()) {
+			queue_mutex.unlock();
+			break;
+		}
+		std::filesystem::path filename = working_queue.front();
+		working_queue.pop();
+		queue_mutex.unlock();
+		Keyframe_Detector_Searcher detector(filename.string());
+		std::string result = query(filename.string(), detector);
+		safe_printf("%s\n", result.c_str());
+	}
+}
 
-int main() {
+void thread_invoker_noise(int deviceID) {
+#ifdef HAVE_OPENCV_CUDACODEC
+	cv::cuda::setDevice(deviceID);
+#endif
+	while (true) {
+		queue_mutex.lock();
+		if (working_queue.empty()) {
+			queue_mutex.unlock();
+			break;
+		}
+		std::filesystem::path filename = working_queue.front();
+		working_queue.pop();
+		queue_mutex.unlock();
+		Keyframe_Detector_Noise detector(filename.string());
+		std::string result = query(filename.string(), detector);
+		safe_printf("%s\n", result.c_str());
+	}
+}
+
+int main(int argc, char** argv) {
 	read_config();
 	DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
 
-	std::vector<std::string> search_result(15);
-	parallel_for_(cv::Range(1, 15), [&](const cv::Range& range) {
-		for (int i = range.start; i <= range.end; i++) {
-			std::filesystem::path filename = std::filesystem::path(MUSCLE_VCD_2007_ST1) / ("ST1Query" + std::to_string(i) + ".mpeg");
-			Keyframe_Detector_Searcher detector(filename.string());
-			search_result[i - 1] = query(filename, detector);
-		}
-	}, thread_num);
-	for (std::string result : search_result) {
-		cout << result << endl;
-	}
+	//std::vector<std::string> search_result(15);
+	//parallel_for_(cv::Range(1, 15), [&](const cv::Range& range) {
+	//	for (int i = range.start; i <= range.end; i++) {
+	//		std::filesystem::path filename = std::filesystem::path(MUSCLE_VCD_2007_ST1) / ("ST1Query" + std::to_string(i) + ".mpeg");
+	//		Keyframe_Detector_Searcher detector(filename.string());
+	//		search_result[i - 1] = query(filename, detector);
+	//	}
+	//}, thread_num);
+	//for (std::string result : search_result) {
+	//	cout << result << endl;
+	//}
 
 	//std::vector<std::string> search_result(3);
 	//parallel_for_(cv::Range(1, 3), [&](const cv::Range& range) {
@@ -278,17 +347,19 @@ int main() {
 	//	iter->join();
 	//}
 
-	//for (const auto& entry : std::filesystem::directory_iterator(NIST_TREC_query)) {
-	//	working_queue.push(entry.path());
-	//}
-	//std::vector<std::thread> thread_list;
-	//for (int i = 0; i < thread_num; i++) {
-	//	std::thread t(thread_invoker, i);
-	//	thread_list.push_back(std::move(t));
-	//}
-	//for (auto iter = thread_list.begin(); iter != thread_list.end(); iter++) {
-	//	iter->join();
-	//}
+	SNR = std::stod(argv[1]);
+	seed_prefix = argv[2];
+	for (const auto& entry : std::filesystem::directory_iterator(NIST_TREC)) {
+		working_queue.push(entry.path());
+	}
+	std::vector<std::thread> thread_list;
+	for (int i = 0; i < thread_num; i++) {
+		std::thread t(thread_invoker_noise, i);
+		thread_list.push_back(std::move(t));
+	}
+	for (auto iter = thread_list.begin(); iter != thread_list.end(); iter++) {
+		iter->join();
+	}
 
 	//std::sort(search_times.begin(), search_times.end());
 	//double time_avg = std::accumulate(search_times.begin(), search_times.end(), 0.0) / search_times.size();

@@ -41,7 +41,7 @@ std::string seed_prefix;
 std::queue<std::filesystem::path> working_queue;
 std::mutex queue_mutex;
 
-void make_noise(const cv::Mat& frame, const double SNR) {
+void make_noise(cv::Mat& frame, const double SNR) {
     cv::Mat noise_frame = frame.clone();
     cv::randShuffle(noise_frame);
     noise_frame /= SNR;
