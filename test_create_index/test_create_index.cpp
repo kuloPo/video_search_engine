@@ -30,7 +30,7 @@
 int main() {
 	read_config();
 	std::filesystem::path filepath = "../rsrc/video.mp4";
-	std::vector<Key_Frame*> key_frames = std::move(create_index(filepath));
+	std::vector<Key_Frame*> key_frames = std::move(Keyframe_Detector(filepath).run());
 	for (Key_Frame* key_frame : key_frames) {
 		std::cout << key_frame->frame_num << " " << key_frame->delta << std::endl;
 	}

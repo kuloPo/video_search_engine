@@ -31,8 +31,8 @@ int main() {
 	std::filesystem::path filepath_1 = "../rsrc/video.mp4";
 	std::filesystem::path filepath_2 = "../rsrc/video_flip.mp4";
 
-	std::vector<Key_Frame*> key_frames_1 = std::move(create_index(filepath_1));
-	std::vector<Key_Frame*> key_frames_2 = std::move(create_index(filepath_2));
+	std::vector<Key_Frame*> key_frames_1 = std::move(Keyframe_Detector(filepath_1).run());
+	std::vector<Key_Frame*> key_frames_2 = std::move(Keyframe_Detector(filepath_2).run());
 
 	std::cout << "video 1 key frame: " << std::endl;
 	for (Key_Frame* key_frame : key_frames_1) {

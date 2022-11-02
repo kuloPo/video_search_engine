@@ -30,6 +30,27 @@ std::unique_ptr<DB_Connector> DB;
 cv::TickMeter tm;
 std::vector<double> search_times;
 
+class Keyframe_Detector_Demo_Searcher : public Keyframe_Detector {
+public:
+	Keyframe_Detector_Demo_Searcher(const std::filesystem::path& filename) : Keyframe_Detector(filename) {
+		bounding_box = find_bounding_box(filename);
+	}
+
+private:
+
+#ifdef HAVE_OPENCV_CUDACODEC
+	void frame_process(cv::cuda::GpuMat& in_frame, cv::Mat& out_frame) {
+#else
+	void frame_process(cv::Mat & in_frame, cv::Mat & out_frame) {
+#endif
+		in_frame = in_frame(bounding_box);
+		Keyframe_Detector::frame_process(in_frame, out_frame);
+	}
+
+private:
+	cv::Rect bounding_box;
+	};
+
 /*
 @brief Read ID of videos from inverted index
 
@@ -81,7 +102,7 @@ std::string invert_index_search_sql(const int interval_floor, const int interval
 std::string query(const std::filesystem::path& filename) {
 	int input_fps = get_fps(filename);
 	// extract interval of the query video
-	std::vector<Key_Frame*> key_frames = std::move(create_index(filename));
+	std::vector<Key_Frame*> key_frames = std::move(Keyframe_Detector_Demo_Searcher(filename).run());
 
 	std::vector<int> input_interval, interval_merged;
 	std::vector<double> input_interval_sec;
