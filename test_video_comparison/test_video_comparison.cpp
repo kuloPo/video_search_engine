@@ -25,11 +25,16 @@
 #include "utils.h"
 #include "io.h"
 
-int main() {
+int main(int argc, char** argv) {
 	read_config();
 
 	std::filesystem::path filepath_1 = "../rsrc/video.mp4";
 	std::filesystem::path filepath_2 = "../rsrc/video_flip.mp4";
+
+	if (argc == 3) {
+		filepath_1 = argv[1];
+		filepath_2 = argv[2];
+	}
 
 	std::vector<Key_Frame*> key_frames_1 = std::move(Keyframe_Detector(filepath_1).run());
 	std::vector<Key_Frame*> key_frames_2 = std::move(Keyframe_Detector(filepath_2).run());

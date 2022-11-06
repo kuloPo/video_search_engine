@@ -27,9 +27,12 @@
 
 #include <vector>
 
-int main() {
+int main(int argc, char** argv) {
 	read_config();
 	std::filesystem::path filepath = "../rsrc/video.mp4";
+	if (argc == 2) {
+		filepath = argv[1];
+	}
 	std::vector<Key_Frame*> key_frames = std::move(Keyframe_Detector(filepath).run());
 	for (Key_Frame* key_frame : key_frames) {
 		std::cout << key_frame->frame_num << " " << key_frame->delta << std::endl;
