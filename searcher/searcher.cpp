@@ -242,8 +242,7 @@ std::string query(const std::filesystem::path& filename, Keyframe_Detector& dete
 		read_interval(interval_str, fps, interval_db);
 		int similarity = interval_comparison(input_interval_sec, interval_db);
 		double matched_percentage = 100.0 * similarity / input_interval_sec.size();
-		if (filename.filename().string() != videoname && 
-			matched_percentage >= min_matched_percentage) {
+		if (matched_percentage >= min_matched_percentage) {
 			result.push_back(std::pair<double, std::string>(matched_percentage, videoname));
 		}
 	}
