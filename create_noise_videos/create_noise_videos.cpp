@@ -55,7 +55,7 @@ void create_video(const std::filesystem::path& video_path, const double SNR) {
     cv::theRNG().state = std::stoull(seed, nullptr, 16);
 
     std::filesystem::path output_path = output_dir / video_path.filename();
-    output_path.replace_extension("avi");
+    output_path.replace_extension("mp4");
 
     cv::Mat frame;
 #ifdef HAVE_OPENCV_CUDACODEC
@@ -67,7 +67,7 @@ void create_video(const std::filesystem::path& video_path, const double SNR) {
     cv::VideoCapture video_reader(video_path.string());
     video_reader >> frame;
 #endif
-    cv::VideoWriter video_writer(output_path.string(), cv::VideoWriter::fourcc('m', 'p', 'g', '2'), get_fps(video_path), frame.size());
+    cv::VideoWriter video_writer(output_path.string(), cv::VideoWriter::fourcc('a', 'v', 'c', '1'), get_fps(video_path), frame.size());
     while (true) {
 #ifdef HAVE_OPENCV_CUDACODEC
         if (!video_reader->nextFrame(gpu_frame))
@@ -109,7 +109,7 @@ int main(int argc, char** argv) {
     }
     output_dir = argv[1];
     SNR = std::stod(argv[2]);
-    seed_prefix = argc == 4 ? "0" : argv[3];
+    seed_prefix = argc == 4 ? argv[3] : "0";
 
     cv::setNumThreads(0);
     read_config();
