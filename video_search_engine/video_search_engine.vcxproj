@@ -87,6 +87,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\algo.cpp" />
+    <ClCompile Include="..\src\imgproc.cpp" />
     <ClCompile Include="..\src\io.cpp" />
     <ClCompile Include="..\src\similar.cpp" />
     <ClCompile Include="..\src\utils.cpp" />
@@ -96,6 +97,7 @@
     <ClInclude Include="..\header\algo.h" />
     <ClInclude Include="..\header\common.h" />
     <ClInclude Include="..\header\config.h" />
+    <ClInclude Include="..\header\imgproc.h" />
     <ClInclude Include="..\header\ini.h" />
     <ClInclude Include="..\header\io.h" />
     <ClInclude Include="..\header\picosha2.h" />

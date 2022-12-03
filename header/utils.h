@@ -21,6 +21,17 @@
 #include <vector>
 #include <opencv2/core.hpp>
 
+#include "common.h"
+
+ /*
+ @brief This function calculates the interval (in frame number) of a video
+ given its vector of Key_Frame.
+
+ @param key_frames Vector containing the pointers of Key_Frame of the source video
+ @param interval Destination of the interval vector
+ */
+void calc_interval(const std::vector<Key_Frame*>& key_frames, std::vector<int>& interval);
+
 /*
 @brief Merge all intervals that are less than one second. 
 The too-short interval will be merged to the one before it. 

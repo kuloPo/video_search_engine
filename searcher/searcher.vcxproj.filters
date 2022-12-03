@@ -36,6 +36,9 @@
     <ClInclude Include="..\header\ini.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\header\imgproc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\algo.cpp">
@@ -51,6 +54,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\imgproc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -18,6 +18,17 @@
 
 #include "utils.h"
 
+void calc_interval(const std::vector<Key_Frame*>& key_frames, std::vector<int>& interval) {
+	int last_frame = 0;
+	for (Key_Frame* key_frame : key_frames) {
+		if (key_frame->frame_num == 0) { // avoid the starting zero, since all intervals start with frame 0
+			continue;
+		}
+		interval.push_back(key_frame->frame_num - last_frame);
+		last_frame = key_frame->frame_num;
+	}
+}
+
 void interval_merge(const std::vector<int>& interval, const int fps, std::vector<int>& interval_merged) {
 	for (int i : interval) {
 		if (i < fps && interval_merged.size() != 0) { // too small and not the first one

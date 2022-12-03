@@ -35,6 +35,7 @@
 #include "similar.h"
 #include "utils.h"
 #include "io.h"
+#include "imgproc.h"
 
 Keyframe_Detector::Keyframe_Detector(const std::filesystem::path& filename) {
 	this->filename = filename;
@@ -42,9 +43,8 @@ Keyframe_Detector::Keyframe_Detector(const std::filesystem::path& filename) {
 }
 
 std::vector<Key_Frame*> Keyframe_Detector::run() {
-	cv::TickMeter index_time, frame_time;
+	cv::TickMeter frame_time;
 
-	index_time.reset(); index_time.start();
 	this->init_video_reader();
 
 	// entire video is emtpy
@@ -92,14 +92,13 @@ std::vector<Key_Frame*> Keyframe_Detector::run() {
 
 	// add last frame into index
 	add_key_frame(key_frames, 0, frame_count, first_frame, empty_frame);
-	index_time.stop();
 
 #if defined DEBUG_CREATE_INDEX || defined DEBUG_PERFORMANCE
 	if (!times.empty()) {
 		std::sort(times.begin(), times.end());
 		double total_time = std::accumulate(times.begin(), times.end(), 0.0);
 		double avg = total_time / frame_count;
-		printf("%s %.2f %d %.2f\n", filename.filename().string().c_str(), total_time, frame_count, index_time.getTimeSec());
+		printf("%s %.2f %d %.2f\n", filename.filename().string().c_str(), total_time, frame_count, avg);
 	}
 #endif // DEBUG_CREATE_INDEX
 
@@ -137,17 +136,6 @@ void Keyframe_Detector::frame_process(cv::Mat & in_frame, cv::Mat & out_frame) {
 	cv::Mat edge_frame_normed = edge_frame / sum(edge_frame);
 	// calculate histogram and the distance between hist
 	Radon_Transform(edge_frame_normed, out_frame, 45, 0, 180);
-}
-
-void calc_interval(const std::vector<Key_Frame*>& key_frames, std::vector<int>& interval) {
-	int last_frame = 0;
-	for (Key_Frame* key_frame : key_frames) {
-		if (key_frame->frame_num == 0) { // avoid the starting zero, since all intervals start with frame 0
-			continue;
-		}
-		interval.push_back(key_frame->frame_num - last_frame);
-		last_frame = key_frame->frame_num;
-	}
 }
 
 cv::Rect find_bounding_box(const std::filesystem::path& video_path) {
@@ -196,31 +184,17 @@ cv::Rect find_bounding_box(const std::filesystem::path& video_path) {
 
 void add_key_frame(std::vector<Key_Frame*>& key_frames, int delta, int frame_num,
 	cv::cuda::GpuMat first_frame, cv::cuda::GpuMat second_frame) {
-	Key_Frame* new_key_frame = new Key_Frame;
-	new_key_frame->delta = delta;
-	new_key_frame->frame_num = frame_num;
-	new_key_frame->first_frame = first_frame;
-	new_key_frame->second_frame = second_frame;
-	key_frames.push_back(new_key_frame);
-}
-
-void frame_preprocessing(cv::cuda::GpuMat& frame) {
-	cv::cuda::resize(frame, frame, cv::Size(128, 128));
-	if (frame.channels() == 4) {
-		cv::cuda::cvtColor(frame, frame, cv::COLOR_BGRA2GRAY);
+	cv::Mat first_frame_cpu, second_frame_cpu;
+	if (!first_frame.empty()) {
+		first_frame.download(first_frame_cpu);
 	}
-	else if (frame.channels() == 3) {
-		cv::cuda::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
+	if (!second_frame.empty()) {
+		second_frame.download(second_frame_cpu);
 	}
+	add_key_frame(key_frames, delta, frame_num, first_frame_cpu, second_frame_cpu);
 }
 
-void edge_detection(cv::cuda::GpuMat& frame, cv::Mat& edge_frame) {
-	cv::Mat frame_cpu;
-	frame.download(frame_cpu);
-	edge_detection(frame_cpu, edge_frame);
-}
-
-#else
+#endif
 
 void add_key_frame(std::vector<Key_Frame*>& key_frames, int delta, int frame_num,
 	cv::Mat first_frame, cv::Mat second_frame) {
@@ -230,31 +204,4 @@ void add_key_frame(std::vector<Key_Frame*>& key_frames, int delta, int frame_num
 	new_key_frame->first_frame = first_frame;
 	new_key_frame->second_frame = second_frame;
 	key_frames.push_back(new_key_frame);
-}
-
-void frame_preprocessing(cv::Mat& frame) {
-	cv::resize(frame, frame, cv::Size(128, 128));
-	if (frame.channels() == 4) {
-		cv::cvtColor(frame, frame, cv::COLOR_BGRA2GRAY);
-	}
-	else if (frame.channels() == 3) {
-		cv::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
-	}
-}
-
-#endif
-
-void edge_detection(cv::Mat& frame, cv::Mat& edge_frame) {
-	cv::GaussianBlur(frame, edge_frame, cv::Size(3, 3), 1, 1, cv::BORDER_DEFAULT);
-	cv::Mat sobel_x, sobel_y;
-	cv::Mat kernel_x = (cv::Mat_<double>(3, 3) << 1, 2, 1, 0, 0, 0, -1, -2, -1);
-	cv::Mat kernel_y = (cv::Mat_<double>(3, 3) << -1, 0, 1, -2, 0, 2, -1, 0, 1);
-	cv::filter2D(edge_frame, sobel_x, -1, kernel_x, cv::Point(-1, -1), 0, 4);
-	cv::filter2D(edge_frame, sobel_y, -1, kernel_y, cv::Point(-1, -1), 0, 4);
-	sobel_x.convertTo(sobel_x, CV_32FC1);
-	sobel_y.convertTo(sobel_y, CV_32FC1);
-	edge_frame.convertTo(edge_frame, CV_32FC1);
-	cv::pow(sobel_x, 2, sobel_x);
-	cv::pow(sobel_y, 2, sobel_y);
-	cv::sqrt((sobel_x + sobel_y), edge_frame);
 }

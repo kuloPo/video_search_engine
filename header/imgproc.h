@@ -6,7 +6,7 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License,
  * or (at your option) any later version.
- * 
+ *
  * kuloPo/video_search_engine is distributed in the hope that it will be useful,but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -18,32 +18,18 @@
 
 #pragma once
 
-#include <filesystem>
-#include <iostream>
-#include <mutex>
-#include <opencv2/opencv_modules.hpp>
+#include <opencv2/core.hpp>
 
 #ifdef HAVE_OPENCV_CUDACODEC
-#include <opencv2/core/cuda.hpp>
+
+void frame_preprocessing(cv::cuda::GpuMat& frame);
+
+void edge_detection(cv::cuda::GpuMat& frame, cv::Mat& edge_frame);
+
 #else
-#include <opencv2/core/mat.hpp>
+
+void frame_preprocessing(cv::Mat& frame);
+
 #endif
 
-#include "config.h"
-#include "debug.h"
-
-using std::cout;
-using std::endl;
-
-struct Key_Frame {
-	double delta;                  // delta value returned by comparison algorithm
-	int frame_num;                 // frame number in source video 
-	cv::Mat first_frame;           // image of the first frame of the pair
-	cv::Mat second_frame;          // image of the second frame of the pair
-};
-
-#ifdef HAVE_OPENCV_CUDACODEC
-inline cv::cuda::GpuMat empty_frame;
-#else
-inline cv::Mat empty_frame;
-#endif
+void edge_detection(cv::Mat& frame, cv::Mat& edge_frame);

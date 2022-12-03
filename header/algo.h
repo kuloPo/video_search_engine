@@ -69,15 +69,6 @@ protected:
 #endif
 };
 
-/*
-@brief This function calculates the interval (in frame number) of a video
-given its vector of Key_Frame.
-
-@param key_frames Vector containing the pointers of Key_Frame of the source video
-@param interval Destination of the interval vector
-*/
-void calc_interval(const std::vector<Key_Frame*>& key_frames, std::vector<int>& interval);
-
 cv::Rect find_bounding_box(const std::filesystem::path& video_path);
 
 #ifdef HAVE_OPENCV_CUDACODEC
@@ -85,17 +76,9 @@ cv::Rect find_bounding_box(const std::filesystem::path& video_path);
 void add_key_frame(std::vector<Key_Frame*>& key_frames, int delta, int frame_num, 
 	cv::cuda::GpuMat first_frame, cv::cuda::GpuMat second_frame);
 
-void frame_preprocessing(cv::cuda::GpuMat& frame);
-
-void edge_detection(cv::cuda::GpuMat& frame, cv::Mat& edge_frame);
-
-#else
+#endif
 
 void add_key_frame(std::vector<Key_Frame*>& key_frames, int delta, int frame_num,
 	cv::Mat first_frame, cv::Mat second_frame);
 
-void frame_preprocessing(cv::Mat& frame);
 
-#endif
-
-void edge_detection(cv::Mat& frame, cv::Mat& edge_frame);
