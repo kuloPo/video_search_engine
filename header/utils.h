@@ -60,6 +60,14 @@ double average(const cv::Mat& m);
 
 double sum(const cv::Mat& m);
 
+#ifdef HAVE_OPENCV_CUDACODEC
+void add_key_frame(std::vector<Key_Frame*>& key_frames, int delta, int frame_num,
+	cv::cuda::GpuMat first_frame, cv::cuda::GpuMat second_frame);
+#endif
+
+void add_key_frame(std::vector<Key_Frame*>& key_frames, int delta, int frame_num,
+	cv::Mat first_frame, cv::Mat second_frame);
+
 /*
 @brief Check if the element is inside a vector
 

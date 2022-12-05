@@ -19,6 +19,7 @@
 #include "similar.h"
 #include "algo.h"
 #include "io.h"
+#include "imgproc.h"
 
 int main() {
 	read_config();

@@ -23,7 +23,7 @@ tests: $(TESTS)
 
 video_search_engine:
 	@mkdir -p $(BIN_DIR)
-	$(CC) -D DEBUG_PERFORMANCE $(PARAM) ./src/algo.cpp ./src/similar.cpp ./src/utils.cpp ./src/io.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
+	$(CC) -D DEBUG_PERFORMANCE $(PARAM) ./src/algo.cpp ./src/similar.cpp ./src/utils.cpp ./src/io.cpp ./src/imgproc.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
 
 create_invert_index:
 	@mkdir -p $(BIN_DIR)
@@ -31,7 +31,7 @@ create_invert_index:
 
 searcher:
 	@mkdir -p $(BIN_DIR)
-	$(CC) $(PARAM) ./src/algo.cpp ./src/similar.cpp ./src/utils.cpp ./src/io.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
+	$(CC) $(PARAM) ./src/algo.cpp ./src/similar.cpp ./src/utils.cpp ./src/io.cpp ./src/imgproc.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
 
 create_noise_videos:
 	@mkdir -p $(BIN_DIR)
@@ -43,15 +43,15 @@ create_query_videos:
 
 demo_searcher:
 	@mkdir -p $(BIN_DIR)
-	$(CC) -D SHOW_PROGRESS $(PARAM) ./src/algo.cpp ./src/similar.cpp ./src/utils.cpp ./src/io.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
+	$(CC) -D SHOW_PROGRESS $(PARAM) ./src/algo.cpp ./src/similar.cpp ./src/utils.cpp ./src/io.cpp ./src/imgproc.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
 
 test_create_index:
 	@mkdir -p $(BIN_DIR)
-	$(CC) -D DEBUG_CREATE_INDEX $(PARAM) ./src/algo.cpp ./src/debug.cpp ./src/similar.cpp ./src/utils.cpp ./src/io.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
+	$(CC) -D DEBUG_CREATE_INDEX $(PARAM) ./src/algo.cpp ./src/debug.cpp ./src/similar.cpp ./src/utils.cpp ./src/io.cpp ./src/imgproc.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
 
 test_frame_comparison:
 	@mkdir -p $(BIN_DIR)
-	$(CC) $(PARAM) ./src/algo.cpp ./src/debug.cpp ./src/similar.cpp ./src/utils.cpp ./src/io.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
+	$(CC) $(PARAM) ./src/algo.cpp ./src/debug.cpp ./src/similar.cpp ./src/utils.cpp ./src/io.cpp ./src/imgproc.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
 
 test_interval_comparison:
 	@mkdir -p $(BIN_DIR)
@@ -63,7 +63,7 @@ test_radon_transform:
 
 test_video_comparison:
 	@mkdir -p $(BIN_DIR)
-	$(CC) -D DEBUG_INTERVAL_COMPARISON $(PARAM) ./src/algo.cpp ./src/similar.cpp ./src/utils.cpp ./src/io.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
+	$(CC) -D DEBUG_INTERVAL_COMPARISON $(PARAM) ./src/algo.cpp ./src/similar.cpp ./src/utils.cpp ./src/io.cpp ./src/imgproc.cpp ./$@/$@.cpp $(LIBS) -o $(BIN_DIR)/$@
 
 test_video_decode:
 	@mkdir -p $(BIN_DIR)

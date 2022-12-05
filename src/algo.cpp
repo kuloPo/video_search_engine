@@ -179,29 +179,3 @@ cv::Rect find_bounding_box(const std::filesystem::path& video_path) {
 	int height = std::min(vector_median(h), raw_size.height - p_y);
 	return cv::Rect(p_x, p_y, width, height);
 }
-
-#ifdef HAVE_OPENCV_CUDACODEC
-
-void add_key_frame(std::vector<Key_Frame*>& key_frames, int delta, int frame_num,
-	cv::cuda::GpuMat first_frame, cv::cuda::GpuMat second_frame) {
-	cv::Mat first_frame_cpu, second_frame_cpu;
-	if (!first_frame.empty()) {
-		first_frame.download(first_frame_cpu);
-	}
-	if (!second_frame.empty()) {
-		second_frame.download(second_frame_cpu);
-	}
-	add_key_frame(key_frames, delta, frame_num, first_frame_cpu, second_frame_cpu);
-}
-
-#endif
-
-void add_key_frame(std::vector<Key_Frame*>& key_frames, int delta, int frame_num,
-	cv::Mat first_frame, cv::Mat second_frame) {
-	Key_Frame* new_key_frame = new Key_Frame;
-	new_key_frame->delta = delta;
-	new_key_frame->frame_num = frame_num;
-	new_key_frame->first_frame = first_frame;
-	new_key_frame->second_frame = second_frame;
-	key_frames.push_back(new_key_frame);
-}
