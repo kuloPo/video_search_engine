@@ -87,8 +87,8 @@
     <ClCompile Include="..\src\imgproc.cpp" />
     <ClCompile Include="..\src\io.cpp" />
     <ClCompile Include="..\src\similar.cpp" />
+    <ClCompile Include="..\src\test_frame_comparison.cpp" />
     <ClCompile Include="..\src\utils.cpp" />
-    <ClCompile Include="test_frame_comparison.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\header\algo.h" />

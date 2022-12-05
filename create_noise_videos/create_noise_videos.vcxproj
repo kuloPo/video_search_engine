@@ -76,8 +76,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\create_noise_videos.cpp" />
     <ClCompile Include="..\src\io.cpp" />
-    <ClCompile Include="create_noise_videos.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\header\io.h" />

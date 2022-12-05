@@ -44,9 +44,6 @@
     <ClCompile Include="..\src\algo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="searcher.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\similar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -57,6 +54,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\imgproc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\searcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -100,9 +100,9 @@
     <ClCompile Include="..\src\algo.cpp" />
     <ClCompile Include="..\src\imgproc.cpp" />
     <ClCompile Include="..\src\io.cpp" />
+    <ClCompile Include="..\src\searcher.cpp" />
     <ClCompile Include="..\src\similar.cpp" />
     <ClCompile Include="..\src\utils.cpp" />
-    <ClCompile Include="searcher.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\header\utils.tpp" />

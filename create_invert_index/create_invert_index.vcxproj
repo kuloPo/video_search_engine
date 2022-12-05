@@ -84,9 +84,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\create_invert_index.cpp" />
     <ClCompile Include="..\src\io.cpp" />
     <ClCompile Include="..\src\utils.cpp" />
-    <ClCompile Include="create_invert_index.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\header\common.h" />

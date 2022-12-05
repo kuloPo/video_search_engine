@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="create_query_videos.cpp">
+    <ClCompile Include="..\src\io.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\io.cpp">
+    <ClCompile Include="..\src\create_query_videos.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

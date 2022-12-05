@@ -77,11 +77,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\algo.cpp" />
+    <ClCompile Include="..\src\demo_searcher.cpp" />
     <ClCompile Include="..\src\imgproc.cpp" />
     <ClCompile Include="..\src\io.cpp" />
     <ClCompile Include="..\src\similar.cpp" />
     <ClCompile Include="..\src\utils.cpp" />
-    <ClCompile Include="demo_searcher.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\header\algo.h" />

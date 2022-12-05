@@ -91,7 +91,7 @@
     <ClCompile Include="..\src\io.cpp" />
     <ClCompile Include="..\src\similar.cpp" />
     <ClCompile Include="..\src\utils.cpp" />
-    <ClCompile Include="video_search_engine.cpp" />
+    <ClCompile Include="..\src\video_search_engine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\header\algo.h" />
