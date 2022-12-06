@@ -38,6 +38,7 @@ class Keyframe_Detector {
 public:
 	Keyframe_Detector(const std::filesystem::path& filename);
 	std::vector<Key_Frame*> run();
+	void print_performance();
 protected:
 	void init_video_reader();
 	virtual bool read_frame();
@@ -53,6 +54,7 @@ protected:
 
 	int total_frames;
 	int frame_count;
+	std::vector<double> times;
 
 	cv::Mat first_radon;
 	cv::Mat second_radon;

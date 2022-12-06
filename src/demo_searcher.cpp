@@ -37,6 +37,12 @@ public:
 	}
 
 private:
+	bool read_frame() {
+		if (frame_count % 1000 == 0) {
+			cout << frame_count << " frames completed" << endl;
+		}
+		return Keyframe_Detector::read_frame();
+	}
 
 #ifdef HAVE_OPENCV_CUDACODEC
 	void frame_process(cv::cuda::GpuMat& in_frame, cv::Mat& out_frame) {
@@ -167,7 +173,13 @@ std::string query(const std::filesystem::path& filename) {
 int main(int argc, char** argv) {
 	read_config();
 	DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
-	std::string filepath = argv[1];
+	std::string filepath;
+	if (argc == 2) {
+		filepath = argv[1];
+	}
+	else {
+		std::cin >> filepath;
+	}
 	int total_frames = get_total_frames(filepath);
 	cout << filepath << " started" << endl;
 	cout << "total frames: " << total_frames << endl;

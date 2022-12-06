@@ -59,18 +59,13 @@ std::vector<Key_Frame*> Keyframe_Detector::run() {
 	add_key_frame(key_frames, 0, 0, first_frame, empty_frame);
 
 	// variables for measuring performance
-	std::vector<double> times;
 	frame_count = 0;
 
 	while (true) {
 		frame_time.reset(); frame_time.start();
 		if (!this->read_frame())
 			break;
-#ifdef SHOW_PROGRESS
-		if (frame_count % 1000 == 0) {
-			cout << frame_count << " frames completed" << endl;
-		}
-#endif
+
 		if (frame_count % (jumped_frame + 1) == 0) {
 			this->frame_process(second_frame, second_radon);
 
@@ -92,15 +87,6 @@ std::vector<Key_Frame*> Keyframe_Detector::run() {
 
 	// add last frame into index
 	add_key_frame(key_frames, 0, frame_count, first_frame, empty_frame);
-
-#if defined DEBUG_CREATE_INDEX || defined DEBUG_PERFORMANCE
-	if (!times.empty()) {
-		std::sort(times.begin(), times.end());
-		double total_time = std::accumulate(times.begin(), times.end(), 0.0);
-		double avg = total_time / frame_count;
-		printf("%s %.2f %d %.2f\n", filename.filename().string().c_str(), total_time, frame_count, avg);
-	}
-#endif // DEBUG_CREATE_INDEX
 
 	return key_frames;
 }
@@ -136,6 +122,15 @@ void Keyframe_Detector::frame_process(cv::Mat & in_frame, cv::Mat & out_frame) {
 	cv::Mat edge_frame_normed = edge_frame / sum(edge_frame);
 	// calculate histogram and the distance between hist
 	Radon_Transform(edge_frame_normed, out_frame, 45, 0, 180);
+}
+
+void Keyframe_Detector::print_performance() {
+	if (!times.empty()) {
+		std::sort(times.begin(), times.end());
+		double total_time = std::accumulate(times.begin(), times.end(), 0.0);
+		double avg = total_time / frame_count;
+		printf("%s %.2f %d %.2f\n", filename.filename().string().c_str(), total_time, frame_count, avg);
+	}
 }
 
 cv::Rect find_bounding_box(const std::filesystem::path& video_path) {
