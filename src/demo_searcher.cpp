@@ -27,8 +27,6 @@
 #include "similar.h"
 
 std::unique_ptr<DB_Connector> DB;
-cv::TickMeter tm;
-std::vector<double> search_times;
 
 class Keyframe_Detector_Demo_Searcher : public Keyframe_Detector {
 public:
@@ -116,8 +114,6 @@ std::string query(const std::filesystem::path& filename) {
 	interval_merge(input_interval, input_fps, interval_merged);
 	interval_to_sec(interval_merged, input_fps, input_interval_sec);
 
-	tm.reset(); tm.start();
-
 	// query interted index to find search range using each interval
 	std::vector<std::string> search_range;
 
@@ -160,9 +156,6 @@ std::string query(const std::filesystem::path& filename) {
 	search_result += std::to_string(result[0].first);
 	search_result += "%";
 
-	tm.stop();
-	search_times.push_back(tm.getTimeMilli());
-
 	for (Key_Frame* key_frame : key_frames) {
 		delete key_frame;
 	}
@@ -185,10 +178,6 @@ int main(int argc, char** argv) {
 	cout << "total frames: " << total_frames << endl;
 
 	cout << query(filepath) << endl;
-
-	std::sort(search_times.begin(), search_times.end());
-	double time_avg = std::accumulate(search_times.begin(), search_times.end(), 0.0) / search_times.size();
-	//printf("Average search time: %.f ms\n", time_avg);
 
 	return 0;
 }
