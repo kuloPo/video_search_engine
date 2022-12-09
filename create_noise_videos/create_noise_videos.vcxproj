@@ -77,9 +77,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\create_noise_videos.cpp" />
+    <ClCompile Include="..\src\imgproc.cpp" />
     <ClCompile Include="..\src\io.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\header\imgproc.h" />
     <ClInclude Include="..\header\io.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

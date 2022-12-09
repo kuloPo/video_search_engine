@@ -43,6 +43,12 @@ void edge_detection(cv::cuda::GpuMat& frame, cv::Mat& edge_frame) {
 	edge_detection(frame_cpu, edge_frame);
 }
 
+cv::Mat make_noise(const cv::cuda::GpuMat& frame, const double SNR) {
+	cv::Mat frame_cpu;
+	frame.download(frame_cpu);
+	return make_noise(frame_cpu, SNR);
+}
+
 #else
 
 void frame_preprocessing(cv::Mat& frame) {
@@ -70,4 +76,11 @@ void edge_detection(cv::Mat& frame, cv::Mat& edge_frame) {
 	cv::pow(sobel_x, 2, sobel_x);
 	cv::pow(sobel_y, 2, sobel_y);
 	cv::sqrt((sobel_x + sobel_y), edge_frame);
+}
+
+cv::Mat make_noise(const cv::Mat& frame, const double SNR) {
+	cv::Mat noise_frame(frame.size(), frame.type());
+	double avg = cv::mean(frame)[0];
+	cv::randn(noise_frame, 0, avg / SNR);
+	return frame + noise_frame;
 }

@@ -30,6 +30,7 @@
 #endif
 
 #include "io.h"
+#include "imgproc.h"
 
 using std::cout;
 using std::endl;
@@ -41,13 +42,6 @@ std::string seed_prefix;
 std::queue<std::filesystem::path> working_queue;
 std::mutex queue_mutex;
 
-void make_noise(cv::Mat& frame, const double SNR) {
-    cv::Mat noise_frame = frame.clone();
-    cv::randShuffle(noise_frame);
-    noise_frame /= SNR;
-    frame += noise_frame;
-}
-
 void create_video(const std::filesystem::path& video_path, const double SNR) {
     std::string hash;
     hash_string(video_path.string(), hash);
@@ -55,7 +49,7 @@ void create_video(const std::filesystem::path& video_path, const double SNR) {
     cv::theRNG().state = std::stoull(seed, nullptr, 16);
 
     std::filesystem::path output_path = output_dir / video_path.filename();
-    output_path.replace_extension("mp4");
+    output_path.replace_extension("avi");
 
     cv::Mat frame;
 #ifdef HAVE_OPENCV_CUDACODEC
@@ -67,7 +61,7 @@ void create_video(const std::filesystem::path& video_path, const double SNR) {
     cv::VideoCapture video_reader(video_path.string());
     video_reader >> frame;
 #endif
-    cv::VideoWriter video_writer(output_path.string(), cv::VideoWriter::fourcc('a', 'v', 'c', '1'), get_fps(video_path), frame.size());
+    cv::VideoWriter video_writer(output_path.string(), cv::VideoWriter::fourcc('I', '4', '4', '4'), get_fps(video_path), frame.size());
     while (true) {
 #ifdef HAVE_OPENCV_CUDACODEC
         if (!video_reader->nextFrame(gpu_frame))
@@ -78,7 +72,7 @@ void create_video(const std::filesystem::path& video_path, const double SNR) {
         if (frame.empty())
             break;
 #endif
-        make_noise(frame, SNR);
+        frame = make_noise(frame, SNR);
         video_writer << frame;
     }
     video_reader.release();

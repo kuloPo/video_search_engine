@@ -21,9 +21,15 @@
     <ClCompile Include="..\src\create_noise_videos.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\imgproc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\header\io.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\header\imgproc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

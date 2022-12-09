@@ -26,6 +26,8 @@ void frame_preprocessing(cv::cuda::GpuMat& frame);
 
 void edge_detection(cv::cuda::GpuMat& frame, cv::Mat& edge_frame);
 
+cv::Mat make_noise(const cv::cuda::GpuMat& frame, const double SNR);
+
 #else
 
 void frame_preprocessing(cv::Mat& frame);
@@ -33,3 +35,5 @@ void frame_preprocessing(cv::Mat& frame);
 #endif
 
 void edge_detection(cv::Mat& frame, cv::Mat& edge_frame);
+
+cv::Mat make_noise(const cv::Mat& frame, const double SNR);

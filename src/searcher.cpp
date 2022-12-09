@@ -80,22 +80,6 @@ public:
 
 private:
 #ifdef HAVE_OPENCV_CUDACODEC
-	cv::Mat make_noise(cv::cuda::GpuMat& frame) {
-		cv::Mat frame_cpu;
-		frame.download(frame_cpu);
-		return make_noise(frame_cpu);
-	}
-#endif
-
-	cv::Mat make_noise(const cv::Mat& frame) {
-		cv::Mat noise_frame = frame.clone();
-		cv::randShuffle(noise_frame);
-		noise_frame /= SNR;
-		noise_frame += frame;
-		return noise_frame;
-	}
-
-#ifdef HAVE_OPENCV_CUDACODEC
 	void frame_process(cv::cuda::GpuMat& in_frame, cv::Mat& out_frame) {
 #else
 	void frame_process(cv::Mat & in_frame, cv::Mat & out_frame) {
@@ -103,7 +87,7 @@ private:
 		// frame preprocessing
 		frame_preprocessing(in_frame);
 		// add noise
-		cv::Mat noise = this->make_noise(in_frame);
+		cv::Mat noise = make_noise(in_frame, SNR);
 		// edge detection
 		edge_detection(noise, edge_frame);
 		cv::Mat edge_frame_normed = edge_frame / sum(edge_frame);
@@ -312,17 +296,17 @@ int main(int argc, char** argv) {
 	read_config();
 	DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
 
-	std::vector<std::string> search_result(15);
-	parallel_for_(cv::Range(1, 15), [&](const cv::Range& range) {
-		for (int i = range.start; i <= range.end; i++) {
-			std::filesystem::path filename = std::filesystem::path(MUSCLE_VCD_2007_ST1) / ("ST1Query" + std::to_string(i) + ".mpeg");
-			Keyframe_Detector_Searcher detector(filename.string());
-			search_result[i - 1] = query(filename, detector);
-		}
-	}, thread_num);
-	for (std::string result : search_result) {
-		cout << result << endl;
-	}
+	//std::vector<std::string> search_result(15);
+	//parallel_for_(cv::Range(1, 15), [&](const cv::Range& range) {
+	//	for (int i = range.start; i <= range.end; i++) {
+	//		std::filesystem::path filename = std::filesystem::path(MUSCLE_VCD_2007_ST1) / ("ST1Query" + std::to_string(i) + ".mpeg");
+	//		Keyframe_Detector_Searcher detector(filename.string());
+	//		search_result[i - 1] = query(filename, detector);
+	//	}
+	//}, thread_num);
+	//for (std::string result : search_result) {
+	//	cout << result << endl;
+	//}
 
 	//std::vector<std::string> search_result(3);
 	//parallel_for_(cv::Range(1, 3), [&](const cv::Range& range) {
@@ -347,19 +331,19 @@ int main(int argc, char** argv) {
 	//	iter->join();
 	//}
 
-	//SNR = std::stod(argv[1]);
-	//seed_prefix = argv[2];
-	//for (const auto& entry : std::filesystem::directory_iterator(NIST_TREC)) {
-	//	working_queue.push(entry.path());
-	//}
-	//std::vector<std::thread> thread_list;
-	//for (int i = 0; i < thread_num; i++) {
-	//	std::thread t(thread_invoker_noise, i);
-	//	thread_list.push_back(std::move(t));
-	//}
-	//for (auto iter = thread_list.begin(); iter != thread_list.end(); iter++) {
-	//	iter->join();
-	//}
+	SNR = std::stod(argv[1]);
+	seed_prefix = argv[2];
+	for (const auto& entry : std::filesystem::directory_iterator(NIST_TREC)) {
+		working_queue.push(entry.path());
+	}
+	std::vector<std::thread> thread_list;
+	for (int i = 0; i < thread_num; i++) {
+		std::thread t(thread_invoker_noise, i);
+		thread_list.push_back(std::move(t));
+	}
+	for (auto iter = thread_list.begin(); iter != thread_list.end(); iter++) {
+		iter->join();
+	}
 
 	//std::sort(search_times.begin(), search_times.end());
 	//double time_avg = std::accumulate(search_times.begin(), search_times.end(), 0.0) / search_times.size();
