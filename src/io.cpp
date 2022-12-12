@@ -55,10 +55,6 @@ DB_Connector::DB_Connector(const std::string& u,
 	initConnection(conn, user, host, password, dbname, port);
 }
 
-DB_Connector::~DB_Connector() {
-	conn->close();
-}
-
 void DB_Connector::initConnection(std::unique_ptr<pqxx::connection>& c,
 	const std::string& u,
 	const std::string& h,

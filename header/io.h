@@ -35,8 +35,6 @@ public:
         const std::string& db,
         const std::string& p);
 
-    ~DB_Connector();
-
     void initConnection(
         std::unique_ptr<pqxx::connection>& c,
         const std::string& u,
