@@ -39,17 +39,17 @@ int main(int argc, char** argv) {
 	std::vector<Key_Frame*> key_frames_1 = std::move(Keyframe_Detector(filepath_1).run());
 	std::vector<Key_Frame*> key_frames_2 = std::move(Keyframe_Detector(filepath_2).run());
 
-	std::cout << "video 1 key frame: " << std::endl;
+	cout << "video 1 key frame: " << endl;
 	for (Key_Frame* key_frame : key_frames_1) {
-		std::cout << key_frame->frame_num << " " << key_frame->delta << std::endl;
+		cout << key_frame->frame_num << " " << key_frame->delta << endl;
 	}
-	std::cout << std::endl;
+	cout << endl;
 
-	std::cout << "video 2 key frame: " << std::endl;
+	cout << "video 2 key frame: " << endl;
 	for (Key_Frame* key_frame : key_frames_2) {
-		std::cout << key_frame->frame_num << " " << key_frame->delta << std::endl;
+		cout << key_frame->frame_num << " " << key_frame->delta << endl;
 	}
-	std::cout << std::endl;
+	cout << endl;
 
 	int fps_1, fps_2;
 	fps_1 = 25;
@@ -62,37 +62,37 @@ int main(int argc, char** argv) {
 	interval_merge(interval_1, fps_1, interval_merged_1);
 	interval_merge(interval_2, fps_2, interval_merged_2);
 
-	std::cout << "video 1 interval: " << std::endl;
+	cout << "video 1 interval: " << endl;
 	for (int i : interval_1) {
-		std::cout << i << " ";
+		cout << i << " ";
 	}
-	std::cout << std::endl;
+	cout << endl;
 
-	std::cout << "video 2 interval: " << std::endl;
+	cout << "video 2 interval: " << endl;
 	for (int i : interval_2) {
-		std::cout << i << " ";
+		cout << i << " ";
 	}
-	std::cout << std::endl;
+	cout << endl;
 
-	std::cout << std::endl;
+	cout << endl;
 
 	std::vector<double> interval_sec_1, interval_sec_2;
 	interval_to_sec(interval_merged_1, fps_1, interval_sec_1);
 	interval_to_sec(interval_merged_2, fps_2, interval_sec_2);
 
-	std::cout << "video 1 interval in second: " << std::endl;
+	cout << "video 1 interval in second: " << endl;
 	for (double i : interval_sec_1) {
-		std::cout << i << " ";
+		cout << i << " ";
 	}
-	std::cout << std::endl;
+	cout << endl;
 
-	std::cout << "video 2 interval in second: " << std::endl;
+	cout << "video 2 interval in second: " << endl;
 	for (double i : interval_sec_2) {
-		std::cout << i << " ";
+		cout << i << " ";
 	}
-	std::cout << std::endl;
+	cout << endl;
 
-	std::cout << std::endl;
+	cout << endl;
 
 	int similarity = interval_comparison(interval_sec_1, interval_sec_2);
 	double matched_percentage = 100.0 * similarity / interval_sec_1.size();

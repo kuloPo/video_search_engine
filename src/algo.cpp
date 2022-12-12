@@ -129,7 +129,7 @@ void Keyframe_Detector::print_performance() {
 		std::sort(times.begin(), times.end());
 		double total_time = std::accumulate(times.begin(), times.end(), 0.0);
 		double avg = total_time / frame_count;
-		printf("%s %.2f %d %.2f\n", filename.filename().string().c_str(), total_time, frame_count, avg);
+		safe_printf("%s %.2f %d %.2f\n", filename.filename().string().c_str(), total_time, frame_count, avg);
 	}
 }
 

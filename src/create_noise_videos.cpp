@@ -32,9 +32,6 @@
 #include "io.h"
 #include "imgproc.h"
 
-using std::cout;
-using std::endl;
-
 std::filesystem::path output_dir;
 double SNR;
 std::string seed_prefix;

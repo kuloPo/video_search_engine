@@ -32,6 +32,7 @@
 #include "config.h"
 #include "debug.h"
 
+using std::cin;
 using std::cout;
 using std::endl;
 

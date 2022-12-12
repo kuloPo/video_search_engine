@@ -342,21 +342,21 @@ int interval_comparison(const std::vector<double>& v1, const std::vector<double>
 	for (int x = 1; x <= n1; x++) {
 		for (int y = 1; y <= n2; y++) {
 			if (m.at<int>(x, y) >= 0) {
-				std::cout << m.at<int>(x, y) << " ";
+				cout << m.at<int>(x, y) << " ";
 			}
 			else {
-				std::cout << "  ";
+				cout << "  ";
 			}
 		}
-		std::cout << std::endl;
+		cout << endl;
 	}
-	std::cout << std::endl;
+	cout << endl;
 
 	for (int x = 1; x <= n1; x++) {
 		for (int y = 1; y <= n2; y++) {
 			printf("(%d,%d) ", path_trace.at<cv::Vec2i>(x, y)[0], path_trace.at<cv::Vec2i>(x, y)[1]);
 		}
-		std::cout << std::endl;
+		cout << endl;
 	}
 #endif // DEBUG_INTERVAL_COMPARISON
 

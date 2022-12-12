@@ -17,8 +17,6 @@
  */
 
 #include <iostream>
-#include <fstream>
-#include <algorithm>
 
 #include "common.h"
 #include "algo.h"

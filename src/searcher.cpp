@@ -199,7 +199,7 @@ std::string query(const std::filesystem::path& filename, Keyframe_Detector& dete
 	}
 	cout << endl;
 
-	std::cout << "result from invert index:" << std::endl;
+	cout << "result from invert index:" << endl;
 
 	for (std::string ID : search_range) {
 		std::string search_sql = form_search_sql(ID);
@@ -208,10 +208,10 @@ std::string query(const std::filesystem::path& filename, Keyframe_Detector& dete
 		cout << filename << endl;
 	}
 
-	std::cout << std::endl;
+	cout << endl;
 
 	cout << search_range.size() << " videos in search range\n" << endl;
-	std::cout << "result from interval matching:" << std::endl;
+	cout << "result from interval matching:" << endl;
 #endif // DEBUG_SEARCHER
 	
 	std::vector<std::pair<double, std::string>> result;

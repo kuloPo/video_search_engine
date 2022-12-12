@@ -35,9 +35,9 @@ int main(int argc, char** argv) {
 	}
 	std::vector<Key_Frame*> key_frames = std::move(Keyframe_Detector(filepath).run());
 	for (Key_Frame* key_frame : key_frames) {
-		std::cout << key_frame->frame_num << " " << key_frame->delta << std::endl;
+		cout << key_frame->frame_num << " " << key_frame->delta << endl;
 	}
-	std::cout << std::endl;
+	cout << endl;
 	std::vector<int> interval;
 	std::vector<int> interval_merged;
 	std::vector<double> interval_sec;

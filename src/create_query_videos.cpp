@@ -34,9 +34,6 @@
 
 #include "io.h"
 
-using std::cout;
-using std::endl;
-
 std::filesystem::path output_dir = "../output";
 
 std::queue<std::filesystem::path> working_queue;
