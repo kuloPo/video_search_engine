@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
 	std::vector<int> interval;
 	std::vector<int> interval_merged;
 	std::vector<double> interval_sec;
-	int fps = 25;
+	int fps = get_fps(filepath);
 	calc_interval(key_frames, interval);
 	interval_merge(interval, fps, interval_merged);
 	interval_to_sec(interval_merged, fps, interval_sec);
@@ -63,5 +63,12 @@ int main(int argc, char** argv) {
 	for (Key_Frame* key_frame : key_frames) {
 		delete key_frame;
 	}
+	double accumulate = 0;
+	cout << "interval in accumulate second: \n";
+	for (double i : interval_sec) {
+		accumulate += i;
+		cout << accumulate << " ";
+	}
+	cout << "\n\n";
 	return 0;
 }
