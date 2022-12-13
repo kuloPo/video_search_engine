@@ -28,9 +28,7 @@ std::unique_ptr<DB_Connector> DB;
 
 class Keyframe_Detector_Demo_Searcher : public Keyframe_Detector {
 public:
-	Keyframe_Detector_Demo_Searcher(const std::filesystem::path& filename) : Keyframe_Detector(filename) {
-		bounding_box = find_bounding_box(filename);
-	}
+	Keyframe_Detector_Demo_Searcher(const std::filesystem::path& filename) : Keyframe_Detector(filename) {}
 
 private:
 	bool read_frame() {
@@ -39,19 +37,7 @@ private:
 		}
 		return Keyframe_Detector::read_frame();
 	}
-
-#ifdef HAVE_OPENCV_CUDACODEC
-	void frame_process(cv::cuda::GpuMat& in_frame, cv::Mat& out_frame) {
-#else
-	void frame_process(cv::Mat & in_frame, cv::Mat & out_frame) {
-#endif
-		in_frame = in_frame(bounding_box);
-		Keyframe_Detector::frame_process(in_frame, out_frame);
-	}
-
-private:
-	cv::Rect bounding_box;
-	};
+};
 
 /*
 @brief Read ID of videos from inverted index
@@ -101,7 +87,7 @@ std::string invert_index_search_sql(const int interval_floor, const int interval
 	return ret;
 }
 
-std::string query(const std::filesystem::path& filename) {
+void query(const std::filesystem::path& filename) {
 	int input_fps = get_fps(filename);
 	// extract interval of the query video
 	std::vector<Key_Frame*> key_frames = std::move(Keyframe_Detector_Demo_Searcher(filename).run());
@@ -144,38 +130,33 @@ std::string query(const std::filesystem::path& filename) {
 
 	std::sort(result.begin(), result.end(), std::greater<std::pair<double, std::string>>());
 	if (result.size() == 0) {
-		result.push_back(std::pair<double, std::string>(0, "not_in_db"));
+		cout << "The video you submitted is not found in the database" << endl;
 	}
-	std::string search_result = "";
-	search_result += filename.filename().string();
-	search_result += " ";
-	search_result += result[0].second;
-	search_result += " ";
-	search_result += std::to_string(result[0].first);
-	search_result += "%";
+	else {
+		printf("Video found in database. The Target video is %s with similarity %.2f\n", result[0].second.c_str(), result[0].first);
+	}
 
 	for (Key_Frame* key_frame : key_frames) {
 		delete key_frame;
 	}
-
-	return search_result;
 }
 
 int main(int argc, char** argv) {
 	read_config();
 	DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
-	std::string filepath;
+	std::filesystem::path filepath;
 	if (argc == 2) {
 		filepath = argv[1];
 	}
 	else {
-		std::cin >> filepath;
+		cin >> filepath;
 	}
 	int total_frames = get_total_frames(filepath);
-	cout << filepath << " started" << endl;
-	cout << "total frames: " << total_frames << endl;
+	cout << "Connection established" << endl;
+	cout << filepath.filename() << " started" << endl;
+	cout << "Total frames in this video: " << total_frames << endl;
 
-	cout << query(filepath) << endl;
+	query(filepath);
 
 	return 0;
 }
