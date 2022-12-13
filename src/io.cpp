@@ -180,6 +180,9 @@ void read_config() {
 	else if (std::filesystem::exists("./rsrc/config.ini")) {
 		config_path = "./rsrc/config.ini";
 	}
+	else if (std::filesystem::exists("./config.ini")) {
+		config_path = "./config.ini";
+	}
 	else {
 		throw "config file not exists";
 	}

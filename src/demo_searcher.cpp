@@ -133,7 +133,7 @@ void query(const std::filesystem::path& filename) {
 		cout << "The video you submitted is not found in the database" << endl;
 	}
 	else {
-		printf("Video found in database. The Target video is %s with similarity %.2f\n", result[0].second.c_str(), result[0].first);
+		printf("Video found in database. The Target video is %s with similarity %.2f%%\n", result[0].second.c_str(), result[0].first);
 	}
 
 	for (Key_Frame* key_frame : key_frames) {
