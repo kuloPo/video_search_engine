@@ -88,6 +88,9 @@ std::string invert_index_search_sql(const int interval_floor, const int interval
 }
 
 void query(const std::filesystem::path& filename) {
+	double process_time, search_time;
+	cv::TickMeter tm;
+	tm.reset(); tm.start();
 	int input_fps = get_fps(filename);
 	// extract interval of the query video
 	std::vector<Key_Frame*> key_frames = std::move(Keyframe_Detector_Demo_Searcher(filename).run());
@@ -97,6 +100,10 @@ void query(const std::filesystem::path& filename) {
 	calc_interval(key_frames, input_interval);
 	interval_merge(input_interval, input_fps, interval_merged);
 	interval_to_sec(interval_merged, input_fps, input_interval_sec);
+
+	tm.stop();
+	process_time = tm.getTimeSec();
+	tm.reset(); tm.start();
 
 	// query interted index to find search range using each interval
 	std::vector<std::string> search_range;
@@ -135,6 +142,12 @@ void query(const std::filesystem::path& filename) {
 	else {
 		printf("Video found in database. The Target video is %s with similarity %.2f%%\n", result[0].second.c_str(), result[0].first);
 	}
+
+	tm.stop();
+	search_time = tm.getTimeSec();
+
+	printf("Process time: %.2f seconds\n", process_time);
+	printf("Search time: %.2f seconds\n", search_time);
 
 	for (Key_Frame* key_frame : key_frames) {
 		delete key_frame;
