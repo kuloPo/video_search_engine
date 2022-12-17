@@ -208,7 +208,6 @@ void Radon_Transform(cv::Mat& src,
 {
 	cv::ximgproc::RadonTransform(src, dst, theta, start_angle, end_angle);
 	dst.convertTo(dst, CV_32FC1);
-	dst /= src.rows * src.cols;
 }
 
 cv::Vec2i _path_back_trace(const cv::Mat& m, const cv::Mat& path_trace, const cv::Vec2i& path) {

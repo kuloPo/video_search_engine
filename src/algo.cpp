@@ -119,9 +119,8 @@ void Keyframe_Detector::frame_process(cv::Mat & in_frame, cv::Mat & out_frame) {
 	frame_preprocessing(in_frame);
 	// edge detection
 	edge_detection(in_frame, edge_frame);
-	cv::Mat edge_frame_normed = edge_frame / sum(edge_frame);
 	// calculate histogram and the distance between hist
-	Radon_Transform(edge_frame_normed, out_frame, 45, 0, 180);
+	Radon_Transform(edge_frame, out_frame, 45, 0, 180);
 }
 
 void Keyframe_Detector::print_performance() {
