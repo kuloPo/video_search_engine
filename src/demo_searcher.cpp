@@ -93,7 +93,9 @@ void query(const std::filesystem::path& filename) {
 	tm.reset(); tm.start();
 	int input_fps = get_fps(filename);
 	// extract interval of the query video
-	std::vector<Key_Frame*> key_frames = std::move(Keyframe_Detector_Demo_Searcher(filename).run());
+	Keyframe_Detector_Demo_Searcher detector(filename);
+	detector.run();
+	std::vector<Key_Frame*> key_frames = std::move(detector.get_index());
 
 	std::vector<int> input_interval, interval_merged;
 	std::vector<double> input_interval_sec;

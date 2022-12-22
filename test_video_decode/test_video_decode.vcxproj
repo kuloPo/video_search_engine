@@ -11,7 +11,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\io.cpp" />
     <ClCompile Include="..\src\test_video_decode.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\header\common.h" />
+    <ClInclude Include="..\header\ini.h" />
+    <ClInclude Include="..\header\io.h" />
+    <ClInclude Include="..\header\picosha2.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

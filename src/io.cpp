@@ -16,6 +16,10 @@
  * along with kuloPo/video_search_engine. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <opencv2/cudaarithm.hpp>
+#include <opencv2/cudawarping.hpp>
+#include <opencv2/cudaimgproc.hpp>
+
 #include "io.h"
 
 #include "picosha2.h"
@@ -86,6 +90,59 @@ std::unique_ptr<pqxx::result> DB_Connector::performQuery(const std::string& quer
 	}
 
 	return res;
+}
+
+Video_Reader::Video_Reader(const std::filesystem::path& filename) {
+	this->filename = filename;
+	this->frame_count = 0;
+	this->init_video_reader();
+}
+
+void Video_Reader::run() {
+	if (!this->preprocess())
+		return;
+	while (true) {
+		tm.reset();
+		tm.start();
+		if (!this->read_frame())
+			break;
+
+		frame_operation();
+
+		tm.stop();
+		frame_time.push_back(tm.getTimeMilli());
+		frame_count++;
+	}
+	this->postprocess();
+}
+
+void Video_Reader::print_performance() {
+	if (!frame_time.empty()) {
+		std::sort(frame_time.begin(), frame_time.end());
+		double total_time = std::accumulate(frame_time.begin(), frame_time.end(), 0.0);
+		double avg = total_time / frame_count;
+		safe_printf("%s %.2f %d %.2f\n", filename.filename().string().c_str(), total_time, frame_count, avg);
+	}
+}
+
+void Video_Reader::init_video_reader() {
+#ifdef HAVE_OPENCV_CUDACODEC
+	cuda_reader = cv::cudacodec::createVideoReader(filename.string());
+	this->read_frame();
+#else
+	video_reader = cv::VideoCapture(filename.string());
+	this->read_frame();
+#endif
+}
+
+bool Video_Reader::read_frame() {
+#ifdef HAVE_OPENCV_CUDACODEC
+	if (!cuda_reader->nextFrame(frame))
+		return false;
+#else 
+	video_reader >> frame;
+	return !frame.empty();
+#endif
 }
 
 std::string write_interval(const std::vector<int>& interval) {

@@ -33,7 +33,10 @@ int main(int argc, char** argv) {
 	if (argc == 2) {
 		filepath = argv[1];
 	}
-	std::vector<Key_Frame*> key_frames = std::move(Keyframe_Detector(filepath).run());
+	Keyframe_Detector keyframe_detector(filepath);
+	keyframe_detector.run();
+	keyframe_detector.print_performance();
+	std::vector<Key_Frame*> key_frames = std::move(keyframe_detector.get_index());
 	for (Key_Frame* key_frame : key_frames) {
 		cout << key_frame->frame_num << " " << key_frame->delta << endl;
 	}

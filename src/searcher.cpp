@@ -45,6 +45,7 @@ public:
 	Keyframe_Detector_Searcher(const std::filesystem::path& filename, double video_length_cut = 1.0) : Keyframe_Detector(filename) {
 		bounding_box = find_bounding_box(filename);
 		this->video_length_cut = video_length_cut;
+		this->total_frames = get_total_frames(filename);
 	}
 
 private:
@@ -66,6 +67,7 @@ private:
 
 private:
 	cv::Rect bounding_box;
+	int total_frames;
 	double video_length_cut;
 };
 
@@ -166,8 +168,8 @@ void write_result(
 std::string query(const std::filesystem::path& filename, Keyframe_Detector& detector, bool print_full = false) {
 	int input_fps = get_fps(filename);
 	// extract interval of the query video
-	//std::vector<Key_Frame*> key_frames = std::move(create_index(filename, MODE::SEARCHER, video_length_cut));
-	std::vector<Key_Frame*> key_frames = std::move(detector.run());
+	detector.run();
+	std::vector<Key_Frame*> key_frames = std::move(detector.get_index());
 
 	std::vector<int> input_interval, interval_merged;
 	std::vector<double> input_interval_sec;
@@ -296,17 +298,17 @@ int main(int argc, char** argv) {
 	read_config();
 	DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
 
-	//std::vector<std::string> search_result(15);
-	//parallel_for_(cv::Range(1, 15), [&](const cv::Range& range) {
-	//	for (int i = range.start; i <= range.end; i++) {
-	//		std::filesystem::path filename = std::filesystem::path(MUSCLE_VCD_2007_ST1) / ("ST1Query" + std::to_string(i) + ".mpeg");
-	//		Keyframe_Detector_Searcher detector(filename.string());
-	//		search_result[i - 1] = query(filename, detector);
-	//	}
-	//}, thread_num);
-	//for (std::string result : search_result) {
-	//	cout << result << endl;
-	//}
+	std::vector<std::string> search_result(15);
+	parallel_for_(cv::Range(1, 15), [&](const cv::Range& range) {
+		for (int i = range.start; i <= range.end; i++) {
+			std::filesystem::path filename = std::filesystem::path(MUSCLE_VCD_2007_ST1) / ("ST1Query" + std::to_string(i) + ".mpeg");
+			Keyframe_Detector_Searcher detector(filename.string());
+			search_result[i - 1] = query(filename, detector);
+		}
+	}, thread_num);
+	for (std::string result : search_result) {
+		cout << result << endl;
+	}
 
 	//std::vector<std::string> search_result(3);
 	//parallel_for_(cv::Range(1, 3), [&](const cv::Range& range) {
@@ -331,19 +333,19 @@ int main(int argc, char** argv) {
 	//	iter->join();
 	//}
 
-	SNR = std::stod(argv[1]);
-	seed_prefix = argv[2];
-	for (const auto& entry : std::filesystem::directory_iterator(NIST_TREC)) {
-		working_queue.push(entry.path());
-	}
-	std::vector<std::thread> thread_list;
-	for (int i = 0; i < thread_num; i++) {
-		std::thread t(thread_invoker_noise, i);
-		thread_list.push_back(std::move(t));
-	}
-	for (auto iter = thread_list.begin(); iter != thread_list.end(); iter++) {
-		iter->join();
-	}
+	//SNR = std::stod(argv[1]);
+	//seed_prefix = argv[2];
+	//for (const auto& entry : std::filesystem::directory_iterator(NIST_TREC)) {
+	//	working_queue.push(entry.path());
+	//}
+	//std::vector<std::thread> thread_list;
+	//for (int i = 0; i < thread_num; i++) {
+	//	std::thread t(thread_invoker_noise, i);
+	//	thread_list.push_back(std::move(t));
+	//}
+	//for (auto iter = thread_list.begin(); iter != thread_list.end(); iter++) {
+	//	iter->join();
+	//}
 
 	//std::sort(search_times.begin(), search_times.end());
 	//double time_avg = std::accumulate(search_times.begin(), search_times.end(), 0.0) / search_times.size();

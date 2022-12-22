@@ -41,7 +41,8 @@ void build_index(std::filesystem::path filepath) {
 
 	// extract key frames
 	Keyframe_Detector detector(filepath);
-	std::vector<Key_Frame*> key_frames = std::move(detector.run());
+	detector.run();
+	std::vector<Key_Frame*> key_frames = std::move(detector.get_index());
 	detector.print_performance();
 	// get interval
 	int fps = get_fps(filepath);

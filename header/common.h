@@ -32,6 +32,12 @@
 #include "config.h"
 #include "debug.h"
 
+#ifdef HAVE_OPENCV_CUDACODEC
+#define AutoMat cv::cuda::GpuMat
+#else 
+#define AutoMat cv::Mat 
+#endif
+
 using std::cin;
 using std::cout;
 using std::endl;
@@ -43,8 +49,4 @@ struct Key_Frame {
 	cv::Mat second_frame;          // image of the second frame of the pair
 };
 
-#ifdef HAVE_OPENCV_CUDACODEC
-inline cv::cuda::GpuMat empty_frame;
-#else
-inline cv::Mat empty_frame;
-#endif
+inline AutoMat empty_frame;

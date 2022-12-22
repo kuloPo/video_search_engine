@@ -52,7 +52,7 @@ cv::Mat make_noise(const cv::cuda::GpuMat& frame, const double SNR) {
 	return make_noise(frame_cpu, SNR);
 }
 
-#else
+#endif
 
 void frame_preprocessing(cv::Mat& frame) {
 	frame.convertTo(frame, CV_32FC1);
@@ -65,8 +65,6 @@ void frame_preprocessing(cv::Mat& frame) {
 		cv::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
 	}
 }
-
-#endif
 
 void edge_detection(cv::Mat& frame, cv::Mat& edge_frame) {
 	cv::GaussianBlur(frame, edge_frame, cv::Size(3, 3), 1, 1, cv::BORDER_DEFAULT);

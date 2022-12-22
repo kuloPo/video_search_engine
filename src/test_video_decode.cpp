@@ -16,48 +16,14 @@
  * along with kuloPo/video_search_engine. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
-#include <numeric>
 #include <filesystem>
-#include <opencv2/opencv_modules.hpp>
-#include <opencv2/highgui.hpp>
 
-#ifdef HAVE_OPENCV_CUDACODEC
-#include <opencv2/cudacodec.hpp>
-#else
-#include <opencv2/videoio.hpp>
-#endif
+#include "io.h"
 
 int main() {
 	std::filesystem::path filepath = "../rsrc/video.mp4";
-	cv::TickMeter tm;
-	std::vector<double> times;
-	int frame_count = 0;
-#ifdef HAVE_OPENCV_CUDACODEC
-	cv::cuda::GpuMat frame;
-	cv::Ptr<cv::cudacodec::VideoReader> cuda_reader = cv::cudacodec::createVideoReader(filepath.string());
-#else
-	cv::Mat frame;
-	cv::VideoCapture video_reader(filepath.string());
-#endif
-
-	while (true) {
-		tm.reset(); tm.start();
-#ifdef HAVE_OPENCV_CUDACODEC
-		if (!cuda_reader->nextFrame(frame))
-			break;
-#else 
-		video_reader >> frame;
-		if (frame.empty())
-			break;
-#endif
-		tm.stop();
-		times.push_back(tm.getTimeMilli());
-		frame_count++;
-	}
-
-	std::sort(times.begin(), times.end());
-	double time_avg = std::accumulate(times.begin(), times.end(), 0.0) / times.size();
-	std::cout << "Perf : Avg : " << time_avg << " ms FPS : " << 1000.0 / time_avg << " Frames " << frame_count << std::endl;
+	Video_Reader video_reader(filepath);
+	video_reader.run();
+	video_reader.print_performance();
 	return 0;
 }

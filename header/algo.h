@@ -27,48 +27,57 @@
 #include <opencv2/videoio.hpp>
 #endif
 
+#include "io.h"
 #include "common.h"
 
-enum MODE {
-	INDEXER,
-	SEARCHER,
-};
+//class Keyframe_Detector {
+//public:
+//	Keyframe_Detector(const std::filesystem::path& filename);
+//	std::vector<Key_Frame*> run();
+//	void print_performance();
+//protected:
+//	void init_video_reader();
+//	virtual bool read_frame();
+//	virtual void frame_process(cv::Mat& in_frame, cv::Mat& out_frame);
+//
+//protected:
+//	std::filesystem::path filename;
+//	std::vector<Key_Frame*> key_frames;
+//
+//	int frame_count;
+//	std::vector<double> times;
+//
+//	cv::Mat frame;
+//	cv::Mat last_frame;
+//
+//	cv::Mat first_radon;
+//	cv::Mat second_radon;
+//	cv::Mat edge_frame;
+//
+//#ifdef HAVE_OPENCV_CUDACODEC
+//	cv::Ptr<cv::cudacodec::VideoReader> cuda_reader;
+//	cv::cuda::GpuMat frame_gpu;
+//#else
+//	cv::VideoCapture video_reader;
+//#endif
+//};
 
-class Keyframe_Detector {
+class Keyframe_Detector : public Video_Reader {
 public:
 	Keyframe_Detector(const std::filesystem::path& filename);
-	std::vector<Key_Frame*> run();
-	void print_performance();
+	std::vector<Key_Frame*> get_index();
 protected:
-	void init_video_reader();
-	virtual bool read_frame();
-#ifdef HAVE_OPENCV_CUDACODEC
-	virtual void frame_process(cv::cuda::GpuMat& in_frame, cv::Mat& out_frame);
-#else
-	virtual void frame_process(cv::Mat& in_frame, cv::Mat& out_frame);
-#endif
+	virtual bool preprocess();
+	virtual void frame_operation();
+	virtual void postprocess();
+	void frame_process(AutoMat& in_frame, cv::Mat& out_frame);
 
 protected:
-	std::filesystem::path filename;
-	std::vector<Key_Frame*> key_frames;
-
-	int total_frames;
-	int frame_count;
-	std::vector<double> times;
-
-	cv::Mat first_radon;
-	cv::Mat second_radon;
+	AutoMat last_frame;
 	cv::Mat edge_frame;
-
-#ifdef HAVE_OPENCV_CUDACODEC
-	cv::Ptr<cv::cudacodec::VideoReader> cuda_reader;
-	cv::cuda::GpuMat first_frame;
-	cv::cuda::GpuMat second_frame;
-#else
-	cv::VideoCapture video_reader;
-	cv::Mat first_frame;
-	cv::Mat second_frame;
-#endif
+	cv::Mat radon;
+	cv::Mat last_radon;
+	std::vector<Key_Frame*> key_frames;
 };
 
 cv::Rect find_bounding_box(const std::filesystem::path& video_path);

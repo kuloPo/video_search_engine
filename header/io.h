@@ -23,6 +23,13 @@
 #include <regex>
 #include <stdarg.h>
 #include <pqxx/pqxx>
+#include <opencv2/opencv_modules.hpp>
+
+#ifdef HAVE_OPENCV_CUDACODEC
+#include <opencv2/cudacodec.hpp>
+#else
+#include <opencv2/videoio.hpp>
+#endif
 
 #include "common.h"
 
@@ -54,6 +61,32 @@ private:
     std::string password;
     std::string dbname;
     std::string port;
+};
+
+class Video_Reader {
+public:
+    Video_Reader(const std::filesystem::path& filename);
+    void run();
+    void print_performance();
+protected:
+    void init_video_reader();
+    bool read_frame();
+    virtual bool preprocess() { return true; };
+    virtual void frame_operation() {};
+    virtual void postprocess() {};
+
+protected:
+    std::filesystem::path filename;
+    int frame_count;
+    AutoMat frame;
+    cv::TickMeter tm;
+    std::vector<double> frame_time;
+
+#ifdef HAVE_OPENCV_CUDACODEC
+    cv::Ptr<cv::cudacodec::VideoReader> cuda_reader;
+#else
+    cv::VideoCapture video_reader;
+#endif
 };
 
 /*

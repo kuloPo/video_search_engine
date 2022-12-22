@@ -36,8 +36,13 @@ int main(int argc, char** argv) {
 		filepath_2 = argv[2];
 	}
 
-	std::vector<Key_Frame*> key_frames_1 = std::move(Keyframe_Detector(filepath_1).run());
-	std::vector<Key_Frame*> key_frames_2 = std::move(Keyframe_Detector(filepath_2).run());
+	Keyframe_Detector key_frame_detector_1(filepath_1);
+	Keyframe_Detector key_frame_detector_2(filepath_2);
+	key_frame_detector_1.run();
+	key_frame_detector_2.run();
+
+	std::vector<Key_Frame*> key_frames_1 = std::move(key_frame_detector_1.get_index());
+	std::vector<Key_Frame*> key_frames_2 = std::move(key_frame_detector_2.get_index());
 
 	cout << "video 1 key frame: " << endl;
 	for (Key_Frame* key_frame : key_frames_1) {
