@@ -16,10 +16,6 @@
  * along with kuloPo/video_search_engine. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <opencv2/cudaarithm.hpp>
-#include <opencv2/cudawarping.hpp>
-#include <opencv2/cudaimgproc.hpp>
-
 #include "io.h"
 
 #include "picosha2.h"
