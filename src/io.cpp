@@ -94,6 +94,10 @@ Video_Reader::Video_Reader(const std::filesystem::path& filename) {
 	this->init_video_reader();
 }
 
+Video_Reader::~Video_Reader() {
+	this->video_reader.release();
+}
+
 void Video_Reader::run() {
 	if (!this->preprocess())
 		return;
@@ -123,7 +127,7 @@ void Video_Reader::print_performance() {
 
 void Video_Reader::init_video_reader() {
 #ifdef HAVE_OPENCV_CUDACODEC
-	cuda_reader = cv::cudacodec::createVideoReader(filename.string());
+	video_reader = cv::cudacodec::createVideoReader(filename.string());
 	this->read_frame();
 #else
 	video_reader = cv::VideoCapture(filename.string());
@@ -133,7 +137,7 @@ void Video_Reader::init_video_reader() {
 
 bool Video_Reader::read_frame() {
 #ifdef HAVE_OPENCV_CUDACODEC
-	if (!cuda_reader->nextFrame(frame))
+	if (!video_reader->nextFrame(frame))
 		return false;
 #else 
 	video_reader >> frame;

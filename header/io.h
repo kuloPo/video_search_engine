@@ -66,6 +66,7 @@ private:
 class Video_Reader {
 public:
     Video_Reader(const std::filesystem::path& filename);
+    ~Video_Reader();
     void run();
     void print_performance();
 protected:
@@ -83,7 +84,7 @@ protected:
     std::vector<double> frame_time;
 
 #ifdef HAVE_OPENCV_CUDACODEC
-    cv::Ptr<cv::cudacodec::VideoReader> cuda_reader;
+    cv::Ptr<cv::cudacodec::VideoReader> video_reader;
 #else
     cv::VideoCapture video_reader;
 #endif
