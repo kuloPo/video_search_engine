@@ -60,6 +60,7 @@ public:
     }
 
     void frame_operation() {
+        frame_preprocessing(frame);
         noise_frame = make_noise(frame, this->SNR);
         video_writer << noise_frame;
     }
