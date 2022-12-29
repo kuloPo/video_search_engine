@@ -70,7 +70,7 @@ protected:
 	virtual bool preprocess();
 	virtual void frame_operation();
 	virtual void postprocess();
-	void frame_process(AutoMat& in_frame, cv::Mat& out_frame);
+	virtual void frame_process(AutoMat& in_frame, cv::Mat& out_frame);
 
 protected:
 	AutoMat last_frame;

@@ -57,9 +57,9 @@ private:
 	}
 
 #ifdef HAVE_OPENCV_CUDACODEC
-	void frame_process(cv::cuda::GpuMat& in_frame, cv::Mat& out_frame) {
+	virtual void frame_process(cv::cuda::GpuMat& in_frame, cv::Mat& out_frame) {
 #else
-	void frame_process(cv::Mat & in_frame, cv::Mat & out_frame) {
+	virtual void frame_process(cv::Mat & in_frame, cv::Mat & out_frame) {
 #endif
 		in_frame = in_frame(bounding_box);
 		Keyframe_Detector::frame_process(in_frame, out_frame);
@@ -82,9 +82,9 @@ public:
 
 private:
 #ifdef HAVE_OPENCV_CUDACODEC
-	void frame_process(cv::cuda::GpuMat& in_frame, cv::Mat& out_frame) {
+	virtual void frame_process(cv::cuda::GpuMat& in_frame, cv::Mat& out_frame) {
 #else
-	void frame_process(cv::Mat & in_frame, cv::Mat & out_frame) {
+	virtual void frame_process(cv::Mat & in_frame, cv::Mat & out_frame) {
 #endif
 		// frame preprocessing
 		frame_preprocessing(in_frame);
