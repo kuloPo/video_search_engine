@@ -30,8 +30,8 @@
 
 void frame_preprocessing(cv::cuda::GpuMat& frame) {
 	frame.convertTo(frame, CV_32FC1);
-	cv::cuda::divide(frame, 255, frame);
 	cv::cuda::resize(frame, frame, cv::Size(128, 128));
+	cv::cuda::divide(frame, 255, frame);
 	if (frame.channels() == 4) {
 		cv::cuda::cvtColor(frame, frame, cv::COLOR_BGRA2GRAY);
 	}
@@ -56,8 +56,8 @@ cv::Mat make_noise(const cv::cuda::GpuMat& frame, const double SNR) {
 
 void frame_preprocessing(cv::Mat& frame) {
 	frame.convertTo(frame, CV_32FC1);
-	cv::divide(frame, 255, frame);
 	cv::resize(frame, frame, cv::Size(128, 128));
+	cv::divide(frame, 255, frame);
 	if (frame.channels() == 4) {
 		cv::cvtColor(frame, frame, cv::COLOR_BGRA2GRAY);
 	}
