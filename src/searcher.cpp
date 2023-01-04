@@ -75,7 +75,7 @@ class Keyframe_Detector_Noise : public Keyframe_Detector {
 public:
 	Keyframe_Detector_Noise(const std::filesystem::path& filename) : Keyframe_Detector(filename) {
 		std::string hash;
-		hash_string(video_path.string(), hash);
+		hash_string(this->filename.string(), hash);
 		this->seed = seed_prefix + hash.substr(0, 15);
 		cv::theRNG().state = std::stoull(seed, nullptr, 16);
 	}
