@@ -27,10 +27,11 @@ std::string DB_user;
 std::string DB_password;
 std::string DB_name;
 
-std::filesystem::path video_path;
 double frame_difference_threshold;
 int min_matched_interval;
 int jumped_frame;
+int Gaussian_kernel_size;
+double Gaussian_kernel_sigma;
 double interval_matching_epsilon;
 int min_matched_percentage;
 int thread_num;
@@ -254,11 +255,11 @@ void read_config() {
 	DB_password = ini["Database"]["password"];
 	DB_name = ini["Database"]["name"];
 
-	video_path = ini["Filepath"]["video_path"];
-
 	frame_difference_threshold = std::stod(ini["Search_Engine"]["frame_difference_threshold"]);
 	min_matched_interval = std::stoi(ini["Search_Engine"]["min_matched_interval"]);
 	jumped_frame = std::stoi(ini["Search_Engine"]["jumped_frame"]);
+	Gaussian_kernel_size = std::stoi(ini["Search_Engine"]["Gaussian_kernel_size"]);
+	Gaussian_kernel_sigma = std::stod(ini["Search_Engine"]["Gaussian_kernel_sigma"]);
 
 	interval_matching_epsilon = std::stod(ini["Searcher"]["interval_matching_epsilon"]);
 	min_matched_percentage = std::stoi(ini["Searcher"]["min_matched_percentage"]);

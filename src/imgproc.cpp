@@ -67,7 +67,7 @@ void frame_preprocessing(cv::Mat& frame) {
 }
 
 void edge_detection(cv::Mat& frame, cv::Mat& edge_frame) {
-	cv::GaussianBlur(frame, edge_frame, cv::Size(3, 3), 1, 1, cv::BORDER_DEFAULT);
+	cv::GaussianBlur(frame, edge_frame, cv::Size(Gaussian_kernel_size, Gaussian_kernel_size), Gaussian_kernel_sigma, 0, cv::BORDER_DEFAULT);
 	cv::Mat sobel_x, sobel_y;
 	cv::Mat kernel_x = (cv::Mat_<double>(3, 3) << -1, 0, 1, -2, 0, 2, -1, 0, 1);
 	cv::Mat kernel_y = (cv::Mat_<double>(3, 3) << 1, 2, 1, 0, 0, 0, -1, -2, -1);

@@ -20,6 +20,8 @@
 
 #include <opencv2/core.hpp>
 
+#include "common.h"
+
 #ifdef HAVE_OPENCV_CUDACODEC
 
 void frame_preprocessing(cv::cuda::GpuMat& frame);

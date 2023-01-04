@@ -26,12 +26,12 @@ extern std::string DB_user;
 extern std::string DB_password;
 extern std::string DB_name;
 
-extern std::filesystem::path video_path; // Path of the folder containing source videos
-
 extern double frame_difference_threshold;   // Threshold of treating two adjacent frames as different frames 
 extern int min_matched_interval;            // Minimum value can be returned by inverval_comparison(). 
-   							                    // If the value is too low, queries with too few intervals may be wrongly matched
+   							                // If the value is too low, queries with too few intervals may be wrongly matched
 extern int jumped_frame;
+extern int Gaussian_kernel_size;
+extern double Gaussian_kernel_sigma;
 
 extern double interval_matching_epsilon;  // difference smaller than epsilon, match found
 extern int min_matched_percentage;         // Queries with matched intervals above this threshold will be considered duplicate
