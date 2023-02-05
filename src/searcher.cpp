@@ -298,11 +298,15 @@ int main(int argc, char** argv) {
 	read_config();
 	DB = std::make_unique<DB_Connector>(DB_user, DB_address, DB_password, DB_name, DB_port);
 
+	double video_len_cut = 1;
+	if (argc == 2) {
+		video_len_cut = std::stod(argv[1]);
+	}
 	std::vector<std::string> search_result(15);
 	parallel_for_(cv::Range(1, 15), [&](const cv::Range& range) {
 		for (int i = range.start; i <= range.end; i++) {
 			std::filesystem::path filename = std::filesystem::path(MUSCLE_VCD_2007_ST1) / ("ST1Query" + std::to_string(i) + ".mpeg");
-			Keyframe_Detector_Searcher detector(filename.string());
+			Keyframe_Detector_Searcher detector(filename.string(), video_len_cut);
 			search_result[i - 1] = query(filename, detector);
 		}
 	}, thread_num);
