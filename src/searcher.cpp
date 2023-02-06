@@ -94,7 +94,7 @@ private:
 		edge_detection(noise, edge_frame);
 		cv::Mat edge_frame_normed = edge_frame / sum(edge_frame);
 		// calculate histogram and the distance between hist
-		Radon_Transform(edge_frame_normed, out_frame, 45, 0, 180);
+		Radon_Transform(edge_frame_normed, out_frame, Radon_theta, 0, 180);
 	}
 
 private:

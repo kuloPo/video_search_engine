@@ -202,7 +202,7 @@ int interval_comparison(const std::vector<double>& v1, const std::vector<double>
 
 double radon_distance(const cv::Mat& radon1, const cv::Mat& radon2) {
 	std::vector<double> integral_distance;
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 180 / Radon_theta; i++) {
 		cv::Mat integral1 = radon1.col(i);
 		cv::Mat integral2 = radon2.col(i);
 		integral_distance.push_back(wasserstein_distance(integral1, integral2));

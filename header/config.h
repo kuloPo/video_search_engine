@@ -32,6 +32,7 @@ extern int min_matched_interval;            // Minimum value can be returned by 
 extern int jumped_frame;
 extern int Gaussian_kernel_size;
 extern double Gaussian_kernel_sigma;
+extern int Radon_theta;
 
 extern double interval_matching_epsilon;  // difference smaller than epsilon, match found
 extern int min_matched_percentage;         // Queries with matched intervals above this threshold will be considered duplicate

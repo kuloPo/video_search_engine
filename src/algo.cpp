@@ -83,7 +83,7 @@ void Keyframe_Detector::frame_process(AutoMat& in_frame, cv::Mat& out_frame) {
 	// edge detection
 	edge_detection(in_frame, edge_frame);
 	// calculate histogram and the distance between hist
-	Radon_Transform(edge_frame, out_frame, 45, 0, 180);
+	Radon_Transform(edge_frame, out_frame, Radon_theta, 0, 180);
 }
 
 std::vector<Key_Frame*> Keyframe_Detector::get_index() {
