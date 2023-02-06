@@ -71,7 +71,7 @@ public:
     void print_performance();
 protected:
     void init_video_reader();
-    bool read_frame();
+    virtual bool read_frame();
     virtual bool preprocess() { return true; };
     virtual void frame_operation() {};
     virtual void postprocess() {};
