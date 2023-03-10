@@ -48,8 +48,8 @@ int main() {
 
 	cout << sum(edge_frame1) << " " << sum(edge_frame2) << endl;
 
-	Radon_Transform(edge_frame1, radon1, 45, 0, 180);
-	Radon_Transform(edge_frame2, radon2, 45, 0, 180);
+	Radon_Transform(edge_frame1, radon1, Radon_theta, 0, 180);
+	Radon_Transform(edge_frame2, radon2, Radon_theta, 0, 180);
 	double d = radon_distance(radon1, radon2);
 
 	cout << d << endl;

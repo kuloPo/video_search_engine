@@ -20,6 +20,7 @@
 #include <iostream>
 #include <mutex>
 #include <queue>
+#include <thread>
 
 #include "algo.h"
 #include "common.h"

@@ -32,6 +32,7 @@ int min_matched_interval;
 int jumped_frame;
 int Gaussian_kernel_size;
 double Gaussian_kernel_sigma;
+int Radon_theta;
 double interval_matching_epsilon;
 int min_matched_percentage;
 int thread_num;
@@ -260,6 +261,7 @@ void read_config() {
 	jumped_frame = std::stoi(ini["Search_Engine"]["jumped_frame"]);
 	Gaussian_kernel_size = std::stoi(ini["Search_Engine"]["Gaussian_kernel_size"]);
 	Gaussian_kernel_sigma = std::stod(ini["Search_Engine"]["Gaussian_kernel_sigma"]);
+	Radon_theta = std::stoi(ini["Search_Engine"]["Radon_theta"]);
 
 	interval_matching_epsilon = std::stod(ini["Searcher"]["interval_matching_epsilon"]);
 	min_matched_percentage = std::stoi(ini["Searcher"]["min_matched_percentage"]);
