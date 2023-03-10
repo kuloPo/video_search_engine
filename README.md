@@ -1,7 +1,12 @@
 # An Efficient Near Duplicate Video Retrieval System Based on Time Intervals
 
 ## Abstract
+
 The fast grow of video data on the Internet makes it a new challenge to detect duplicate or plagiarized video in an efficient and accurate manner. In this paper, we proposed an efficient video retrieval system based on the time intervals between keyframes and uses numerical comparisons only, ensuring fast response time during query operations. The proposed method demonstrates excellent performance in accuracy and efficiency, with a 100\% accuracy rate on the MUSCLE\_VCD\_2007 ST1 query and strong robustness in various test scenarios. This system offers a promising solution to the growing challenge of video data management in the era of big data.
+
+## Demo
+
+https://demo.kulopo.com
 
 ## Build
 
