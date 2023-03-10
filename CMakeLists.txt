@@ -14,7 +14,7 @@ else ()
     message(STATUS "    libraries: ${OpenCV_LIBS}")
 endif ()
 
-find_package(libpqxx CONFIG REQUIRED)
+find_library(LIBPQXX pqxx)
 
 file(GLOB_RECURSE SRC_LIST
     ./src/*.cpp
@@ -23,7 +23,7 @@ file(GLOB_RECURSE SRC_LIST
 INCLUDE_DIRECTORIES(./header)
 INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
 link_libraries(${OpenCV_LIBS})
-link_libraries(libpqxx::pqxx)
+link_libraries(${LIBPQXX})
 
 file(GLOB files "targets/*.cpp")
 foreach(file ${files})
